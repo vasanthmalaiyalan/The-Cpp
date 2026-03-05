@@ -1,434 +1,369 @@
 
-# 🖥️ Computer System என்றால் என்ன?
+# 🖥️ A Tour of Computer Systems
 
-ஒரு **computer system** இரண்டு முக்கிய பகுதிகள் கொண்டு இருக்கும்:
+---
 
-1️⃣ **Hardware**  
-2️⃣ **System Software**
+## 1️⃣ இந்த Chapter என்ன சொல்லுகிறது
 
-இரண்டும் சேர்ந்து:
+```
+Computer system-ஐ ஒரு tour போல introduce செய்கிறது
+Computer system முழுவதும் எப்படி வேலை செய்கிறது என்று overview
+```
 
-👉 **Application programs run செய்யும்**
+---
 
-----------
+## 2️⃣ Computer System என்றால் என்ன
 
-## 🧱 Hardware examples
+**Hardware — Physical parts:**
+```
+CPU
+RAM
+Disk
+Keyboard
+Monitor
+```
 
--   CPU
-    
--   Memory (RAM)
-    
--   Disk
-    
--   Network card
-    
+**System Software — Hardware-ஐ control செய்து programs run செய்ய உதவும்:**
+```
+Operating system
+Compiler
+Linker
+Loader
+Shell
+```
 
-----------
+✔ இந்த இரண்டும் சேர்ந்து தான் → application programs run செய்ய முடியும்
 
-## 💻 System Software examples
+---
 
--   Operating system
-    
--   Compiler
-    
--   Linker
-    
--   Shell
-    
+## 3️⃣ Implementation Change ஆகும், Concepts Change ஆகாது
 
-----------
+**Computer technology காலத்துடன் மாறுகிறது:**
+```
+CPU architecture change
+OS versions change
+hardware speed increase
+```
 
-# ⚙️ Systems change but concepts same
+**ஆனால்:**
+```
+basic concepts same தான் இருக்கும்
+```
 
-Technology காலத்துடன் மாறும்:
+**எல்லா computers-லும்:**
+```
+CPU
+Memory
+Storage
+OS
+```
 
--   CPU model மாறும்
-    
--   OS version மாறும்
-    
--   hardware design மாறும்
-    
+✔ இவை இருக்கும் — அதனால் concepts கற்றுக்கொண்டால் எந்த future system-ஐயும் புரிந்துகொள்ள முடியும்
 
-ஆனால்:
+---
 
-👉 **basic concepts மாறாது**
+## 4️⃣ இந்த புத்தகம் யாருக்காக
 
-எல்லா computers-லும்:
+```
+இந்த புத்தகம் → programmers காக எழுதப்பட்டது
+```
 
--   CPU
-    
--   Memory
-    
--   Storage
-    
--   OS
-    
+**Goal:**
+```
+computer system எப்படி வேலை செய்கிறது
+அது program correctness மற்றும் performance-ஐ எப்படி பாதிக்கிறது
+```
 
-இவை இருக்கும்.
+---
 
-----------
+## 5️⃣ "Power Programmer" என்ற Idea
 
-# 👨‍💻 இந்த புத்தகம் யாருக்காக?
+**இந்த புத்தகம் படித்தால் → Power Programmer ஆக முடியும்**
 
-இந்த புத்தகம்:
+```
+system internals தெரியும்
+performance optimize செய்ய தெரியும்
+bugs root cause கண்டுபிடிக்க தெரியும்
+```
 
-👉 **programmers**
+```
+ordinary programmer → system-aware programmer
+```
 
-காக எழுதப்பட்டது.
+---
 
-Goal:
+## 6️⃣ இந்த புத்தகம் கற்றுக்கொடுக்கும் Practical Skills
 
-Programmers புரிந்து கொள்ள வேண்டும்:
+---
 
--   computer system எப்படி வேலை செய்கிறது
-    
--   அது program performance-ஐ எப்படி பாதிக்கும்
-    
+### (1) Strange Numerical Errors Avoid செய்ய
 
-----------
+```
+Computers numbers-ஐ special format-ல் represent செய்கிறது
+Example: floating-point representation
 
-# 🚀 Power Programmer என்றால் என்ன?
+இதனால் unexpected errors வரும்
+Example: 0.1 + 0.2 ≠ 0.3
+```
 
-இந்த புத்தகம் படித்தால்:
+---
 
-நீங்கள் ஒரு **Power Programmer** ஆகலாம்.
+### (2) C Code Optimization
 
-Power Programmer என்றால்:
+**Modern processors:**
+```
+pipelines
+cache
+branch prediction
+out-of-order execution
+```
 
--   computer system உள்ளே என்ன நடக்கிறது தெரியும்
-    
--   bugs easy-ஆ fix செய்ய முடியும்
-    
--   performance improve செய்ய முடியும்
-    
+✔ இந்த hardware design பயன்படுத்தி C programs fast ஆக எழுதலாம்
 
-----------
+---
 
-# 📚 இந்த புத்தகம் கற்றுக்கொடுக்கும் skills
+### (3) Procedure Calls Compiler எப்படி Implement செய்கிறது
 
-இந்த புத்தகம் சில **practical skills** கற்றுக்கொடுக்கும்.
+```c
+foo();
+```
 
-----------
+**Compile ஆன பிறகு compiler பயன்படுத்துவது:**
+```
+stack
+registers
+memory
+```
 
-## 1️⃣ Strange numerical errors
+---
 
-Computer numbers represent செய்வது different.
+### (4) Buffer Overflow Security Problems
 
-Example:
+```c
+char buf[10];
+gets(buf);
+```
 
-floating point numbers.
+```
+Buffer overflow → network software-ல் common vulnerability
+attackers exploit செய்ய முடியும்
+```
 
-இதனால்:
+✔ எப்படி வருகிறது + எப்படி avoid செய்வது — explain செய்யும்
 
-👉 unexpected errors வரும்.
+---
 
-இந்த புத்தகம்:
+### (5) Linking Errors
 
-✔ இந்த errors avoid செய்ய கற்றுக்கொடுக்கும்.
+**Compile செய்த பிறகு → Linking stage**
 
-----------
+**Common errors:**
+```
+undefined reference
+multiple definition
+```
 
-## 2️⃣ C code optimization
+✔ Average programmers confuse ஆகிவிடுவார்கள் — இந்த புத்தகம் linking process explain செய்யும்
 
-Modern processors:
+---
 
--   pipelines
-    
--   cache
-    
--   branch prediction
-    
+### (6) Real Systems Programs எழுத கற்றுக்கொடுக்கும்
 
-இவை பயன்படுத்தி:
+**Projects:**
+```
+Unix shell
+dynamic memory allocator
+Web server
+```
 
-👉 **C code fast ஆக எழுதுவது**
+✔ அதாவது OS level programs
 
-கற்றுக்கொடுக்கப்படும்.
+---
 
-----------
+### (7) Concurrency
 
-## 3️⃣ Procedure calls
+**Modern CPUs:**
+```
+4 core
+8 core
+16 core
+→ programs parallel run செய்யலாம்
+```
 
-Compiler எப்படி:
+✔ benefits + dangers (race conditions) இரண்டையும் explain செய்யும்
 
-👉 **function calls implement செய்கிறது**
+---
 
-அதை explain செய்கிறது.
+## 7️⃣ Hello Program Example
 
-Example:
-
--   stack usage
-    
--   registers
-    
-
-----------
-
-## 4️⃣ Security problems
-
-Example:
-
-**Buffer overflow**
-
-இது:
-
-👉 network software-ல் common vulnerability.
-
-இந்த புத்தகம்:
-
-✔ அதை புரிந்து கொள்ள  
-✔ அதை avoid செய்ய
-
-கற்றுக்கொடுக்கும்.
-
-----------
-
-## 5️⃣ Linking errors
-
-Program compile ஆன பிறகு:
-
-👉 **linking stage**
-
-இங்கு சில errors வரும்.
-
-Average programmers:
-
-❌ confuse ஆகிவிடுவார்கள்.
-
-இந்த புத்தகம்:
-
-✔ linking எப்படி வேலை செய்கிறது explain செய்கிறது.
-
-----------
-
-## 6️⃣ Real systems programs எழுத கற்றுக்கொடுக்கும்
-
-இந்த புத்தகத்தில் நீங்கள் எழுத கற்றுக்கொள்வீர்கள்:
-
--   Unix shell
-    
--   dynamic memory allocator
-    
--   web server
-    
-
-அதாவது:
-
-👉 real systems software.
-
-----------
-
-## 7️⃣ Concurrency
-
-Modern CPUs:
-
-👉 **multi-core processors**
-
-இதனால் programs:
-
-👉 parallel run ஆகும்.
-
-இந்த topic:
-
-✔ advantages  
-✔ problems
-
-இரண்டையும் explain செய்யும்.
-
-----------
-
-# 👋 Hello Program example
-
-Authors ஒரு famous example பயன்படுத்துகிறார்கள்.
-
-Hello program.
-
-#include <stdio.h>  
-  
-int  main()  
-{  
-  printf("hello, world\n");  
-  return  0;  
-}
-
-இந்த program:
-
-👉 screen-ல் print செய்யும்
-
-hello, world
-
-----------
-
-# 🤔 இந்த simple program run ஆக என்ன வேண்டும்?
-
-இந்த simple program run ஆக:
-
-Computer system முழுவதும் work செய்ய வேண்டும்.
-
-Example:
-
-1️⃣ compiler  
-2️⃣ OS  
-3️⃣ CPU  
-4️⃣ memory  
-5️⃣ terminal
-
-இவை அனைத்தும் சேர்ந்து வேலை செய்ய வேண்டும்.
-
-----------
-
-# 🎯 இந்த புத்தகத்தின் goal
-
-Authors சொல்வது:
-
-👉 Hello program run ஆகும்போது
-
-**computer system-ல் என்ன நடக்கிறது**
-
-அதை முழுவதும் புரிய வைப்பது தான் இந்த புத்தகத்தின் goal.
-
-----------
-
-# 🔄 Hello program life cycle
-
-இந்த chapter-ல் authors explain செய்வது:
-
-Hello program வாழ்க்கை.
-
-1️⃣ programmer code எழுதுகிறார்  
-2️⃣ compiler compile செய்கிறது  
-3️⃣ OS program load செய்கிறது  
-4️⃣ CPU instructions execute செய்கிறது  
-5️⃣ output print ஆகிறது
-
-----------
-
-# 💾 Code computer-ல் எப்படி store ஆகும்?
-
-Computer:
-
-👉 text புரியாது.
-
-அது புரிவது:
-
-**bits**
-
-அதாவது:
-
-0  
-1
-
-----------
-
-# 🔤 ASCII representation
-
-Hello program text computer-ல்
-
-👉 ASCII numbers ஆக store ஆகும்.
-
-Example:
-
-h = 104  
-e = 101  
-l = 108  
-o = 111
-
-அதனால்:
-
-text → numbers.
-
-Example:
-
-hello
-
-store ஆகும்:
-
-104 101 108 108 111
-
-----------
-
-# 📄 hello.c file example
-
-File:
-
-code/intro/hello.c
-
-இந்த file computer memory-ல்
-
-ASCII numbers ஆக இருக்கும்.
-
-Example:
-
+```c
 #include <stdio.h>
 
-convert ஆகும் numbers:
+int main()
+{
+    printf("hello, world\n");
+    return 0;
+}
+```
 
-35 105 110 99 ...
+**Output:**
+```
+hello, world
+```
 
-----------
+---
 
-# 🧠 முக்கிய concept
+## 8️⃣ Hello Program Simple தான் ஆனால் System முழுவதும் வேலை செய்ய வேண்டும்
 
-இந்த section main idea:
+**Run ஆக இவை எல்லாம் வேலை செய்ய வேண்டும்:**
+```
+editor
+compiler
+linker
+OS
+CPU
+memory
+terminal
+```
 
-👉 **Information = Bits + Context**
+---
 
-அதாவது:
+## 9️⃣ இந்த புத்தகத்தின் Goal
 
-Computer-க்கு எல்லாம்:
+```
+Hello program run ஆகும்போது
+computer system-ல் என்ன நடக்கிறது என்று explain செய்வது
+```
 
-0  
-1
+---
 
-ஆனால்:
+## 🔟 Hello Program Lifetime
 
-Context இருந்தால் தான் meaning தெரியும்.
+```
+1️⃣ Programmer code எழுதுகிறார்
+2️⃣ Source file save செய்கிறார்
+3️⃣ Compiler compile செய்கிறது
+4️⃣ Linker libraries இணைக்கிறது
+5️⃣ OS program load செய்கிறது
+6️⃣ CPU instructions execute செய்கிறது
+7️⃣ Output screen-ல் print ஆகிறது
+```
 
-Example:
+---
 
+## 1️⃣1️⃣ Computer Information எப்படி Store செய்கிறது
+
+```
+Computer text-ஐ நேரடியாக store செய்யாது
+அது store செய்வது → bits
+
+bit = 0 or 1
+
+எல்லா information-மும் bits ஆக தான் இருக்கும்
+```
+
+---
+
+## 1️⃣2️⃣ ASCII Representation
+
+**Text characters → numbers ஆக represent செய்யப்படும்:**
+```
+h = 104
+e = 101
+l = 108
+o = 111
+```
+
+**`hello` store ஆகும்:**
+```
+104  101  108  108  111
+```
+
+✔ இதற்கு → ASCII encoding
+
+---
+
+## 1️⃣3️⃣ hello.c File எப்படி Memory-ல் இருக்கும்
+
+**`#include <stdio.h>` → ASCII numbers:**
+```
+# = 35
+i = 105
+n = 110
+c = 99
+```
+
+✔ source code → numbers
+
+---
+
+## 1️⃣4️⃣ Information = Bits + Context
+
+**இந்த chapter-ல் வரும் powerful concept:**
+
+```
+Information = Bits + Context
+```
+
+**Example:**
+```
 01000001
 
-இது:
+Context இல்லாமல் → meaningless
 
-ASCII context-ல்
+ASCII context   → 'A'
+Integer context → 65
+```
 
-👉 'A'
+✔ Context meaning decide செய்கிறது
 
-ஆகும்.
+---
 
-----------
+## 1️⃣5️⃣ இந்த Chapter என்ன செய்யும்
 
-# ⭐ Chapter 1 என்ன செய்யும்?
+**Hello program example மூலம் introduce செய்வது:**
+```
+machine code
+memory
+linking
+OS
+networking
+```
 
-இந்த chapter:
+---
 
-Hello program life cycle explain செய்யும்.
+## 📌 Final Summary
 
-Topics:
+```
+Computer system = hardware + system software
 
-1️⃣ Source code  
-2️⃣ Compilation  
-3️⃣ Linking  
-4️⃣ Loading  
-5️⃣ Execution  
-6️⃣ Output
+Programmers system internals புரிந்துகொள்ள வேண்டும்
 
-Later chapters:
+Simple Hello program run ஆக → system முழுவதும் work செய்கிறது
 
-இந்த concepts-ஐ **detail-ஆ explain செய்யும்**.
+Computer information → bits ஆக store செய்யப்படுகிறது
 
-----------
+Meaning = bits + context
+```
 
-✅ **Short summary**
+---
 
-இந்த chapter சொல்லுவது:
+## 💡 Core Journey of This Book
 
--   computer system = hardware + software
-    
--   programs run ஆக system components work together
-    
--   programmers system understanding இருந்தால் better programs எழுதலாம்
-    
--   Hello program மூலம் system operation explain செய்யப்படும்
-    
--   computer-ல் எல்லாம் **bits (0,1)** ஆக store செய்யப்படும்
+```
+C code
+  ↓
+compiler
+  ↓
+assembly
+  ↓
+machine code
+  ↓
+CPU
+  ↓
+memory
+  ↓
+OS
+  ↓
+terminal output
+```
