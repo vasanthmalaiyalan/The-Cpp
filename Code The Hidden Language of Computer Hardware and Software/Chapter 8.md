@@ -412,3 +412,57 @@ Binary numbers connect mathematics with electricity.
 **இந்த binary numbers எப்படி computer memory-ஆக மாறுகிறது (bits → bytes → characters)**
 
 அது தான் இந்த book-லே அடுத்த பெரிய jump.
+----
+
+இந்த **Chapter 8**-ல் author சொல்ல வருவது மிகவும் short-ஆ ஒரு idea தான்.
+
+### முக்கிய point
+
+> **நாம் பயன்படுத்தும் decimal (base-10) மட்டும் number system இல்லை.
+> வேறு base-களும் இருக்கலாம்.**
+
+Example:
+
+* base-10 → 0-9 (நாம் பயன்படுத்துவது)
+* base-8 → 0-7
+* base-4 → 0-3
+* **base-2 → 0,1 (binary)**
+
+---
+
+### முக்கியமான காரணம்
+
+Computers வேலை செய்யும் விதம்:
+
+```
+ON / OFF
+current / no current
+```
+
+அதாவது:
+
+```
+1 / 0
+```
+
+இதுவே **binary numbers**.
+
+---
+
+### Author சொல்லும் final idea
+
+```
+Electric circuits → ON / OFF
+ON / OFF → 1 / 0
+1 / 0 → binary numbers
+```
+
+அதனால்:
+
+> **Computers binary numbers பயன்படுத்துகிறது.**
+
+---
+
+✅ **ஒரு line summary**
+
+> **Binary numbers (0 மற்றும் 1) electricity-க்கு perfectly match ஆகிறது, அதனால் computers binary பயன்படுத்துகிறது.**
