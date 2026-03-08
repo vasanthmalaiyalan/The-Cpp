@@ -1,4 +1,6 @@
-```STEP 2 — Preprocessing (hello.i)
+# STEP 2 — Preprocessing (hello.i)
+```
+STEP 2 — Preprocessing (hello.i)
 
 Command: gcc -E hello.c -o hello.i
 
