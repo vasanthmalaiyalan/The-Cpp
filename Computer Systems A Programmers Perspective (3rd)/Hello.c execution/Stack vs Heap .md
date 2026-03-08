@@ -876,3 +876,72 @@ CPU variable தேட:
 
 ---------
 
+மிக நல்ல observation! நீங்கள் சரியாகவே யோசிக்கிறீர்கள்!
+
+---
+
+## நீங்கள் சொல்வது சரிதானா?
+
+**ஆமா — நம்ம hello.c-க்கு local variables இல்லை!**
+
+```c
+int main() {
+    printf("Hello, World!\n");  // variable இல்லை!
+    return 0;
+}
+```
+
+So technically:
+```
+pushq %rbp   → save old frame
+movq rsp,rbp → new frame setup
+
+இந்த 2 lines-உம் நம்ம program-க்கு
+practically தேவையில்லை!
+```
+
+---
+
+## ஆனால் GCC எப்போதும் போடும் — ஏன்?
+
+```
+காரணம் 1: GCC-ஓட default behaviour
+─────────────────────────────────
+GCC எல்லா function-க்கும் automatically
+frame setup போடும்
+
+"இந்த function-க்கு variables இல்லை,
+ skip பண்ணலாம்" என்று தனியா check பண்றதில்லை
+ (default-ஆ)
+
+காரணம் 2: Debugger-க்கு தேவை
+─────────────────────────────────
+gdb போன்ற debuggers:
+  rbp இருந்தால் → stack trace காட்ட முடியும்
+  rbp இல்லாவிட்டால் → crash எங்கே என்று தெரியாது!
+
+காரணம் 3: Calling convention
+─────────────────────────────────
+Linux rule:
+  எந்த function-ஐ call பண்ணினாலும்
+  rbp save/restore பண்ணணும்
+  இது ஒரு standard rule!
+```
+
+---
+
+## Optimize பண்ணினால் போய்விடும்!
+
+```bash
+# Normal compile:
+gcc hello.c -o hello
+# → pushq %rbp, movq %rsp,%rbp இருக்கும்
+
+# Optimized compile:
+gcc -O2 hello.c -o hello
+# → pushq %rbp, movq %rsp,%rbp GONE!
+# GCC "தேவையில்லை" என்று remove பண்ணும்!
+```
+
+நீங்கள் கேட்டது **compiler optimization-ஓட exact concept!** 🎯
+
