@@ -1,3 +1,26 @@
+>`STEP 2 — Preprocessing (hello.i)
+
+Command: gcc -E hello.c -o hello.i
+
+Preprocessor என்ன செய்யும்:
+
+    #include <stdio.h> → stdio.h file-ஓட முழு contents-ஐ copy paste செய்யும்
+    #define macros → actual values-ஆல் replace செய்யும்
+    Comments remove செய்யும்
+    Conditional #ifdef blocks resolve செய்யும்
+
+Result: hello.i என்பது ~800 lines! printf-ஓட declaration எல்லாம் அதில் இருக்கும்.
+
+# 1 "/usr/include/stdio.h" 1 3 4
+extern int printf(const char *__restrict __fmt, ...);
+# 6 "hello.c" 2
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+`
+-----
+
 ஒவ்வொன்றாக deep-ஆக பார்க்கலாம்!
 
 ---
