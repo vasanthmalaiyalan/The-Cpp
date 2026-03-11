@@ -1048,3 +1048,245 @@ n → disk write
 t → disk write
 f → disk write`இதுபோல் ஒரே வரியில் சேமிப்பதற்கும் என்ன வித்தியாசம் `write("printf(\"hello\");")` `
 
+--------
+
+`அதிக ஆபரேஷன் ஒஎஸ் க்கு கொடுத்தா ஓஎஸ் speed affect ஆகும் அல்லவா அதனால் தான் அதை தவிர்க்கிறோமா? `
+
+ஆம் 👍 நீ சொல்வது **முக்கியமான காரணங்களில் ஒன்று** தான்.
+ஆனால் முழு காரணம் **OS speed மட்டும் இல்லை** — **3 பெரிய காரணங்கள்** இருக்கின்றன. அதை தெளிவாகப் பார்ப்போம்.
+
+---
+
+# 1️⃣ System call overhead (OS load)
+
+நீ ஒரு `write()` call செய்தால்:
+
+```
+program (user mode)
+↓
+system call
+↓
+kernel mode
+↓
+filesystem
+↓
+disk driver
+↓
+return to user mode
+```
+
+இந்த **user mode ↔ kernel mode switch** மிகவும் costly.
+
+Example:
+
+| operation       | time     |
+| --------------- | -------- |
+| CPU instruction | ~1 ns    |
+| system call     | ~1000 ns |
+
+அதாவது:
+
+```
+system call ≈ 1000× slower
+```
+
+அதனால்:
+
+```
+1000 write() calls
+```
+
+means
+
+```
+1000 kernel transitions
+```
+
+இதனால் **OS load அதிகரிக்கும்**.
+
+---
+
+# 2️⃣ Disk I/O cost (முக்கிய காரணம்)
+
+Disk operation மிகவும் slow.
+
+Example:
+
+| device       | latency |
+| ------------ | ------- |
+| CPU register | ~1 ns   |
+| RAM          | ~100 ns |
+| SSD          | ~100 µs |
+| HDD          | ~5 ms   |
+
+Comparison:
+
+```
+disk ≈ 10,000 – 1,000,000 × slower than RAM
+```
+
+அதனால்:
+
+```
+small writes → many disk operations
+```
+
+Buffer பயன்படுத்தினால்:
+
+```
+many small writes → one large write
+```
+
+---
+
+# 3️⃣ Block device behavior
+
+Disk blocks:
+
+```
+filesystem block size ≈ 4096 bytes
+```
+
+நீ எழுதுவது:
+
+```
+1 byte
+```
+
+Disk actually செய்யும்:
+
+```
+read 4096 bytes
+modify 1 byte
+write 4096 bytes
+```
+
+அதனால்:
+
+```
+small writes = inefficient
+```
+
+---
+
+# 4️⃣ CPU idle problem
+
+Buffer இல்லாமல்:
+
+```
+CPU wait
+disk write
+CPU wait
+disk write
+```
+
+Buffer இருந்தால்:
+
+```
+CPU continue work
+RAM buffer collect
+disk write later
+```
+
+இதனால் **CPU utilization improve ஆகும்**.
+
+---
+
+# 5️⃣ OS scheduling efficiency
+
+Buffering allows OS to:
+
+```
+merge writes
+reorder writes
+optimize disk access
+```
+
+Example:
+
+```
+write A
+write B
+write C
+```
+
+OS combine:
+
+```
+write ABC
+```
+
+---
+
+# 6️⃣ Real Linux architecture
+
+Actual write path:
+
+```
+program
+↓
+stdio buffer (user space)
+↓
+kernel page cache
+↓
+filesystem
+↓
+disk driver
+↓
+storage device
+```
+
+Buffering happens in **multiple layers**.
+
+---
+
+# 7️⃣ Simple analogy
+
+Without buffer:
+
+```
+restaurant
+1 customer order
+chef cook
+serve
+repeat
+```
+
+With buffer:
+
+```
+collect 10 orders
+cook together
+serve faster
+```
+
+---
+
+# Final answer
+
+ஆம் — ஒரு காரணம்:
+
+```
+OS overload avoid செய்ய
+```
+
+ஆனால் முக்கிய காரணங்கள்:
+
+```
+1. system call overhead reduce
+2. disk I/O cost reduce
+3. block device efficiency improve
+4. CPU idle time reduce
+```
+
+---
+
+💡 CSAPP புத்தகத்தில் பின்னர் ஒரு **மிக முக்கியமான concept** வரும்:
+
+```
+Page Cache
+```
+
+Linux OS **disk writes direct செய்யாது** — முதலில் **RAM page cache-ல் store** செய்யும்.
+
+இதுதான் modern OS I/O performance-ஓட secret.
