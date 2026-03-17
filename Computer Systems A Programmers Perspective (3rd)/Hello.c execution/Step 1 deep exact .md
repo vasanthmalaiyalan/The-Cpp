@@ -1,299 +1,121 @@
-சரி 👍
-இப்போது **STEP-1 முழு flow-ஐ Linux kernel source level-க்கு அருகில் இருக்கும் real path-ஆக** பார்க்கலாம்.
-(Keyboard → Kernel driver → TTY → User program → Save → Filesystem → Disk)
-
-நாம் இரண்டு பகுதி பார்ப்போம்:
-
-1️⃣ **Typing (# screen-ல் தோன்றுவது)**
-2️⃣ **Save செய்தபின் disk-க்கு எழுதுவது**
+சரி 🔥 — இப்ப நீ கேட்டது **full deep execution (Step 1)**
+👉 *keyboard press இருந்து → file save → RAM inode update வரை*
+👉 **exact, clean, no confusion, full pipeline** 👇
 
 ---
 
-# PART 1 — Keyboard → Screen
-
-## 1️⃣ Keyboard hardware
-
-நீ press செய்கிறாய்:
-
-```
-Shift + 3
-```
-
-Keyboard controller detect செய்கிறது:
-
-```
-scan code
-```
-
-Example (PS/2 set-2):
-
-```
-Shift press   → 0x12
-3 press       → 0x26
-3 release     → F0 26
-Shift release → F0 12
-```
-
-இந்த data bus வழியாக computer-க்கு வரும்.
+# 🚀 STEP 1 — FULL EXECUTION (END-TO-END)
 
 ---
 
-# 2️⃣ CPU interrupt
+# 🔹 PART 1 — Keyboard → Kernel (hardware → kernel space)
 
-Hardware interrupt:
-
-```
-IRQ1
-```
-
-CPU interrupt handler run செய்யும்.
-
-Kernel interrupt entry:
-
-```
-arch/x86/kernel/irq.c
-```
-
-Call path:
-
-```
-do_IRQ()
+```text
+Keyboard press
 ↓
-handle_irq()
+Keyboard controller (hardware)
 ↓
-keyboard interrupt handler
+Scan code generate
+   (e.g., Shift + 3 → make/break codes)
+↓
+CPU interrupt (IRQ)
+↓
+Kernel interrupt handler
+↓
+Keyboard driver (kernel space)
+↓
+Input subsystem
+↓
+Keycode உருவாகும் (e.g., KEY_3, KEY_LEFTSHIFT)
+↓
+Keyboard layout mapping
+↓
+Character உருவாகும் → '#'
+↓
+Encoding → UTF-8 → 0x23
 ```
 
----
+👉 இங்கே வரை:
 
-# 3️⃣ Linux keyboard driver
-
-Driver file:
-
-```
-drivers/input/keyboard/atkbd.c
-```
-
-Driver scan code read செய்கிறது.
-
-Example:
-
-```
-0x26
-```
-
-Driver convert செய்கிறது:
-
-```
-scan code → keycode
-```
-
-Example:
-
-```
-KEY_3
-KEY_LEFTSHIFT
-```
-
----
-
-# 4️⃣ Linux input subsystem
-
-Kernel subsystem:
-
-```
-drivers/input/input.c
-```
-
-Event create செய்யும்:
-
-```
-EV_KEY KEY_LEFTSHIFT 1
-EV_KEY KEY_3         1
-EV_KEY KEY_3         0
-EV_KEY KEY_LEFTSHIFT 0
-```
-
-Meaning:
-
-| field  | meaning        |
-| ------ | -------------- |
-| EV_KEY | keyboard event |
-| KEY_3  | key identifier |
-| 1      | press          |
-| 0      | release        |
-
----
-
-# 5️⃣ Keyboard layout mapping
-
-Kernel TTY layer.
-
-Source:
-
-```
-drivers/tty/vt/keyboard.c
-```
-
-Mapping table:
-
-```
-KEY_3 → '3'
-SHIFT + KEY_3 → '#'
-```
-
-Character create ஆகிறது:
-
-```
-'#'
-```
-
-Encoding:
-
-```
-ASCII / UTF-8
-```
-
-Value:
-
-```
-0x23
-```
-
----
-
-# 6️⃣ Kernel TTY buffer
-
-Kernel store செய்யும்:
-
-```
-tty input buffer
-```
-
-Memory example:
-
-```
+```text
 Kernel Space
--------------------
+----------------
+TTY buffer:
 0xffff2000 : 0x23
 ```
 
-இதுவரை **User space ஒன்றும் பார்க்கவில்லை**.
-
 ---
 
-# 7️⃣ User program waiting
+# 🔹 PART 2 — Kernel → User (read path)
 
-Editor program (example):
-
-* Vim
-* Visual Studio Code
-
-Editor call:
+Editor already running (vim / vscode)
 
 ```c
 read(0, buf, 1);
 ```
 
-Meaning:
+Flow:
 
-| parameter | meaning     |
-| --------- | ----------- |
-| fd        | stdin       |
-| buf       | user buffer |
-| count     | bytes       |
-
----
-
-# 8️⃣ Kernel → User copy
-
-Kernel function:
-
-```
-tty_read()
+```text
+User Space (editor)
+↓
+read() syscall
+↓
+Kernel (tty_read)
+↓
+TTY buffer check
+↓
+data available (0x23)
 ↓
 copy_to_user()
-```
-
-Example memory:
-
-```
-Kernel Space
-0xffff2000 : 0x23
-```
-
-Copy →
-
-```
-User Space
-0x7ffe91a0 : 0x23
-```
-
----
-
-# 9️⃣ Editor buffer update
-
-Editor store செய்யும்:
-
-```
-editor text buffer
-```
-
-Example:
-
-```
-User Space
-------------------
-0x7ffe9100 : 0x23
-```
-
-Character:
-
-```
-#
-```
-
----
-
-# 🔟 Screen draw
-
-Editor screen update:
-
-```
-editor
 ↓
-write()
+User buffer update
+```
+
+👉 Result:
+
+```text
+User Space
+-----------
+buf[0] = 0x23   ('#')
+```
+
+---
+
+# 🔹 PART 3 — Editor buffer + Screen
+
+```text
+editor internal buffer update
+↓
+screen draw request
+↓
+write() syscall (stdout / terminal)
 ↓
 kernel tty driver
 ↓
-terminal
+terminal emulator
 ↓
 GPU
 ↓
-screen
+Screen shows: #
 ```
 
-Screen-ல் தெரியும்:
+👉 முக்கியம்:
 
-```
-#
-```
-
-இதுதான் **நீ key press செய்த உடனே screen-ல் தெரியும் reason**.
-
----
-
-# PART 2 — Save file
-
-இப்போது நீ save செய்கிறாய்:
-
-```
-:w
+```text
+👉 read() → data பெற
+👉 write() → screen காட்ட
 ```
 
 ---
 
-# 1️⃣ User space write
+# 🔹 PART 4 — Save file (write path)
+
+User action:
+
+```text
+:w   (vim save)
+```
 
 Editor call:
 
@@ -307,221 +129,177 @@ Example:
 write(3, 0x7ffe9100, 1);
 ```
 
-Meaning:
-
-| parameter  | meaning         |
-| ---------- | --------------- |
-| 3          | file descriptor |
-| 0x7ffe9100 | user memory     |
-| 1          | bytes           |
-
 ---
 
-# 2️⃣ System call entry
+# 🔹 PART 5 — User → Kernel (write syscall)
 
-CPU switch செய்யும்:
+```text
+User Space
+-----------
+buf: '#'
 
-```
-Ring 3 → Ring 0
-```
+↓ write()
 
-Kernel entry:
-
-```
-sys_write()
-```
-
-Source:
-
-```
-fs/read_write.c
-```
-
----
-
-# 3️⃣ Kernel copy
-
-Kernel function:
-
-```
-copy_from_user()
-```
-
-Example:
-
-```
-copy_from_user(kernel_buffer, 0x7ffe9100, 1)
-```
-
-Kernel memory:
-
-```
 Kernel Space
-------------------
-kernel_buffer : 0x23
+------------
+sys_write()
+↓
+copy_from_user()
+↓
+kernel buffer = 0x23   ✅
+```
+
+👉 முக்கியம்:
+
+```text
+copy ஆகுவது → data மட்டும் (#)
+copy ஆகாதது → fd, address, size
 ```
 
 ---
 
-# 4️⃣ VFS layer
+# 🔹 PART 6 — VFS layer
 
-Kernel Virtual File System:
-
-```
+```text
 vfs_write()
+↓
+fd → struct file
+↓
+file → inode
+↓
+filesystem type கண்டுபிடி (ext4)
 ```
 
-Source:
+👉 already known:
 
-```
-fs/vfs.c
-```
-
-Purpose:
-
-```
-filesystem independent interface
+```text
+inode exists
+block mapping exists / இல்லா இருக்கலாம்
 ```
 
 ---
 
-# 5️⃣ Filesystem driver
+# 🔹 PART 7 — ext4_file_write_iter() (🔥 core)
 
-Example filesystem:
-
-* ext4
-
-Functions:
-
-```
+```text
 ext4_file_write_iter()
-↓
-ext4_map_blocks()
-↓
-ext4_mb_new_blocks()
-```
 
-Free block allocation:
-
-```
-bitmap check
-↓
-free block find
-```
-
-Example:
-
-```
-block 8421
+↓ offset = file->f_pos (e.g., 0)
+↓ page கண்டுபிடி (page cache)
+↓ inode → block mapping check
+↓ (if needed) block allocate
+↓ data copy → page cache
+↓ mark page dirty
+↓ inode (RAM) update
 ```
 
 ---
 
-# 6️⃣ Inode update
+# 🔹 PART 8 — RAM state
 
-Example inode:
+```text
+Page Cache (RAM)
+----------------
+[0] = 0x23   (#)
 
-```
-inode 14523
-```
-
-Metadata update:
-
-```
-size
-timestamps
-block pointers
+inode (RAM)
+------------
+size = 1
+mtime updated
 ```
 
-Example:
+👉 இங்கே:
 
-```
-inode 14523
-size : 1 byte
-block: 8421
+```text
+dirty = 1   🔥
 ```
 
 ---
 
-# 7️⃣ Disk write
+# ❗ முக்கிய நிலை
 
-Data write:
-
+```text
+❌ disk-ல் இன்னும் இல்லை
+✅ RAM-ல் மட்டும் இருக்கிறது
 ```
-block 8421
-```
-
-Disk:
-
-```
-0x23
-```
-
-Binary stored.
 
 ---
 
-# FINAL FULL FLOW
+# 🔹 PART 9 — Return to user
 
+```c
+write() → return 1
 ```
-keyboard press
+
+👉 meaning:
+
+```text
+"RAM-ல் எழுதிவிட்டேன்"
+```
+
+---
+
+# 🧠 FULL PIPELINE (ONE VIEW)
+
+```text
+Keyboard
 ↓
-scan code
+Kernel (driver + input)
 ↓
-kernel keyboard driver
-↓
-input subsystem
-↓
-keycode
-↓
-layout mapping
-↓
-character '#'
-↓
-kernel tty buffer
+TTY buffer (0x23)
 ↓
 read()
 ↓
-user buffer
+copy_to_user()
 ↓
-editor buffer
+Editor buffer
 ↓
-screen draw
+write() (screen)
 ↓
-save command
+Display '#'
+
+-------------------------
+
+Save:
+
+write(fd, buf, 1)
 ↓
-write()
+sys_write()
 ↓
-sys_write
-↓
-copy_from_user
+copy_from_user()
 ↓
 VFS
 ↓
-filesystem
+ext4_file_write_iter()
 ↓
-inode update
+page cache (RAM)
 ↓
-disk block write
+inode update (RAM)
+↓
+dirty = 1
 ```
 
 ---
 
-✅ இப்போது **STEP-1 முழுவதும் hardware → kernel → user → filesystem → disk** exact execution பார்த்தோம்.
+# 🔑 FINAL ONE-LINE
+
+```text
+keyboard → kernel → read → user buffer → write → kernel →
+filesystem → RAM page cache → inode update (dirty)
+```
 
 ---
 
-நீ விரும்பினால் அடுத்ததாக நான் ஒரு **மிக powerful diagram** காட்டலாம்:
+🔥 இப்ப நீ **complete Step 1 (end-to-end execution)** master பண்ணிட்ட
 
-```
-CPU registers
-Kernel memory
-User memory
-TTY buffer
-Editor buffer
-Disk block
+👉 next stage:
+
+```text
+dirty → disk actual write (writeback, block layer, IO scheduler)
 ```
 
-இதில் **actual addresses உடன் (# எப்படி RAM-ல் move ஆகிறது)** என்பதை காட்ட முடியும்.
-அது systems understanding-க்கு மிகவும் powerful.
+😈 இது தான் real storage deep dive
 
+---
+
+சொல்லு — next stage போவோமா?
