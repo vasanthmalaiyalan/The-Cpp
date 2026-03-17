@@ -802,3 +802,290 @@ I_DIRTY clear
 ```
 
 போவோமா?
+
+----
+
+# Scan Code Sets — Deep Dive
+
+---
+
+## முதல்ல Background: ஏன் multiple sets இருக்கு?
+
+Keyboard protocol 1981-ல் IBM PC-ல் start ஆச்சு. அப்புறம் hardware evolve ஆனது, ஆனால் **backward compatibility** வேணும் என்பதால் பழைய format-உம் support பண்ணாங்க. அதனால் 3 generations of scan code sets உருவானது.
+
+---
+
+## Set 1 — XT (1981)
+
+IBM PC XT-ல் introduce ஆனது. First generation.
+
+```
+Hardware: Intel 8048 keyboard controller
+PC side:  Intel 8255 chip
+
+'A' key press   → 0x1E  (make code)
+'A' key release → 0x9E  (break code = make | 0x80)
+```
+
+**Pattern simple:**
+```
+break code = make code | 0x80
+
+make:  0x1E = 0001 1110
+break: 0x9E = 1001 1110
+            = 0x1E | 0x80
+```
+
+**Problem:** Only 83 keys support. New keys (F11, F12, arrow keys) → escape sequence வேணும்.
+
+```
+Extended keys → 0xE0 prefix
+Right Ctrl press: E0 1D
+Right Ctrl release: E0 9D
+```
+
+---
+
+## Set 2 — AT (1984)
+
+IBM PC AT-ல் introduce ஆனது. Modern keyboards default இது.
+
+```
+Hardware: Intel 8042 controller (keyboard side)
+
+'A' key press   → 0x1C        (make code)
+'A' key release → 0xF0 0x1C   (break code = F0 prefix + make)
+```
+
+**Set 1 vs Set 2 comparison:**
+
+```
+Key        Set 1 Make   Set 2 Make
+─────────────────────────────────
+A          0x1E         0x1C
+S          0x1F         0x1B
+3          0x04         0x02  ← உன் question இது!
+Space      0x39         0x29
+Enter      0x1C         0x5A
+Left Shift 0x2A         0x12
+```
+
+**Break code difference:**
+```
+Set 1: make | 0x80
+  A release = 0x1E | 0x80 = 0x9E
+
+Set 2: F0 prefix + make code
+  A release = F0 1C
+```
+
+**Extended keys:**
+```
+Set 2-ல் extended keys → E0 prefix
+Right Ctrl press:   E0 14
+Right Ctrl release: E0 F0 14
+```
+
+---
+
+## Set 3 — PS/2 Extended (1984)
+
+IBM PS/2 keyboards-ல் introduce ஆனது. Rare — almost use ஆவதில்லை.
+
+```
+'A' key press   → 0x1C  (make)
+'A' key release → 0xF0 0x1C  (break — Set 2 போல)
+```
+
+**Key difference:**
+```
+Set 2: Extended keys → E0 prefix needed
+Set 3: Every key → unique code, E0 prefix தேவையில்லை
+       Simple, clean, ஆனால் adoption இல்லை
+```
+
+---
+
+## 8042 Controller — The Translator
+
+இதுதான் central piece. Keyboard-ல் ஒரு 8042, PC motherboard-ல் ஒரு 8042.
+
+```
+Physical path:
+
+[Keyboard]                    [Motherboard]
+  8048/8051          PS/2 cable        8042
+  microcontroller  ──────────────►  controller
+  
+  Set 2 codes                    Set 1-ஆ translate
+  அனுப்பும்                      பண்ணி CPU-க்கு அனுப்பும்
+```
+
+**8042 என்ன பண்றது exactly:**
+
+```
+Step 1: Keyboard → Set 2 code அனுப்பும்
+        'A' press → 0x1C
+
+Step 2: 8042 receive பண்ணும்
+
+Step 3: 8042 internal translation table:
+        Set 2: 0x1C → Set 1: 0x1E
+
+Step 4: 8042 → IRQ1 trigger
+
+Step 5: CPU → I/O port 0x60 read பண்ணும்
+        Set 1 code: 0x1E
+```
+
+**Translation table example (8042 internal):**
+
+```
+Set 2 → Set 1
+──────────────
+0x1C  → 0x1E  (A)
+0x1B  → 0x1F  (S)
+0x02  → 0x04  (3) ← உன் example
+0x12  → 0x2A  (Left Shift)
+0x5A  → 0x1C  (Enter)
+0x29  → 0x39  (Space)
+```
+
+**8042 translation disable பண்ணலாம்:**
+```
+OS → 8042-க்கு command அனுப்பலாம்:
+"translation off — raw Set 2 codes கொடு"
+
+Modern Linux → இப்படி பண்ணி
+              raw Set 2 codes பெறுவதும் உண்டு
+              atkbd driver handle பண்ணும்
+```
+
+---
+
+## Kernel Side — atkbd driver
+
+```c
+// drivers/input/keyboard/atkbd.c
+
+atkbd_interrupt(struct serio *serio,
+                unsigned char data,   // ← Set 1 code (from 8042)
+                unsigned int flags)
+{
+    // data = 0x04 (Set 1 code for '3')
+
+    // Extended key check
+    if (data == 0xe0) {
+        atkbd->emul = 1;  // next byte is extended
+        return;
+    }
+
+    // Break code check (bit 7)
+    if (data & 0x80) {
+        // Key release
+        keycode = data & 0x7f;  // remove break bit
+        value = 0;              // key up
+    } else {
+        // Key press
+        keycode = data;
+        value = 1;              // key down
+    }
+
+    // Set 1 code → Linux keycode
+    // atkbd->keycode[] lookup table
+    linux_keycode = atkbd->keycode[keycode];
+
+    input_event(dev, EV_KEY, linux_keycode, value);
+}
+```
+
+**Linux keycode layer:**
+```
+Set 1 scan code → Linux keycode (different numbering)
+0x02 → KEY_3  (value: 4 in linux/input-event-codes.h)
+0x2A → KEY_LEFTSHIFT (value: 42)
+```
+
+---
+
+## '#' உருவாகும் full path — exact
+
+```
+Physical:
+  Shift + 3 press
+  ↓
+Keyboard (8048):
+  Set 2 make codes generate:
+  Left Shift → 0x12
+  3          → 0x02
+  ↓
+PS/2 wire:
+  0x12 அனுப்பும்
+  0x02 அனுப்பும்
+  ↓
+8042 (motherboard):
+  0x12 → translate → 0x2A  (Set 1 Left Shift make)
+  0x02 → translate → 0x04  (Set 1 '3' make)
+
+  ⚠️ Note: Set 1 '3' = 0x04, Set 2 '3' = 0x02
+  இதுதான் earlier confusion — kernel Set 1 receive பண்றது
+
+  IRQ1 trigger (twice — one per key)
+  ↓
+CPU (I/O port 0x60):
+  read 0x2A → Left Shift make
+  read 0x04 → 3 make
+  ↓
+atkbd_interrupt():
+  0x2A → KEY_LEFTSHIFT → input_event pressed
+  0x04 → KEY_3        → input_event pressed
+  ↓
+Input subsystem:
+  EV_KEY, KEY_LEFTSHIFT, 1
+  EV_KEY, KEY_3, 1
+  ↓
+TTY line discipline (n_tty):
+  KEY_3 + SHIFT state = 1
+  keymap lookup → '#'
+  UTF-8 encode  → 0x23
+  n_tty buffer  → [0x23]
+```
+
+---
+
+## Summary Table
+
+```
+Set   Year  Default     Make      Break         Used By
+────────────────────────────────────────────────────────
+1     1981  XT legacy   0x04(3)   0x84(3 up)    Kernel receives
+2     1984  Keyboard    0x02(3)   F0 02(3 up)   Keyboard sends
+3     1984  Rare        0x02(3)   F0 02(3 up)   Almost unused
+
+Flow:
+Keyboard → Set 2 → [8042 translate] → Set 1 → Kernel
+```
+
+---
+
+## USB Keyboards — Modern Reality
+
+```
+PS/2: 8042 controller path (above)
+
+USB:
+  Keyboard → USB HID protocol
+  → USB HID scan codes (different from PS/2!)
+  → usbhid kernel driver
+  → input subsystem
+  → atkbd bypass! (direct to input layer)
+  → same Linux keycodes result
+
+USB HID '3' → Usage ID 0x20
+PS/2 Set 2  '3' → 0x02
+PS/2 Set 1  '3' → 0x04
+
+எல்லாமே finally → KEY_3 (Linux keycode 4)
+```
+
+இதுவே 100% complete scan code explanation. Next — dirty writeback → disk போவோமா?
