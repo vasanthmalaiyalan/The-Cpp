@@ -14,6 +14,7 @@ Disk-ஐ விட RAM **10,000x** fast. ஆனா CPU-ஐ விட RAM **100x*
 
 இப்போ memory hierarchy எப்படி solve பண்றது னு visual-ஆ பாக்கலாம்:இப்போ concept-ஐ deep-ஆ பாக்கலாம்.
 
+![alt text](image.png)
 ---
 
 ## ஏன் bigger = slower? (Physical law)
