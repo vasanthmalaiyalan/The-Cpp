@@ -443,7 +443,10 @@ Book சொல்லாதாலும்,
 
 # Controller vs Adapter — Packaging difference
 
-Book சொல்றது: "distinction is mainly one of packaging." ஆனா deeper-ஆ பாக்கலாம்:---
+Book சொல்றது: "distinction is mainly one of packaging." ஆனா deeper-ஆ பாக்கலாம்:
+
+![alt text](image-5.png)
+---
 
 ## Controller — Motherboard-ல soldered chip
 
