@@ -24,7 +24,10 @@ while (power_is_on) {
 
 # Fetch → Decode → Execute — Real trace
 
-`int c = a + b;` (a=3, b=7, both in memory) execute ஆகும்போது:---
+`int c = a + b;` (a=3, b=7, both in memory) execute ஆகும்போது:
+![alt text](image-6.png)
+
+---
 
 # 4 Basic Operations — Deep Examples
 
