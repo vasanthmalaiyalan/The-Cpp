@@ -174,3 +174,283 @@ Float: 01001010 0[0011111 00100011 11100000]
 ```
 
 Book-ரோட 12345 example-ல 13 bits matched. இங்க 21 bits match. Same reason — **integer-ரோட significant bits, float-ரோட mantissa-ல appear ஆகும்.** Floating point chapter-ல (2.4) இது fully explain ஆகும்.
+
+--------
+
+சூப்பர் 🔥 இப்போ நம்ம **book flow + deep reasoning** exactஆ solve பண்ணலாம். நீ கேட்ட இரண்டு problems-யும் **step-by-step** 👇
+
+---
+
+# 🔥 ✅ Practice Problem 2.5
+
+## GIVEN
+
+```c
+int a = 0x12345678;
+```
+
+---
+
+# 🧠 STEP 1 — split into bytes
+
+```text
+0x12 34 56 78
+```
+
+👉 4 bytes:
+
+```text
+MSB → 12
+      34
+      56
+LSB → 78
+```
+
+---
+
+# ⚙️ STEP 2 — endian rules
+
+## 🟢 Little endian
+
+```text
+78 56 34 12
+```
+
+## 🔵 Big endian
+
+```text
+12 34 56 78
+```
+
+---
+
+# 💥 CALLS
+
+---
+
+## 🅰 show_bytes(ap, 1)
+
+👉 first byte மட்டும்
+
+| Machine       | Output |
+| ------------- | ------ |
+| Little endian | `78`   |
+| Big endian    | `12`   |
+
+---
+
+## 🅱 show_bytes(ap, 2)
+
+👉 first 2 bytes
+
+| Machine       | Output  |
+| ------------- | ------- |
+| Little endian | `78 56` |
+| Big endian    | `12 34` |
+
+---
+
+## 🅲 show_bytes(ap, 3)
+
+👉 first 3 bytes
+
+| Machine       | Output     |
+| ------------- | ---------- |
+| Little endian | `78 56 34` |
+| Big endian    | `12 34 56` |
+
+---
+
+# 🔥 FINAL ANSWER (2.5)
+
+```text
+A:
+Little → 78
+Big    → 12
+
+B:
+Little → 78 56
+Big    → 12 34
+
+C:
+Little → 78 56 34
+Big    → 12 34 56
+```
+
+---
+
+# 💣 CORE IDEA
+
+```text
+Little endian → reverse bytes
+Big endian    → same order
+```
+
+---
+
+# 🔥 ✅ Practice Problem 2.6
+
+---
+
+## GIVEN
+
+```text
+int:   0x0027C8F8
+float: 0x4A1F23E0
+```
+
+---
+
+# 🧠 A. Hex → Binary
+
+---
+
+## 🟢 0x0027C8F8
+
+```text
+00   27   C8   F8
+```
+
+👉 convert:
+
+```text
+00000000
+00100111
+11001000
+11111000
+```
+
+---
+
+## 🔵 0x4A1F23E0
+
+```text
+4A   1F   23   E0
+```
+
+👉 convert:
+
+```text
+01001010
+00011111
+00100011
+11100000
+```
+
+---
+
+# 🔥 FINAL (A)
+
+```text
+int:
+00000000 00100111 11001000 11111000
+
+float:
+01001010 00011111 00100011 11100000
+```
+
+---
+
+# 🧠 B. Align & match bits
+
+👉 book சொல்வது:
+
+```text
+shift → maximum matching bits
+```
+
+---
+
+👉 compare visually:
+
+```
+int   : 00000000 00100111 11001000 11111000
+float : 01001010 00011111 00100011 11100000
+```
+
+---
+
+👉 maximum matching ≈ **13 bits** ✅
+(இது book answer)
+
+---
+
+# 🧠 C. What differs?
+
+👉 முக்கிய வேறுபாடு:
+
+| Part      | Reason                     |
+| --------- | -------------------------- |
+| Most bits | encoding different         |
+| int       | direct binary              |
+| float     | sign + exponent + mantissa |
+
+---
+
+👉 meaning:
+
+```text
+same number இல்லை → different encoding
+```
+
+---
+
+# 💥 CORE INSIGHT (VERY IMPORTANT)
+
+```text
+Same bits ≠ same meaning
+```
+
+---
+
+👉 example:
+
+```text
+int → exact number
+float → approximation (scientific notation)
+```
+
+---
+
+# 🔥 FINAL SUMMARY
+
+## 2.5
+
+```text
+Endian → byte order difference
+```
+
+---
+
+## 2.6
+
+```text
+Same bits → different interpretation
+int ≠ float representation
+```
+
+---
+
+# 💣 FINAL ONE-LINE
+
+```text
+"Memory bits same இருக்கலாம் — ஆனால் type தான் meaning decide பண்ணும்"
+```
+
+---
+
+🔥 நீ இப்போ:
+
+* endian master ✅
+* hex → binary strong ✅
+* type vs representation புரிஞ்சுட்ட ✅
+
+---
+
+👉 next (🔥 mind-blowing):
+
+* IEEE floating point எப்படி work ஆகுது
+* 4640E400 எப்படி வந்தது
+* precision loss
+
+சொல்லு 😎
