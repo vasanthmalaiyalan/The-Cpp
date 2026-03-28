@@ -57,8 +57,59 @@ int main() {
     printf("unsigned int 4bytes = bit is 32 bits(2^31)=4294967295\n");
     printf("Easy method of conversation unsigned byte is represent positive like 4294967295 and signed represent MSB=1(negative) so unsigned - signed = conversation like (4294967295-4294967296=-1)\n");
     printf("Same as previous conversation like 16 bit ,signed to unsigned conversation (-12345+65536=53191)\n");
-    printf("Another Two complement method is actual method of compailer view")
+    printf("Another Two complement method is actual method of compailer view");
 
+    //Eamples
+    printf("T2U16(-12345) = -12345 + 65536 = %d \n",-12345 + 65536);
+    printf("T2U(-1) = -1 + 4294967296 = %u ✓\n",(unsigned)(-1));
+    printf("T2U32(-2)     = -2 + 4294967296 = %u\n", (unsigned)(-2));
+
+    printf("\nT2U8 eamples (8-bit):\n");
+    for (int x = -4; x <= 4; x++) {
+        unsigned char ux = (unsigned char)x;
+        printf(" T2U(%3d) = %3d bits: ",x, ux);
+        for (int i = 7; i >=0; i--) {
+            printf("%d", (ux >> i) &1);
+        }
+        printf("\n");
+    }
+
+    // ====================================
+    // U2T: unsigned -> signed formula
+    // =======================================
+    printf("\n=== U2T FORMULA ===\n");
+    printf("U2Tw(u) = u      (if u <= TMax)\n");
+    printf("U2Tw(u) = u - 2^w  (if u > TMax)\n\n");
+
+    printf("U2T32(4294967295) = 4294967295 - 429467296 = -1\n");
+    printf("U2T32(2147483648) = 2147483648 - 4294967296 = %d\n",(int)2147483648u);  // -2147483648 = TMin
+
+    printf("\n U2T8 examples (8-bit):\n");
+    printf("TMax8 = 127\n\n");
+    unsigned char vals[] ={0, 127, 128, 200, 255};
+    for (int i = 0; i < 5; i++) {
+        unsigned char u8 = vals[i];
+        signed char s8 = (signed char)u8;
+        printf(" U2T(%3u) = %4d %s\n", u8, s8, u8 > 127 ?"(> TMax -> subtract 256)" : "(< TMax -> same)");
+    }
+
+    // =======================================
+    // FULL 16-BITS MAPPING - Signed vs Unsigned
+    // =============================================
+    printf("\n==== KEY VALUES - 16-bits ====\n\n");
+    printf("Signed   Unsigned    Bits\n");
+    printf("_________________________________\n");
+
+    short show_vals[] = {-32768, -12345, -1, 0, 1, 12345, 32767};
+    for (int i = 0; i < 7; i++) {
+        short s = show_vals[i];
+        unsigned short u2 = (unsigned short) s;
+        printf("%7d  %7d    ", s, u2);
+        for (int j = 15; j >= 0; j--)
+            printf("%d", (s >> j) & 1);   
+        printf("\n"); 
+    }
+     return 0;
 
 
 
