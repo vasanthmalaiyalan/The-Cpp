@@ -119,3 +119,44 @@ int main() {
     return 0;
 }
 
+/*
+ouput
+
+Binary: 1100111111000111 (16 bits)
+==================================
+
+Using formula: value = -(MSB x 2^(w-1)) + (remaining bits)
+
+MSB = 1
+Remaining bits = 100111111000111
+2^(w-1) = 2^15 = 32768
+
+Value of remaining bits (100111111000111) = 20423
+
+Result = -(32768) + 20423 = -12345
+
+===================================
+Final answer: 1100111111000111₂ = -12345
+
+=======VERIFICATION===========
+As unsigned: 53191
+As signed (two's complement): -12345
+Matches formula? ✓ YES
+
+==== STEP-BY-STEP CALCULATION ===
+1100111111000111 = -(1 x 2^15) + (100111111000111₂)
+    = -32768 + (16384 + 2048 + 1024 + 512 + 256 + 128 + 64 + 4 + 2 + 1)
+    = -32768 + 20423
+    = -12345
+
+*/
+
+/*
+Key Changes:
+Old (with pow)	New (with bit shift)
+pow(2, bits-1)	1 << (bits-1)
+pow(2, bits-1-i)	1 << (bits-1-i)
+pow(2, bits-2-i)	1 << (bits-2-i)
+pow(2, bits)	1 << bits
+*/
+
