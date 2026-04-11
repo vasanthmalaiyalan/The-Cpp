@@ -12,7 +12,7 @@ int main() {
         5,
         -5,
         123,
-        INT_MIN // Special case
+        INT_MIN // Special case -> -2147483648
     };
 
     int n = sizeof(test) / sizeof(test[0]);
@@ -29,7 +29,7 @@ int main() {
 
         // check special case
         if (is_TMin(x)) {
-            printf(" Special Case: x is INT_MIN\n");
+            printf(" Special Case: x is INT_MIN\n"); //-2147483648
             printf(" -x == x (no positive representation)\n");
         }
 
