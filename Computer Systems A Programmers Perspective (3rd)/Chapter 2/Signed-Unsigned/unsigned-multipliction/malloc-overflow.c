@@ -7,8 +7,8 @@
 /////////////////////////////////////////////////
 // Vulnerable version (original bug)
 void *bad_malloc(size_t ele_cnt, size_t ele_size) {
-    size_t size = ele_cnt * ele_size;
-//overflow
+    size_t size = ele_cnt * ele_size; //overflow
+    printf("[bad] computed size = %zu\n", size);
     return malloc(size);
 }
 
@@ -16,6 +16,7 @@ void *bad_malloc(size_t ele_cnt, size_t ele_size) {
 // wrong fix (still vulnerable)
 void *wrong_fix_malloc(size_t ele_cnt, size_t ele_size) {
     uint64_t asize = ele_cnt * (uint64_t)ele_size;
+    printf("[wrong_fix] computer size (64-bit) = %llu\n", (unsigned long long)asize);
     return malloc(asize); // truncated to size
 }
 
@@ -30,6 +31,8 @@ void *safe_malloc(size_t ele_cnt, size_t ele_size) {
     }
 
     size_t size = ele_cnt * ele_size;
+    printf("[safe] computed size = %zu\n", size);
+
 
     if (size == 0) { //optional extre safety
         printf("Zero allocation avoided.\n");
