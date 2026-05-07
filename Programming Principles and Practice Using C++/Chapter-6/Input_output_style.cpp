@@ -1,6 +1,7 @@
 // chapter 6.2 - input and output style calculator loop
 
 #include <iostream>
+#include <cctype>
 
 // --------------------------------------------------
 // Token
@@ -16,105 +17,225 @@ class Token {
        Token(char k, double v) : kind{k}, value{v} {}
 };
 
-// ---------------------------------------------
-// Token_stream (minimal placeholder version)
-// --------------------------------------------
+// -------------------------------------------
+// Token_stream
+// -------------------------------------------
 
 class Token_stream {
     public:
-       Token get() {
+      
+      Token_stream() : full{false}, buffer{'0'} {}
 
-        char ch = 0;
-        std::cin >> ch;
+      Token get();
+      void putback(Token t);
 
-        switch (ch) {
-
-            case ';':
-            case 'q':
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-            case '(':
-            case ')':
-               return Token{ch};
-
-            default:
-            
-               if (std::isdigit(ch) || ch == '.') {
-                  std::cin.putback(ch);
-
-                  double value = 0;
-                  std::cin >> value;
-
-                  return Token{'8', value};
-               }
-
-               std::cerr << "Bad token\n";
-               return Token{'q'};
-           }
-       }
-
-       void putback(Token) {
-
-          // simplified for now
-       }
+    private:
+      bool full;
+      Token buffer;  
 };
+// ---------------------------------------------
+// putback
+// ---------------------------------------------
 
-// -------------------------------------------------
-// Global Token Stream
-// -------------------------------------------------
+void Token_stream::putback(Token t) {
 
-Token_stream ts;
-
-// -------------------------------------------------
-// Expression placeholder
-// ------------------------------------------------
-
-double expression() {
-
-    Token t = ts.get();
-
-    if (t.kind == '8') {
-        return t.value;
+    if (full) {
+        std::cerr << "putback() into a full buffer\n";
+        return;
     }
 
-    return 0;
+    buffer = t;
+    full = true;
 }
 
 // -------------------------------------------------
-// Main
+// get
 // -------------------------------------------------
 
-int main() {
+Token Token_stream::get() {
+
+    if (full) {
+        full = false;
+        return buffer;
+    }
+
+    char ch = 0;
+    std::cin >> ch;
+
+    switch (ch) {
+
+        case ';':
+        case 'q':
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+        case '(':
+        case ')':
+            return Token{ch};
+
+        default:
+            
+            if (std::isdigit(ch) || ch == '.') {
+
+                std::cin.putback(ch);
+
+                double value = 0;
+                std::cin >> value;
+
+                return Token{'8', value};
+            }
+
+            std::cerr << "Bad token\n";
+            return Token{'q'};
+    }
+}
+
+// -----------------------------------------------
+// Global Token Stream
+// -----------------------------------------------
+
+Token_stream ts;
+
+// ------------------------------------------------
+// primary
+// ------------------------------------------------
+
+double primary() {
+
+    Token t = ts.get();
+
+    switch (t.kind) {
+
+        case '(':
+        {
+            double value = 0;
+            value = primary();
+
+            t = ts.get();
+
+            if (t.kind != ')') {
+                std::cerr << "')' expected\n";
+            }
+
+            return value;
+        }
+
+        case '8':
+           return t.value;
+
+        default:
+            std::cerr << "Primary excepted\n";
+            return 0;
+    }
+}
+
+// ----------------------------------------------
+// term
+// -----------------------------------------------
+
+double term() {
+
+    double left = primary();
+
+    while (true) {
+
+        Token t = ts.get();
+
+        switch (t.kind) {
+
+            case '*':
+               left *= primary();
+               break;
+
+            case '/':
+            {
+                double d = primary();
+
+                if (d == 0) {
+                    std::cerr << "Division by zero\n";
+                    return 0;
+                }
+
+                left /= d;
+                break;
+            }   
+
+            default:
+               ts.putback(t);
+               return left;
+        }
+    }
+}
+
+// ----------------------------------------------
+// expression
+// ---------------------------------------------
+
+double expression()
+ {
+
+    double left = term();
+
+    while (true) {
+
+        Token t = ts.get();
+
+        switch (t.kind) {
+
+            case '+':
+               left += term();
+               break;
+
+            case '-':
+               left -= term();
+               break;
+               
+            default:
+               ts.putback(t);
+               return left;   
+        }
+    }
+ }
+
+ // ----------------------------------------------
+ // Main
+ // -----------------------------------------------
+
+ int main() {
 
     std::cout << "Simple Calculator\n";
     std::cout << "Use ; to print result\n";
     std::cout << "Use q to quit\n\n";
 
-    double val = 0;
-
     while (std::cin) {
 
-        std::cout << "> ";
+        try {
 
-        Token t = ts.get();
+            std::cout << "> ";
 
-        if (t.kind == 'q') {
-            break;
-        }
+            Token t = ts.get();
 
-        if (t.kind == ';') {
+            while (t.kind == ';') {
+                t = ts.get();
+            }
 
-            std::cout << "= " << val << '\n';
-        }
-        else {
+            if (t.kind == 'q') {
+                break;
+            }
 
             ts.putback(t);
 
-            val = expression();
+            double val = expression();
+
+            std::cout << "= " << val << '\n';
+        }
+
+        catch (...) {
+            std::cerr << "Error occurred\n";
+            return 1;
         }
     }
 
     return 0;
-}
+ }
