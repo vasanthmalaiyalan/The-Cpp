@@ -283,3 +283,19 @@ void Token_stream::putback(Token t) {
     std::cerr << "Unknown exception\n";
     return 2;
  }
+
+ /*
+ > 1+2*3;
+= 7
+
+> (1+2)*3;
+= 9
+
+> -5+10;
+= 5
+
+> 1/0;
+Error: divide by zero
+
+> q
+ */
