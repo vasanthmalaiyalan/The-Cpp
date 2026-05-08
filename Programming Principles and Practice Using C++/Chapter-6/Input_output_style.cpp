@@ -97,6 +97,8 @@ Token Token_stream::get() {
 
 Token_stream ts;
 
+double expression();
+
 // ------------------------------------------------
 // primary
 // ------------------------------------------------
@@ -109,8 +111,7 @@ double primary() {
 
         case '(':
         {
-            double value = 0;
-            value = primary();
+            double value = expression();
 
             t = ts.get();
 
