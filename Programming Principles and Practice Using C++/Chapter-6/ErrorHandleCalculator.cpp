@@ -246,3 +246,14 @@ double expression()
     std::cerr << "Unknown exception\n";
     return 2;
  }
+
+ /*
+ ./a.out 
+Simple Calculator
+Use ; to print result
+Use q to quit
+
+> (1+2)*3;
+= 9
+> 
+ */
