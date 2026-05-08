@@ -80,4 +80,82 @@ return 0;   // main() function-யே exit
 
 **Simple rule:**
 
-> `;` = expression separator — program end இல்ல, next expression கேக்கும். `return 0` = main() exit = program end — loop, function எல்லாம் போயிடும்.       
+> `;` = expression separator — program end இல்ல, next expression கேக்கும். `return 0` = main() exit = program end — loop, function எல்லாம் போயிடும்.  
+
+---
+
+`என்னதான் `loop என்ன பண்ணும்?
+user ";;;1+2" போட்டா:
+
+t = ';' → while: t = ts.get()
+t = ';' → while: t = ts.get()
+t = ';' → while: t = ts.get()
+t = '1' → while நிக்கும்!
+putback('1')
+expression() → 3` while உள்ளே இருக்கும் obj t- க்கு value assign ஆனாலும் அது மேல இருக்கும் இதற்கும் சேர்த்து பொருந்துகிறது `Token t = ts.get();` அதனால்தான் இது வேலை செய்கிறது `putback('1')`?`
+
+## ஆமா! Exactly சரிதான்! 🎯
+
+---
+
+## Same `t` object — while உள்ளேயும் வெளியேயும்!
+
+```cpp
+Token t = ts.get();          // ← இந்த t
+
+while (t.kind == ';') {
+    t = ts.get();            // ← same t-ஐ update பண்றோம்!
+}
+
+// while முடிஞ்சவுடன் t = '1' (last value)
+
+ts.putback(t);               // ← '1' putback பண்றோம் ✅
+```
+
+`t` ஒரே object — while உள்ளே update ஆகுது, வெளியேயும் same `t`!
+
+---
+
+## Memory-ல என்ன நடக்குது?
+
+```
+Token t = ts.get() → t.kind = ';'
+
+Stack:
+┌─────────────┐
+│ t.kind = ';'│ ← first value
+└─────────────┘
+
+while loop:
+t = ts.get() → t.kind = ';'
+┌─────────────┐
+│ t.kind = ';'│ ← overwrite
+└─────────────┘
+
+t = ts.get() → t.kind = ';'
+┌─────────────┐
+│ t.kind = ';'│ ← overwrite
+└─────────────┘
+
+t = ts.get() → t.kind = '1'
+┌─────────────┐
+│ t.kind = '1'│ ← overwrite
+└─────────────┘
+
+while நிக்கும் — t.kind = '1' ✅
+```
+
+---
+
+## அதனால் `putback(t)` சரியா வேலை செய்யும்
+
+```cpp
+ts.putback(t);   // t.kind = '1' — சரியான value! ✅
+expression();    // '1' buffer-லிருந்து படிக்கும் ✅
+```
+
+---
+
+**Simple rule:**
+
+> `t` same object — while உள்ளே `t = ts.get()` போட்டா same `t`-ஐ overwrite பண்ணும். Loop முடிஞ்சவுடன் `t`-ல last read value இருக்கும் — அதை `putback` பண்றோம். அதனால் `expression()` correct token படிக்கும்!
