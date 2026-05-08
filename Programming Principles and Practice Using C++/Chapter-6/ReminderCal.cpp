@@ -65,6 +65,7 @@ void Token_stream::putback(Token t) {
         case '*':
         case '-':
         case '/':
+        case '%':
            return Token{ch};
 
         case '.':
@@ -120,7 +121,7 @@ void Token_stream::putback(Token t) {
 
     Token t = ts.get();
 
-    switch (t,kind) {
+    switch (t.kind) {
 
         case '(' :
         {
@@ -187,7 +188,7 @@ void Token_stream::putback(Token t) {
                     throw std::runtime_error("%: divide by zero");
                 }
 
-                left std::fmod(left, divisor);
+                left = std::fmod(left, divisor);
                 break;
             }
             default:
@@ -208,7 +209,7 @@ void Token_stream::putback(Token t) {
 
         Token t = ts.get();
 
-        switch (t,kind) {
+        switch (t.kind) {
 
             case '+':
                left += term();
@@ -238,7 +239,7 @@ void Token_stream::putback(Token t) {
 
     while (std::cin) {
 
-        std::cout << "< ";
+        std::cout << "> ";
 
         Token t = ts.get();
 
