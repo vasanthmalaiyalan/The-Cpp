@@ -283,3 +283,25 @@ catch (...) {
     std::cerr << "Unknown exception\n";
     return 2;
 }
+
+/*
+> 1+2*3;
+= 7
+
+> (1+2)*3;
+= 9
+
+> -5+10;
+= 5
+
+> 10%3;
+= 1
+
+> 6.7%3.3;
+= 0.1
+
+> 1/0;
+Error: divide by zero
+
+> q
+*/
