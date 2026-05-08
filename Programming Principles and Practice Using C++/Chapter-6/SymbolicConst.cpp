@@ -25,7 +25,7 @@ class Token {
        double value;
 
        Token(char k) : kind{k}, value{0} {}
-       Token(char k, doubel v) : kind{k}, value{v} {}  
+       Token(char k, double v) : kind{k}, value{v} {}  
 };
 // ------------------------------------------------
 // Token stream
@@ -34,7 +34,7 @@ class Token {
 class Token_stream {
     public:
        Token get();
-       void putback();
+       void putback(Token t);
 
     private:
        bool full {false};
@@ -85,6 +85,8 @@ Token Token_stream::get() {
         case '*':
         case '/':
         case '%':
+        case '(':
+        case ')':
 
             return Token{ch};
 
@@ -154,7 +156,7 @@ double primary() {
            return primary();
            
         default:
-           throw std:;runtime_error("Primary expected");   
+           throw std::runtime_error("Primary expected");   
     }
 }
 
@@ -217,7 +219,7 @@ double expression() {
 
         Token t = ts.get();
 
-        switch (t,kind) {
+        switch (t.kind) {
 
             case '+':
                left += term();
