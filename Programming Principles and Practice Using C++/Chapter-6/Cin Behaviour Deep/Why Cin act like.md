@@ -94,3 +94,52 @@ get() → '\n' ✅ → default hit → return 3 → print! ✅
 **Simple rule:**
 
 > `cin >>` = programmer convenience-க்காக whitespace skip — 1970s Unix design. Data-ஐ space/newline வச்சு separate பண்றது natural. `;` அதனால் வேணும் — valid token-ஆ "end" சொல்ல. `cin.get()` use பண்ணினா `\n` படிக்கும் — ஆனா spaces handle பண்ண வேற logic வேணும்!
+
+`அதாவது இப்படி போட்டாள் `'\n'` white space - ஆக எடுத்துக் கொள்கிறது`
+
+## ஆமா! Exactly!
+
+---
+
+## `cin` Design Rule
+
+```
+whitespace characters:
+  ' '  → space
+  '\t' → tab  
+  '\n' → newline   ← enter போட்டா இது வருது
+```
+
+**எல்லாமே cin-க்கு "இடைவெளி" மட்டும் — data இல்ல!**
+
+---
+
+## அதனால் என்ன ஆகுது?
+
+```
+User: 1+2 [Enter]
+
+cin பார்க்கும்:
+[1] → data ✅ படிக்கும்
+[+] → data ✅ படிக்கும்
+[2] → data ✅ படிக்கும்
+[\n] → whitespace! ❌ skip, wait...
+```
+
+---
+
+## Simple-ஆ சொன்னா
+
+```
+cin >> ch போட்டா:
+
+"data வா" என்று காத்திருக்கும்
+whitespace வந்தா → "இது data இல்ல, skip" → காத்திருக்கும்
+valid char வந்தா → "இது data!" → படிக்கும்
+```
+
+---
+
+**One line:**
+
+> `'\n'` = Enter key = whitespace = cin-க்கு "இடைவெளி" மட்டும் — data இல்ல. அதனால் skip பண்ணி next valid character வரும் வரை wait பண்ணும். `;` போட்டாதான் valid token — உடனே படிக்கும்!
