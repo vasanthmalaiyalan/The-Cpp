@@ -84,3 +84,61 @@ default hit → return 3 → print ✅
 **Simple rule:**
 
 > `cin >>` = whitespace (`\n`, space, tab) separator-ஆ treat பண்ணும் — "இன்னும் data வரும்" என்று wait பண்ணும். `;` whitespace இல்ல — valid token, உடனே read ஆகும். அதனால் `;` இல்லன்னா `cin` next valid input வரும் வரை block ஆகும்!
+
+---------------
+
+## ஆமா! நீ 100% சரிதான்! 🎯
+
+---
+
+## இரண்டு Cases-லயும் `\n` வரும் — Wait பண்ணும்!
+
+```
+[1][+][2][;][\n]
+              ↑
+              ';' read ஆனவுடன் → default → return 3!
+              '\n' reach-யே ஆகல! ✅
+
+[1][+][2][\n]
+          ↑
+          '\n' skip → next input wait ⏳
+```
+
+---
+
+## Key Difference!
+
+```
+[1][+][2][;][\n]
+
+get() → '1'
+get() → '+'
+get() → '2'  → left = 3
+get() → ';'  → default hit! → return 3 ✅
+               '\n' reach ஆகவே இல்ல!
+```
+
+```
+[1][+][2][\n]
+
+get() → '1'
+get() → '+'
+get() → '2'  → left = 3
+get() → '\n' → skip! wait ⏳
+               default hit ஆகவே இல்ல!
+```
+
+---
+
+## Simple-ஆ சொன்னா:
+
+```
+';' → get() return பண்ணும் → default hit → return left ✅
+'\n' → get() skip பண்ணும் → default hit ஆகவே இல்ல ❌
+```
+
+---
+
+**Simple rule:**
+
+> `;` வந்தா `get()` அதை return பண்ணும் — `default` hit ஆகும் — `return left` — print! `\n` வந்தா `get()` skip பண்ணும் — `default` reach ஆகாது — wait! அதுதான் வித்தியாசம்!
