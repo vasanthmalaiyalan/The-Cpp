@@ -69,7 +69,7 @@ class Variable {
 // Variable Table
 // -----------------------------------------------
 
-std::vector::<Variable> var_table;
+std::vector<Variable> var_table;
 
 // ---------------------------------------------
 // Token Stream 
@@ -398,7 +398,7 @@ Token Token_stream::get() {
   Token t = ts.get();
 
   if (t.kind != name) {
-    throw sttd::runtime_error("name expected");
+    throw std::runtime_error("name expected");
   }
 
   std::string var_name = t.name;
