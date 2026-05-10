@@ -156,6 +156,342 @@ void Token_stream::putback(Token t) {
 void Token_stream::ignore(char c) {
 
   if (full && buffer.kind == c) {
-    
+
+    full = false;
+    return;
+  }
+
+  full = false;
+
+  char ch = 0;
+
+  while (std::cin >> ch) {
+
+    if (ch == c) {
+      return;
+    }
   }
 }
+
+// ------------------------------------------------
+// Get Token
+// ------------------------------------------------
+
+Token Token_stream::get() {
+
+  if (full) {
+    
+    full = false;
+    return buffer;
+  }
+
+  char ch = 0;
+
+  std::cin >> ch;
+
+  switch (ch) {
+
+    case print:
+    case quit:
+
+    case '(':
+    case ')':
+
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '%':
+    case '=':
+
+      return Token{ch};
+
+    case '.':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+    {
+
+      std::cin.putback(ch);
+
+      double value = 0;
+
+      std::cin >> value;
+
+      return Token{number, value};
+    }  
+
+    default:
+       
+    if (std::isalpha(ch)) {
+
+      std::string s;
+
+      s += ch;
+
+      while (std::cin.get(ch) && (std::isalpha(ch) || std::isdigit(ch))) {
+
+        s += ch;
+      }
+
+      std::cin.putback(ch);
+
+      if (s == "let") {
+        return Token{let};
+      }
+
+      return Token{name, s};
+    }
+
+    throw std::runtime_error("Bad token");
+  }
+ }
+
+ // ---------------------------------------------
+ // Function Declarations
+ // -----------------------------------------------
+
+ double expression();
+ double term();
+ double primary();
+
+ double statement();
+ double declaration();
+
+ void calculate();
+ void clean_up_mess();
+
+ // ------------------------------------------------
+ // Primary
+ // ------------------------------------------------
+ 
+ double primary() {
+
+  Token t = ts.get();
+
+  switch (t.kind) {
+
+    case '(':
+    {
+
+      double value = expression();
+
+      t = ts.get();
+
+      if (t.kind != ')') {
+        throw std::runtime_error("')' expected");
+      }
+
+      return value;
+    }
+
+    case number:
+      return t.value;
+
+    case name:
+      return get_value(t.name);
+      
+    case '-':
+      return -primary();
+      
+    case '+':
+      return primary();
+      
+    default:
+      throw std::runtime_error("Primary expected");  
+  }
+
+ }
+
+ // ----------------------------------------------
+ // Term
+ // -----------------------------------------------
+
+ double term() {
+  
+  double left = primary();
+
+  while (true) {
+
+    Token t = ts.get();
+
+    switch (t.kind) {
+
+      case '*':
+        left *= primary();
+        break;
+
+      case '/':
+      {
+
+        double d = primary();
+
+        if (d == 0) {
+          throw std::runtime_error("divide by zero");
+        }
+
+        left /= d;
+        break;
+      }  
+
+      case '%':
+      {
+        double d = primary();
+
+        if (d == 0) {
+          throw std::runtime_error("%: divide by zero");
+        }
+
+        left = std::fmod(left, d);
+        break;
+      }
+
+      default:
+        ts.putback(t);
+        return left;
+    }
+  }
+ }
+
+ // ------------------------------------------
+ // Expression
+ // ------------------------------------------
+
+ double expression() {
+
+  double left = term();
+
+  while (true) {
+
+    Token t = ts.get();
+
+    switch (t.kind) {
+
+      case '+':
+        left += term();
+        break;
+
+      case '-':
+        left -= term();
+        break;
+        
+      default:
+        ts.putback(t);
+        return left;  
+    }
+  }
+ }
+
+ // ------------------------------------------------
+ // Declaration
+ // ------------------------------------------------
+
+ double declaration() {
+
+  Token t = ts.get();
+
+  if (t.kind != name) {
+    throw sttd::runtime_error("name expected");
+  }
+
+  std::string var_name = t.name;
+
+  Token t2 = ts.get();
+
+  if (t2.kind != '=') {
+    throw std::runtime_error("= missing in declaration");
+  }
+
+  double value = expression();
+
+  define_name(var_name, value);
+
+  return value;
+ }
+
+ // ---------------------------------------------
+ // Statement
+ // ----------------------------------------------
+
+ double statement() {
+
+  Token t = ts.get();
+
+  switch (t.kind) {
+
+    case let:
+      return declaration();
+
+    default:
+      ts.putback(t);
+      return expression();  
+  }
+ }
+
+ /// --------------------------------------------
+ // Cleanup
+ // -----------------------------------------------
+ void clean_up_mess() {
+
+     ts.ignore(print);
+ }
+
+ // ---------------------------------------------
+ // Calculate
+ // ----------------------------------------------
+
+ void calculate() {
+    
+    while (std::cin)
+
+    try {
+
+      std::cout << prompt;
+
+      Token t = ts.get();
+
+      while (t.kind == print) {
+        t = ts.get();
+      }
+
+      if (t.kind == quit) {
+        return;
+      }
+
+      ts.putback(t);
+
+      std::cout << result << statement() << '\n';
+    }
+
+    catch (std::exception& e) {
+
+      std::cerr << e.what() << '\n';
+
+      clean_up_mess();
+    }
+ }
+
+ // ------------------------------------------------
+ // Main
+ // -----------------------------------------------
+
+ int main() 
+ try {
+
+  calculate();
+  return 0;
+
+ }
+
+ catch (...) {
+
+  std::cerr << "'Fatal error\n";
+  return 2;
+ }
