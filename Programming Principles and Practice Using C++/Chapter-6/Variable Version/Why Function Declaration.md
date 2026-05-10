@@ -122,3 +122,90 @@ line 2: primary() உள்ளே get_value() call
 **Simple rule:**
 
 > Forward declaration தனியா போட தேவையில்ல — **definition-யே declaration!** Compiler function பார்த்தவுடன் "இந்த function இருக்கு" note பண்ணும். மேலே define ஆனது கீழே call பண்ணலாம் — தனியா declare தேவையில்ல!
+
+----------
+`
+`இதே மாதிரி `Definition = Declaration + Body`இதுவும் இதே மாதிரி செய்யலாம் தானே `double expression();  // ← forward declaration வேணும்!
+double term();
+double primary();`ஏன் தனியாக டிக்ளரேசன் செய்கிறார்கள்`
+
+`
+
+## ஏன் தனியா Declaration வேணும்?
+
+---
+
+## Problem — Circular Calls!
+
+```cpp
+double primary() {
+    expression();  // ← expression() கீழே இருக்கு!
+}
+
+double term() {
+    primary();     // ← primary() மேலே இருக்கு ✅
+}
+
+double expression() {
+    term();        // ← term() மேலே இருக்கு ✅
+}
+```
+
+---
+
+## Compiler Top-to-Bottom படிக்கும்:
+
+```
+primary() define:
+  expression() call → இன்னும் பார்க்கலை! ❌ ERROR!
+```
+
+---
+
+## யாரை மேலே போட்டாலும் Problem!
+
+```
+primary() மேலே போட்டா:
+  expression() தெரியாது ❌
+
+expression() மேலே போட்டா:
+  term() தெரியாது ❌
+
+term() மேலே போட்டா:
+  primary() தெரியாது ❌
+```
+
+**எந்த order-லயும் fix ஆகாது!**
+
+---
+
+## அதனால் Forward Declaration!
+
+```cpp
+// முதலில் எல்லாரையும் declare பண்ணு:
+double expression();   // "இருக்கு, கீழே இருக்கு"
+double term();         // "இருக்கு, கீழே இருக்கு"
+double primary();      // "இருக்கு, கீழே இருக்கு"
+
+// இப்போ எந்த order-லயும் define பண்ணலாம்:
+double primary() {
+    expression();  // ✅ already declared!
+}
+```
+
+---
+
+## `get_value()` ஏன் தேவையில்ல?
+
+```
+get_value()  →  primary() call பண்றது இல்ல
+primary()    →  get_value() call பண்றது
+
+One-way! Circular இல்ல → forward declaration தேவையில்ல!
+```
+
+---
+
+**Simple rule:**
+
+> `get_value()` = one-way call, மேலே define — forward declaration தேவையில்ல. `primary/term/expression` = circular calls — யாரை மேலே போட்டாலும் மற்றது தெரியாது — forward declaration கட்டாயம்!
