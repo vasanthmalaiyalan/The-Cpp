@@ -62,5 +62,100 @@ class Variable {
      std::string name;
      double value;
 
-     
+     Variable(std::string n, double v) : name{n}, value{v} {}
+};
+
+// -----------------------------------------------
+// Variable Table
+// -----------------------------------------------
+
+std::vector::<Variable> var_table;
+
+// ---------------------------------------------
+// Token Stream 
+// ----------------------------------------------
+
+class Token_stream {
+
+  public:
+    Token get();
+
+    void putback(Token t);
+
+    void ignore(char c);
+
+  private:
+    bool full {false};
+
+    Token buffer {'0'};  
+};
+
+// ----------------------------------------------
+// Global Token Stream
+// -----------------------------------------------
+
+Token_stream ts;
+
+// ----------------------------------------------
+// Variable Function
+// -----------------------------------------------
+
+double get_value(std::string s) {
+
+  for (const Variable& v : var_table) {
+
+     if (v.name == s) {
+        return v.value;
+     }
+  }
+
+  throw std::runtime_error("undefined variable: " + s);
+}
+
+bool is_declared(std::string var) {
+
+  for (const Variable& v : var_table) {
+
+    if (v.name == var) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+double define_name(std::string var, double value) {
+
+  if (is_declared(var)) {
+    throw std::runtime_error(var + " declared twice");
+  }
+
+  var_table.push_back(Variable{var, value}); // only stored in data
+
+  return value;
+}
+
+// --------------------------------------------
+// Putback
+// -----------------------------------------------
+
+void Token_stream::putback(Token t) {
+
+  if (full) {
+    throw std::runtime_error("putback() into full buffer");
+  }
+
+  buffer = t;
+  full = true;
+}
+
+// ---------------------------------------------
+// Ignore
+// ---------------------------------------------
+
+void Token_stream::ignore(char c) {
+
+  if (full && buffer.kind == c) {
+    
+  }
 }
