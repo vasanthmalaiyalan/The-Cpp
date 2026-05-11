@@ -580,3 +580,22 @@ double term() {
     std::cerr << "Unknown fatal error\n";
     return 2;
  }
+
+ /*
+ > let x = 10;
+= 10
+
+> let y = 5;
+= 5
+
+> x + y * 2;
+= 20
+
+> (x+y)%4;
+= 3
+
+> -x + 2;
+= -8
+
+> q
+ */
