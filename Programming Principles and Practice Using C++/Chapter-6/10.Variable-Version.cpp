@@ -46,7 +46,7 @@ class Token {
 
       double value;
 
-      std::string name;
+      std::string name; 
 
       Token(char k) : kind{k}, value{0} {}
       Token(char k, double v) : kind{k}, value{v} {}
