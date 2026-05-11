@@ -268,7 +268,7 @@ bool is_declared(std::string var) {
 
 // -----------------------------------------------
 
-double define_name(string var, double value) {
+double define_name(std::string var, double value) {
 
     if (is_declared(var)) {
 
