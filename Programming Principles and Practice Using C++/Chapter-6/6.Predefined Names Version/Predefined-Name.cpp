@@ -9,12 +9,12 @@
 // Symbolic Constants
 // ------------------------------------------------
 
-constexpr const number = '8'; // numeric literal token
-constexpr const name = 'a'; // identifier token
-constexpr const let = 'L'; // declaration token
+constexpr const char number = '8';  // numeric literal token
+constexpr const char name = 'a';  // identifier token
+constexpr const char let = 'L';  // declaration token
 
-constexpr const quit = 'q'; // quit command
-constexpr const print = ';'; // print command
+constexpr const char quit = 'q';   // quit command
+constexpr const char print = ';';   // print command
 
 constexpr const char* declkey = "let";
 
@@ -233,7 +233,7 @@ double get_value(std::string s) {
     for (const Variable& v : var_table) {
 
         if (v.name == s) {
-            return v.name;
+            return v.value;
         }
     }
 
@@ -243,7 +243,7 @@ double get_value(std::string s) {
 
 void set_value(std::string s, double d) { // this is onlu for future right
 
-    for (Varibale& v : var_table) {
+    for (Variable& v : var_table) {
 
         if (v.name == s) {
 
@@ -517,6 +517,12 @@ void calculate() {
 // -----------------------------------------------
 int main() 
 try {
+
+    // predefined constant
+
+    define_name("pi", 3.1415926535);
+
+    define_name("e", 2.7182818284);
 
     calculate();
 
