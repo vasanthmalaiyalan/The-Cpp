@@ -69,7 +69,7 @@ class Token {
 
          // name token
 
-         Token(char ch, std::string n) : kind{ch}, value{n}, name{n} {}
+         Token(char ch, std::string n) : kind{ch}, value{0}, name{n} {}
 };
 
 // ---------------------------------------------
@@ -136,7 +136,7 @@ void Token_stream::putback(Token t) {
 
 void Token_stream::ignore(char c) {
     if (full && buffer.kind == c) {
-+
+
         full = false;
         return;
     }
@@ -352,7 +352,7 @@ double primary() {
         }
 
         case number:
-           return t.value:
+           return t.value;
 
         case name:
            return get_value(t.name);
