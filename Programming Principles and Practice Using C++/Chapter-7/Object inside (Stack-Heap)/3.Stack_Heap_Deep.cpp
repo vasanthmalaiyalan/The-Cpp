@@ -60,7 +60,7 @@ class StackHeap {
                  << "===================================\n";
 
               // whole object address
-              std::cout << "this (Stack_Heap - Whole Obj Address)      : "
+              std::cout << "this (StackHeap Class - Whole Obj Address)      : "
                         << this 
                         << '\n';
                         
