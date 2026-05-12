@@ -37,19 +37,19 @@ int main() {
     std::cout 
        << "\n==================== MEMBERS ===============\n";
        
-    std::cout << "&s.id              : "
+    std::cout << "&s.id          : "
               << &s.id
               << '\n';
               
-    std::cout << "&s.price            : "
+    std::cout << "&s.price       : "
               << &s.price
               << '\n';
               
-    std::cout << "&s.grade             : "
+    std::cout << "&s.grade       : "
               << static_cast<void*>(&s.grade)
               << '\n';
               
-    std::cout << "&s.values             : "
+    std::cout << "&s.values       : "
               << &s.values
               << '\n';
               
