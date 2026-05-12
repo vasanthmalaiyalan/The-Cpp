@@ -85,3 +85,15 @@ int main() {
 
     std::cout << '\n';
 }
+
+/*
+| Concept                  | Example                      |
+| ------------------------ | ---------------------------- |
+| Uninitialized variable   | `int garbage_value;`         |
+| `=` initialization       | `int age = 21;`              |
+| `{}` initialization      | `string name {"Vasanth"};`   |
+| const variable           | `const double pi`            |
+| `( )` constructor syntax | `vector<int> numbers(5)`     |
+| `{}` initializer list    | `vector<int> scores {95,88}` |
+
+*/
