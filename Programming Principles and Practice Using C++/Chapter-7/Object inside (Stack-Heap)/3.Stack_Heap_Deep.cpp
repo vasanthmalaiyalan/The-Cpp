@@ -72,24 +72,24 @@ class StackHeap {
 
               // member addresses
               std::cout << "&id                 : "
-                        << &id 
+                        << &id   // and you try this id only not &id , so why because stored in stack 
                         << '\n';
                         
                std::cout << "&price              : "
-                         << &price
+                         << &price   // same as this one 
                          << '\n';
                          
                std::cout << "&numbers (vector object) : "
-                         << &numbers 
+                         << &numbers   // and this one is not print like `number` because stored in heap not stack (how actual data stored index)
                          << '\n';
                          
                std::cout << "&name (string)            : "
-                         << &name 
+                         << &name  // same as this one but small string is consider in stack store so large string is heap stored
                          << '\n';
                          
                 std::cout 
                    << "\n=====================================\n"
-                   << " Stack inside data stored in Heap Address calling\n"
+                   << " Stack inside data stored in Heap Address Ref calling\n"
                    << "========================================\n";
                    
                 // vector heap memory inside stack
