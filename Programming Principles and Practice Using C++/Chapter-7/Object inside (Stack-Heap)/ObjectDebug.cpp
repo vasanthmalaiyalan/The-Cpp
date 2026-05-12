@@ -47,7 +47,7 @@ class Number_store {
              // Vector Internal Data Pointer
              // ------------------------------------------
              
-             std::cout << "Vector heap data 1st address(inside stack)        : "
+             std::cout << "Vector heap data 1st address(inside stack)   : "
                        << values.data() // &values[o]
                        << '\n';
 
