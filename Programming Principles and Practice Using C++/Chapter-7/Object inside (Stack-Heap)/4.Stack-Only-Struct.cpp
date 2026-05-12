@@ -65,3 +65,21 @@ int main() {
                   << '\n';
        }
 }
+
+/*
+./a.out 
+
+====================== OBJECT ADDRESS ==================
+&s          : 0x7fffb9843e40
+
+==================== MEMBERS ===============
+&s.id          : 0x7fffb9843e40
+&s.price       : 0x7fffb9843e48
+&s.grade       : 0x7fffb9843e50
+&s.values       : 0x7fffb9843e54
+
+===================== ARRAY ELEMENTS ======================
+Values[0] address: 0x7fffb9843e54
+Values[1] address: 0x7fffb9843e58
+Values[2] address: 0x7fffb9843e5c
+*/
