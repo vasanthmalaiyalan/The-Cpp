@@ -24,11 +24,11 @@ int main() {
       std::cout 
          << "\n================== Vector =====================\n";
 
-      std::cout << "Stack itself Address - &vec                : "
+      std::cout << "Stack itself Address - &vec          : "
                 << &vec  // seperate stack inside obj address
                 << '\n';
                 
-      std::cout << "Stack inside Ref Address - vec.data()          : "
+      std::cout << "Stack inside Ref Address - vec.data()    : "
                 << vec.data() // stack inside obj ref value address
                 << '\n';          
 
