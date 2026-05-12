@@ -228,7 +228,7 @@ class Heap_based_data {
                                        << (
                                              reinterpret_cast<char*>(&numbers) - reinterpret_cast<char*>(this)
                                        ) 
-                                       << " bytes";
+                                       << " bytes\n";
                                        
                               std::cout << "name offset                    : "
                                         << (
