@@ -105,7 +105,7 @@ class StackHeap {
                           
                 std::cout
                    << "\n=====================================\n"
-                   << "Vector Element\n"
+                   << "Vector Element Actual Heap\n"
                    << "=========================================\n";
                    
                  for (size_t i = 0; i < numbers.size(); ++i) {
@@ -160,6 +160,11 @@ class StackHeap {
                                reinterpret_cast<char*>(&name) - reinterpret_cast<char*>(this)
                        )    
                        << " bytes\n";
+
+                    std::cout << "\n===================Sizeof(obj)============================\n"
+                        << "Sizeof(Vector) : " << sizeof(numbers) << '\n';
+                        
+                        std::cout << "Sizeof(string)   : " << sizeof(name) << '\n';
 
         }
 };
