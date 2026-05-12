@@ -24,9 +24,9 @@ int main() {
     // Class Type with initialization
     // ==========================================
     
-    std::string name;
+    std::string name; // safe empty string
 
-    std::vector<int> numbers;
+    std::vector<int> numbers; // safe empty vector
 
     std::cout << "\nDefault initialized string:\n";
 
