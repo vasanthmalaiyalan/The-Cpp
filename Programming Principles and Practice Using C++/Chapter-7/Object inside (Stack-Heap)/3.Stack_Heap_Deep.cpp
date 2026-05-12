@@ -89,15 +89,15 @@ class StackHeap {
                          
                 std::cout 
                    << "\n=====================================\n"
-                   << "Heap Memory\n"
+                   << " Stack inside data stored in Heap Address calling\n"
                    << "========================================\n";
                    
-                // vector heap memory
+                // vector heap memory inside stack
                 std::cout << "numbers.data()                : "
                           << numbers.data()
                           << '\n';
                           
-                // String heap memory
+                // String heap memory inside stack
                 std::cout << "name.data()                   : "
                           << static_cast<const void*>(name.data())
                           << '\n';    
