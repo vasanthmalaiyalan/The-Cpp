@@ -1,0 +1,57 @@
+#include <iostream>
+
+// =================================
+/// Declarations
+// =================================
+
+// Function declarations
+int add(int a, int b);    // declaration
+void print_result(const std::string& label, int value); //declaration
+
+// global variable declaration (extern means declaration only)
+extern int global_value; // declaration only
+
+
+// =========================================
+// Definitions
+// =========================================
+
+// global variable definition
+int global_value = 100;
+
+// function definition
+int add(int a, int b) {
+
+    return a + b;
+}
+
+// function definition
+void print_result(const std::string& label, int value) {
+
+    std::cout << label << " : " << value << '\n';
+}
+
+// ===========================================
+// Main
+// ============================================
+
+int main() {
+
+    // variable definition
+    int x = 10;
+
+    // variable definition
+    int y = 20;
+
+    // function call
+    int result = add(x, y);
+
+    // function call
+    print_result("sum", result);
+
+    // using global variable
+    std::cout << "Global value: "
+              << global_value
+              << '\n';
+}
+
