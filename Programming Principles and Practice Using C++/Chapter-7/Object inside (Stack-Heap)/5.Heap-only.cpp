@@ -63,6 +63,29 @@ int main() {
                      
            std::cout << "mp[1]          : "
                      << mp[1]
-                     << '\n';          
+                     << '\n';    
+                     
+
                    
 }
+
+/*
+
+./a.out 
+
+================== Vector =====================
+Stack itself Address - &vec          : 0x7ffe33e8fd40
+Stack inside Ref Address - vec.data()    : 0x5efe8d6522b0
+
+ ================== STRING ===================
+&str               : 0x7ffe33e8fdb0
+str.data()          : 0x7ffe33e8fdc0
+
+============= LIST =================
+&lst            : 0x7ffe33e8fd60
+First node value : 1
+
+=============== MAP ===================
+&mp           : 0x7ffe33e8fd80
+mp[1]          : one
+*/
