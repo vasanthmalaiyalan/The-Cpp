@@ -179,3 +179,66 @@ int main() {
 
     d.print_memory_layout();
 }
+
+/*
+| Thing           | Stored where?        |
+| --------------- | -------------------- |
+| int             | inside object        |
+| double          | inside object        |
+| vector object   | inside object        |
+| vector elements | heap                 |
+| string object   | inside object        |
+| string chars    | usually heap         |
+| `this`          | whole object address |
+| `data()`        | heap address         |
+
+
+ ./a.out 
+
+=================================
+OBJECT ADDRESS
+===================================
+this (StackHeap Class - Whole Obj Address)      : 0x7ffe1ea4a2e0
+
+====================================
+Stack / Object Memory Members
+=======================================
+&id                 : 0x7ffe1ea4a2e0
+&price              : 0x7ffe1ea4a2e8
+&numbers (vector object) : 0x7ffe1ea4a2f0
+&name (string)            : 0x7ffe1ea4a308
+
+=====================================
+ Stack inside data stored in Heap Address Ref calling
+========================================
+numbers.data()                : 0x5ecc2938a2b0
+name.data()                   : 0x7ffe1ea4a318
+
+=====================================
+Vector Element Actual Heap
+=========================================
+numbers[0] values      : 10
+numbers [0] address     : 0x5ecc2938a2b0
+offset from base                   : 0 bytes
+
+numbers[1] values      : 20
+numbers [1] address     : 0x5ecc2938a2b4
+offset from base                   : 4 bytes
+
+numbers[2] values      : 30
+numbers [2] address     : 0x5ecc2938a2b8
+offset from base                   : 8 bytes
+
+
+========================================
+Offset of members inside Object
+===========================================
+id offset          : 0 bytes
+price offset                    : 8 bytes
+numbers offset                  : 16 bytes
+name offset                     : 40 bytes
+
+===================Sizeof(obj)============================
+Sizeof(Vector) : 24
+Sizeof(string)   : 32
+*/
