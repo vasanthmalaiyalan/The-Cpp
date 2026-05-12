@@ -51,7 +51,7 @@ class Number_store {
               // statement scope
               for (size_t i = 0; i < values.size(); ++i) {
 
-                    biggest = max(biggest, values[i]);
+                    biggest = max_value(biggest, values[i]);
               }
 
               // i no longer exits here
