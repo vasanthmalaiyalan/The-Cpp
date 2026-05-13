@@ -1,0 +1,1025 @@
+`offset எப்படி கால்குலேட் ஆகிறது? `
+
+மிக முக்கியமான question 🔥
+இப்போது நீ actual compiler memory layout logic-ஐ பார்க்கிறாய்.
+
+உன் output:
+
+```text id="hjlwm1"
+id offset        : 0 bytes
+price offset     : 8 bytes
+numbers offset   : 16 bytes
+name offset      : 40 bytes
+```
+
+இதெல்லாம் எப்படி calculate ஆகிறது?
+
+---
+
+# Core Idea
+
+## Offset means:
+
+> object start address-லிருந்து
+> member எவ்வளவு bytes தள்ளி இருக்கிறது?
+
+---
+
+# Formula
+
+\text{offset} = \text{member address} - \text{object base address}
+
+---
+
+# Your code
+
+நீ இதை பயன்படுத்தினாய்:
+
+```cpp id="zjlwme"
+reinterpret_cast<char*>(&price)
+-
+reinterpret_cast<char*>(this)
+```
+
+---
+
+# Why `char*`?
+
+Because:
+
+```text id="6jlwmg"
+char = 1 byte
+```
+
+அதனால் subtraction:
+
+## exact byte difference.
+
+---
+
+# Example Memory Layout
+
+Suppose:
+
+```cpp id="mjlwmy"
+class Demo
+{
+    int id;
+    double price;
+    vector<int> numbers;
+    string name;
+};
+```
+
+---
+
+# Suppose object starts at:
+
+```text id="8jlwma"
+this = 1000
+```
+
+---
+
+# Step-by-step Layout
+
+---
+
+# 1. `int id`
+
+```text id="qjlwmd"
+sizeof(int) = 4
+```
+
+Placed at:
+
+```text id="0jlwmm"
+1000
+```
+
+---
+
+# But next member is double
+
+---
+
+# 2. `double price`
+
+```text id="yjlwmu"
+sizeof(double) = 8
+```
+
+double usually:
+
+## 8-byte aligned.
+
+---
+
+# So compiler inserts padding.
+
+---
+
+# Layout becomes
+
+```text id="9jlwmp"
+1000 -> id (4 bytes)
+1004 -> padding (4 bytes)
+1008 -> price
+```
+
+---
+
+# Therefore:
+
+```text id="zjlwme"
+price offset = 8
+```
+
+---
+
+# 3. vector<int> numbers
+
+Suppose vector object size:
+
+```text id="6jlwmg"
+24 bytes
+```
+
+---
+
+# price occupies:
+
+```text id="mjlwmy"
+1008 - 1015
+```
+
+---
+
+# Next available:
+
+```text id="8jlwma"
+1016
+```
+
+---
+
+# Therefore:
+
+```text id="qjlwmd"
+numbers offset = 16
+```
+
+---
+
+# 4. string name
+
+Suppose vector occupies:
+
+```text id="0jlwmm"
+24 bytes
+```
+
+Then:
+
+```text id="yjlwmu"
+1016 + 24 = 1040
+```
+
+---
+
+# Therefore:
+
+```text id="9jlwmp"
+name offset = 40
+```
+
+---
+
+# So offsets come from:
+
+## previous members + alignment/padding.
+
+---
+
+# VERY IMPORTANT CONCEPT
+
+# Alignment
+
+CPU certain data types aligned addresses-ல் இருந்தால் faster.
+
+---
+
+# Example
+
+double often wants:
+
+```text id="zjlwme"
+address divisible by 8
+```
+
+---
+
+# So compiler adds padding.
+
+---
+
+# Without padding
+
+```text id="6jlwmg"
+1004 -> double
+```
+
+slow/misaligned.
+
+---
+
+# Therefore compiler does:
+
+```text id="mjlwmy"
+1004-1007 padding
+1008 double
+```
+
+---
+
+# This is why offsets not always continuous.
+
+---
+
+# Your Output Explained
+
+---
+
+# id offset = 0
+
+Because:
+first member.
+
+---
+
+# price offset = 8
+
+Because:
+padding added after int.
+
+---
+
+# numbers offset = 16
+
+After double.
+
+---
+
+# name offset = 40
+
+After vector object.
+
+---
+
+# Your Code Logic
+
+This line:
+
+```cpp id="8jlwma"
+reinterpret_cast<char*>(&price)
+-
+reinterpret_cast<char*>(this)
+```
+
+Suppose:
+
+```text id="qjlwmd"
+&price = 1008
+this    = 1000
+```
+
+Then:
+
+1008 - 1000 = 8
+
+---
+
+# That's the offset.
+
+---
+
+# Important
+
+Offsets are:
+
+## compile-time calculated.
+
+Compiler already knows:
+
+* member sizes
+* alignments
+* layout rules
+
+---
+
+# CPU access internally
+
+When you write:
+
+```cpp id="0jlwmm"
+obj.price
+```
+
+Compiler roughly generates:
+
+```text id="yjlwmu"
+object_base + 8
+```
+
+---
+
+# This is why objects fast
+
+No searching.
+
+Direct offset access.
+
+---
+
+# Visual Full Layout
+
+```text id="9jlwmp"
+Object Base = 1000
+
+1000 -> id        (4 bytes)
+1004 -> padding   (4 bytes)
+1008 -> price     (8 bytes)
+1016 -> numbers   (24 bytes)
+1040 -> name
+```
+
+---
+
+# Final Most Important Understanding
+
+## Offset means:
+
+```text id="zjlwme"
+distance from object base address
+```
+
+---
+
+# Calculated using:
+
+```text id="6jlwmg"
+member address - object address
+```
+
+---
+
+# Compiler decides offsets based on:
+
+* member size
+* alignment rules
+* padding
+
+---
+
+# One-line summary
+
+> Offset என்பது object starting address-லிருந்து member எவ்வளவு bytes தள்ளி இருக்கிறது என்பதைக் காட்டும் value.
+------------
+
+``Layout becomes
+Plain text
+1000 -> id (4 bytes)
+1004 -> padding (4 bytes)
+1008 -> price
+Therefore:
+Plain text
+price offset = 8`இதுவரை தான் புரிந்தது? இதெல்லாம் சுத்தமா புரியவில்லை `vector numbers
+Suppose vector object size:
+Plain text
+24 bytes
+price occupies:
+Plain text
+1008 - 1015
+Next available:
+Plain text
+1016``
+
+சரி 🔥
+நாம் மிகவும் slow-ஆ step-by-step பார்ப்போம்.
+நீ confusion ஆகும் இடம்:
+
+```text
+1008 - 1015
+Next available:
+1016
+```
+
+இதுதானே?
+
+---
+
+# First Important Rule
+
+Memory addresses:
+
+## byte-by-byte increase ஆகும்.
+
+---
+
+# Example
+
+```text id="zjlwm1"
+Address
+1000
+1001
+1002
+1003
+1004
+...
+```
+
+ஒவ்வொரு address:
+
+## 1 byte.
+
+---
+
+# `int id`
+
+Suppose:
+
+```cpp id="7jlwmy"
+int id;
+```
+
+---
+
+# Usually
+
+```text id="4jlwma"
+sizeof(int) = 4 bytes
+```
+
+---
+
+# If id starts at:
+
+```text id="qjlwmd"
+1000
+```
+
+then it occupies:
+
+```text id="0jlwmm"
+1000
+1001
+1002
+1003
+```
+
+---
+
+# Next free address
+
+```text id="yjlwmu"
+1004
+```
+
+---
+
+# Then compiler inserted padding
+
+Because next member:
+
+```cpp id="9jlwmp"
+double price;
+```
+
+---
+
+# double usually needs:
+
+```text id="zjlwme"
+8-byte alignment
+```
+
+Meaning:
+address divisible by 8.
+
+---
+
+# 1004 divisible by 8?
+
+No.
+
+---
+
+# So compiler adds padding:
+
+```text id="6jlwmg"
+1004
+1005
+1006
+1007
+```
+
+padding bytes.
+
+---
+
+# Then:
+
+```text id="mjlwmy"
+1008
+```
+
+is divisible by 8.
+
+So:
+
+```text id="8jlwma"
+price starts at 1008
+```
+
+---
+
+# Now IMPORTANT PART
+
+## `double`
+
+usually size:
+
+```text id="qjlwmd"
+8 bytes
+```
+
+---
+
+# Therefore:
+
+price occupies:
+
+```text id="0jlwmm"
+1008
+1009
+1010
+1011
+1012
+1013
+1014
+1015
+```
+
+---
+
+# Therefore next free address:
+
+```text id="yjlwmu"
+1016
+```
+
+---
+
+# THIS is the part you missed.
+
+---
+
+# Visual Full Layout
+
+```text id="9jlwmp"
+1000 -> id byte 1
+1001 -> id byte 2
+1002 -> id byte 3
+1003 -> id byte 4
+
+1004 -> padding
+1005 -> padding
+1006 -> padding
+1007 -> padding
+
+1008 -> price byte 1
+1009 -> price byte 2
+1010 -> price byte 3
+1011 -> price byte 4
+1012 -> price byte 5
+1013 -> price byte 6
+1014 -> price byte 7
+1015 -> price byte 8
+
+1016 -> next free space
+```
+
+---
+
+# Now vector starts
+
+Suppose:
+
+```cpp id="zjlwme"
+vector<int> numbers;
+```
+
+---
+
+# Vector object size
+
+Suppose:
+
+```text id="6jlwmg"
+24 bytes
+```
+
+---
+
+# So vector starts at:
+
+```text id="mjlwmy"
+1016
+```
+
+---
+
+# It occupies:
+
+```text id="8jlwma"
+1016 -> byte 1
+1017 -> byte 2
+...
+1039 -> byte 24
+```
+
+---
+
+# Therefore next free:
+
+```text id="qjlwmd"
+1040
+```
+
+---
+
+# This becomes:
+
+```text id="0jlwmm"
+name offset = 40
+```
+
+because:
+
+1040 - 1000 = 40
+
+---
+
+# Most Important Insight
+
+Offsets are:
+
+## cumulative memory distances.
+
+---
+
+# Another Simple Example
+
+```cpp id="yjlwmu"
+class X
+{
+    char a;
+    int b;
+};
+```
+
+---
+
+# Suppose object starts:
+
+```text id="9jlwmp"
+1000
+```
+
+---
+
+# char a
+
+size:
+
+```text id="zjlwme"
+1 byte
+```
+
+occupies:
+
+```text id="6jlwmg"
+1000
+```
+
+---
+
+# But int wants alignment 4
+
+So padding:
+
+```text id="mjlwmy"
+1001
+1002
+1003
+```
+
+---
+
+# int b starts:
+
+```text id="8jlwma"
+1004
+```
+
+---
+
+# Final layout
+
+```text id="qjlwmd"
+1000 -> a
+1001 -> padding
+1002 -> padding
+1003 -> padding
+1004 -> b byte1
+1005 -> b byte2
+1006 -> b byte3
+1007 -> b byte4
+```
+
+---
+
+# Why compiler does this?
+
+CPU aligned memory faster access.
+
+---
+
+# Final Most Important Understanding
+
+## Member occupies multiple byte addresses.
+
+---
+
+# Next member starts after:
+
+```text id="0jlwmm"
+previous member size
++
+possible padding
+```
+
+---
+
+# One-line summary
+
+> `price` 8 bytes என்பதால் அது `1008` முதல் `1015` வரை occupy செய்கிறது.
+> அதனால் next free address `1016` ஆகிறது.
+ 
+ ---------------------------
+
+ `but note the output is number offset is 16 byte but string is 24?`
+
+ ஆம் 🔥
+அதுதான் correct.
+நீ மிகவும் நல்ல observation செய்திருக்கிறாய்.
+
+உன் output:
+
+```text id="jlwm1b"
+numbers offset : 16 bytes
+name offset    : 40 bytes
+```
+
+---
+
+# Important
+
+இதன் meaning:
+
+```text id="7jlwmy"
+name offset - numbers offset
+=
+40 - 16
+=
+24 bytes
+```
+
+அதாவது:
+
+```text id="4jlwma"
+vector object size ≈ 24 bytes
+```
+
+---
+
+# NOT string size.
+
+நீ confusion ஆனது:
+
+> “string is 24?”
+
+இல்லை.
+
+Actually:
+
+```text id="qjlwmd"
+numbers occupies 24 bytes
+```
+
+---
+
+# Let's calculate carefully
+
+Suppose object starts:
+
+```text id="0jlwmm"
+1000
+```
+
+---
+
+# id offset = 0
+
+```text id="yjlwmu"
+int size = 4
+```
+
+occupies:
+
+```text id="9jlwmp"
+1000-1003
+```
+
+---
+
+# padding
+
+```text id="zjlwme"
+1004-1007
+```
+
+---
+
+# price offset = 8
+
+double size:
+
+```text id="6jlwmg"
+8 bytes
+```
+
+occupies:
+
+```text id="mjlwmy"
+1008-1015
+```
+
+---
+
+# Therefore next free:
+
+```text id="8jlwma"
+1016
+```
+
+---
+
+# numbers offset = 16
+
+vector object starts:
+
+```text id="qjlwmd"
+1016
+```
+
+---
+
+# name offset = 40
+
+Meaning:
+
+```text id="0jlwmm"
+1040
+```
+
+---
+
+# Therefore vector object occupied:
+
+1040 - 1016 = 24
+
+---
+
+# So vector object size ≈ 24 bytes
+
+---
+
+# Why vector object 24 bytes?
+
+Because internally roughly:
+
+```cpp id="yjlwmu"
+class vector
+{
+    int* data;        // 8 bytes
+    size_t size;      // 8 bytes
+    size_t capacity;  // 8 bytes
+};
+```
+
+---
+
+# On 64-bit systems
+
+Usually:
+
+| Type    | Size    |
+| ------- | ------- |
+| pointer | 8 bytes |
+| size_t  | 8 bytes |
+
+---
+
+# Therefore
+
+8 + 8 + 8 = 24
+
+---
+
+# This matches your output exactly.
+
+---
+
+# Very Important
+
+## `numbers` object size
+
+is 24 bytes.
+
+BUT:
+
+## vector heap elements
+
+NOT included.
+
+---
+
+# Heap elements separate
+
+```text id="9jlwmp"
+10
+20
+30
+```
+
+live elsewhere in heap.
+
+---
+
+# So object layout
+
+```text id="zjlwme"
+1016 -> vector.data pointer
+1024 -> vector.size
+1032 -> vector.capacity
+```
+
+---
+
+# Total:
+
+```text id="6jlwmg"
+24 bytes
+```
+
+---
+
+# Then next member:
+
+```text id="mjlwmy"
+name
+```
+
+starts at:
+
+```text id="8jlwma"
+1040
+```
+
+---
+
+# Final Most Important Understanding
+
+| Offset              | Meaning                   |
+| ------------------- | ------------------------- |
+| numbers offset = 16 | vector object starts here |
+| name offset = 40    | next member starts here   |
+| 40 - 16 = 24        | vector object size        |
+
+---
+
+# One-line summary
+
+> `name offset = 40` என்பதால் string 24 bytes என்று அர்த்தம் இல்லை.
+> `numbers` member `16` முதல் `39` வரை occupy செய்கிறது என்பதால்தான் next member `40`-ல் தொடங்குகிறது.
