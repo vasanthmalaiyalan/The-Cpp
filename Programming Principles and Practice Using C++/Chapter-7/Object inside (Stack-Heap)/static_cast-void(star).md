@@ -58,3 +58,78 @@ static_cast<void*>(&grade)  // C++ style — same result, but compiler checks �
 ```
 
 **Address மாறல — type label மட்டும் மாறுது.**
+
+----------------
+
+`static_cast -> `Related types மட்டும் மாத்தும்` means? what? , how this one related type like `static_cast<void*>(&grade)``
+
+நல்ல கேள்வி — "related types" என்பதை clearly define பண்ணணும்.
+
+---
+
+### "Related types" — C++ rules
+
+`static_cast` இந்த conversions-ஐ அனுமதிக்கும்:
+
+**1. Numeric conversions**
+```cpp
+int x = 65;
+static_cast<double>(x)   // int → double ✓
+static_cast<char>(x)     // int → char ✓
+```
+
+**2. Inheritance hierarchy (parent ↔ child)**
+```cpp
+class Animal {};
+class Dog : public Animal {};
+
+Dog* d = new Dog();
+static_cast<Animal*>(d)  // Dog* → Animal* ✓ (child → parent)
+```
+
+**3. `void*` ↔ any pointer — special rule**
+```cpp
+char grade = 'A';
+static_cast<void*>(&grade)   // char* → void* ✓
+```
+
+---
+
+### `void*` ஏன் special?
+
+`void*` என்பது C++ standard-ல் **"universal pointer"** — எந்த pointer type-உம் `void*`-ஆ போகலாம், `void*`-லிருந்து எந்த pointer type-உம் வரலாம்.
+
+```cpp
+// எல்லாமே void* → valid
+static_cast<void*>(&someInt)     // int* → void* ✓
+static_cast<void*>(&someDouble)  // double* → void* ✓
+static_cast<void*>(&someChar)    // char* → void* ✓
+```
+
+இது C++ standard explicitly permit பண்ணது — அதனால் static_cast அனுமதிக்கும்.
+
+---
+
+### "Unrelated" என்றால் என்ன?
+
+```cpp
+double price = 9.99;
+static_cast<char*>(&price)   // double* → char* ❌ — unrelated!
+```
+
+`double*` → `char*`: இவங்க inheritance-ல் இல்ல, numeric conversion இல்ல, `void*` இல்ல — **எந்த rule-உம் match ஆகல.** Compiler refuse.
+
+---
+
+### Simple rule
+
+| Conversion | static_cast | reinterpret_cast |
+|---|---|---|
+| `int` → `double` | ✓ | — |
+| `Child*` → `Parent*` | ✓ | — |
+| `anyPtr*` → `void*` | ✓ | ✓ |
+| `double*` → `char*` | ❌ | ✓ |
+| `int*` → `Dog*` | ❌ | ✓ |
+
+**static_cast** — C++ rules-க்கு உள்ளே இருக்கற conversions மட்டும்.
+**reinterpret_cast** — rules bypass, raw memory reinterpret — நீ சொன்னா சரிதான்.
