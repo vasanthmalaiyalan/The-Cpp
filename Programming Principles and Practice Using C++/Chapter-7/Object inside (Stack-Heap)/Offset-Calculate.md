@@ -775,3 +775,251 @@ possible padding
 
 > `price` 8 bytes என்பதால் அது `1008` முதல் `1015` வரை occupy செய்கிறது.
 > அதனால் next free address `1016` ஆகிறது.
+ 
+ ---------------------------
+
+ `but note the output is number offset is 16 byte but string is 24?`
+
+ ஆம் 🔥
+அதுதான் correct.
+நீ மிகவும் நல்ல observation செய்திருக்கிறாய்.
+
+உன் output:
+
+```text id="jlwm1b"
+numbers offset : 16 bytes
+name offset    : 40 bytes
+```
+
+---
+
+# Important
+
+இதன் meaning:
+
+```text id="7jlwmy"
+name offset - numbers offset
+=
+40 - 16
+=
+24 bytes
+```
+
+அதாவது:
+
+```text id="4jlwma"
+vector object size ≈ 24 bytes
+```
+
+---
+
+# NOT string size.
+
+நீ confusion ஆனது:
+
+> “string is 24?”
+
+இல்லை.
+
+Actually:
+
+```text id="qjlwmd"
+numbers occupies 24 bytes
+```
+
+---
+
+# Let's calculate carefully
+
+Suppose object starts:
+
+```text id="0jlwmm"
+1000
+```
+
+---
+
+# id offset = 0
+
+```text id="yjlwmu"
+int size = 4
+```
+
+occupies:
+
+```text id="9jlwmp"
+1000-1003
+```
+
+---
+
+# padding
+
+```text id="zjlwme"
+1004-1007
+```
+
+---
+
+# price offset = 8
+
+double size:
+
+```text id="6jlwmg"
+8 bytes
+```
+
+occupies:
+
+```text id="mjlwmy"
+1008-1015
+```
+
+---
+
+# Therefore next free:
+
+```text id="8jlwma"
+1016
+```
+
+---
+
+# numbers offset = 16
+
+vector object starts:
+
+```text id="qjlwmd"
+1016
+```
+
+---
+
+# name offset = 40
+
+Meaning:
+
+```text id="0jlwmm"
+1040
+```
+
+---
+
+# Therefore vector object occupied:
+
+1040 - 1016 = 24
+
+---
+
+# So vector object size ≈ 24 bytes
+
+---
+
+# Why vector object 24 bytes?
+
+Because internally roughly:
+
+```cpp id="yjlwmu"
+class vector
+{
+    int* data;        // 8 bytes
+    size_t size;      // 8 bytes
+    size_t capacity;  // 8 bytes
+};
+```
+
+---
+
+# On 64-bit systems
+
+Usually:
+
+| Type    | Size    |
+| ------- | ------- |
+| pointer | 8 bytes |
+| size_t  | 8 bytes |
+
+---
+
+# Therefore
+
+8 + 8 + 8 = 24
+
+---
+
+# This matches your output exactly.
+
+---
+
+# Very Important
+
+## `numbers` object size
+
+is 24 bytes.
+
+BUT:
+
+## vector heap elements
+
+NOT included.
+
+---
+
+# Heap elements separate
+
+```text id="9jlwmp"
+10
+20
+30
+```
+
+live elsewhere in heap.
+
+---
+
+# So object layout
+
+```text id="zjlwme"
+1016 -> vector.data pointer
+1024 -> vector.size
+1032 -> vector.capacity
+```
+
+---
+
+# Total:
+
+```text id="6jlwmg"
+24 bytes
+```
+
+---
+
+# Then next member:
+
+```text id="mjlwmy"
+name
+```
+
+starts at:
+
+```text id="8jlwma"
+1040
+```
+
+---
+
+# Final Most Important Understanding
+
+| Offset              | Meaning                   |
+| ------------------- | ------------------------- |
+| numbers offset = 16 | vector object starts here |
+| name offset = 40    | next member starts here   |
+| 40 - 16 = 24        | vector object size        |
+
+---
+
+# One-line summary
+
+> `name offset = 40` என்பதால் string 24 bytes என்று அர்த்தம் இல்லை.
+> `numbers` member `16` முதல் `39` வரை occupy செய்கிறது என்பதால்தான் next member `40`-ல் தொடங்குகிறது.
