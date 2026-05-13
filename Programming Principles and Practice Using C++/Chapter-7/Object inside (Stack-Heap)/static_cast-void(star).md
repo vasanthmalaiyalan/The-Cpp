@@ -133,3 +133,69 @@ static_cast<char*>(&price)   // double* → char* ❌ — unrelated!
 
 **static_cast** — C++ rules-க்கு உள்ளே இருக்கற conversions மட்டும்.
 **reinterpret_cast** — rules bypass, raw memory reinterpret — நீ சொன்னா சரிதான்.
+
+`void* means எந்த டேட்டா return type -பும் கிடையாது என்பதை குறிப்பதா?`
+
+இல்ல — அந்த meaning **function return type**-க்கு மட்டும்தான்.
+
+`void*` வேற, `void` வேற — இரண்டும் different context.
+
+---
+
+### `void` — "return value இல்ல"
+
+```cpp
+void printHello() {  // nothing return பண்றேன்
+    cout << "Hello";
+}
+```
+
+---
+
+### `void*` — "type தெரியாத pointer"
+
+```cpp
+void* ptr;  // எந்த type-ஓட address-ஐயும் வச்சுக்கலாம்
+```
+
+`void*` = **"இந்த address என்ன type memory point பண்றது என்று தெரியாது / சொல்ல வேண்டாம்"**
+
+```cpp
+int    x     = 42;
+double price = 9.99;
+char   grade = 'A';
+
+void* ptr;
+
+ptr = &x;      // ✓ int* → void*
+ptr = &price;  // ✓ double* → void*
+ptr = &grade;  // ✓ char* → void*
+```
+
+ஒரே `void*` variable — எந்த type address-ஐயும் hold பண்ணும்.
+
+---
+
+### ஆனா — dereference பண்ண முடியாது
+
+```cpp
+void* ptr = &x;
+cout << *ptr;  // ❌ Error — type தெரியாம value எடுக்க முடியாது
+```
+
+Type தெரிஞ்சதும் cast பண்ணணும்:
+
+```cpp
+cout << *(static_cast<int*>(ptr));  // ✓
+```
+
+---
+
+### One line summary
+
+| | என்ன |
+|---|---|
+| `void` | return value இல்ல |
+| `void*` | எந்த type-ஓட address-ஐயும் hold பண்ணும் pointer |
+
+`void*`-ல் `void` என்பது *"type-less"* என்று அர்த்தம் — *"no return"* இல்ல.
