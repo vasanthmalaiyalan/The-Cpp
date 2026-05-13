@@ -1053,3 +1053,89 @@ Value : 9.99
 **3. Round trip works** — bytes-ஐ திரும்ப `double*`-ஆ cast பண்ணி dereference பண்ணா `9.99` வருது — data corrupt ஆகல.
 
 **4. Little-endian** — உன் machine x86-64 ஆனா, least significant byte முதல்ல வரும் (`bytes[0]`). `0x40 23 d7...` என்பது IEEE 754 format-ல் 9.99.
+
+----------
+
+`hex இத போட்டா என்ன பிரின்ட் ஆகும் ? அதே மாதிரி இது ரெண்டும் என்ன செய்கிறது `setw(2) << setfill('0')`?`
+
+## `hex`, `setw(2)`, `setfill('0')` — என்ன செய்யுது?
+
+---
+
+### `hex` — number system மாத்துது
+
+```cpp
+int x = 255;
+
+cout << x << endl;        // 255     ← decimal (default)
+cout << hex << x << endl; // ff      ← hexadecimal
+```
+
+`hex` போட்டா அதுக்கு அப்புறம் வர்ற **எல்லா integers-உம் hex-ஆ print ஆகும்** — reset பண்ணும் வரைக்கும்.
+
+```cpp
+cout << hex << 255 << endl;  // ff
+cout << 16 << endl;          // 10  ← இன்னும் hex mode-லயே இருக்கு!
+cout << dec << 16 << endl;   // 16  ← dec போட்டா reset
+```
+
+---
+
+### `setw(2)` — minimum width
+
+```cpp
+cout << setw(2) << 5;    // " 5"  ← 2 characters wide, space padding
+cout << setw(2) << 255;  // "255" ← width exceed ஆனா cut பண்ணாது
+```
+
+"இந்த value குறைஞ்சது 2 characters wide-ஆ print செய்" என்று சொல்வது.
+
+> **Note:** `setw` ஒரு முறை மட்டும் apply ஆகும் — அடுத்த print-க்கு reset ஆயிடும்.
+
+---
+
+### `setfill('0')` — padding character மாத்துது
+
+Default padding space `' '`. `setfill('0')` போட்டா `'0'` கொண்டு fill பண்ணும்.
+
+```cpp
+cout << setw(2) << 5;              // " 5"  ← space padding (default)
+cout << setfill('0') << setw(2) << 5;  // "05" ← zero padding
+```
+
+---
+
+### மூணும் சேர்ந்து என்ன செய்யுது?
+
+```cpp
+(int)(unsigned char)bytes[i] = 7  // single digit hex
+
+cout << hex << setw(2) << setfill('0') << 7;
+// Output: "07"  ✓
+
+// இல்லாம போனா:
+cout << hex << 7;
+// Output: "7"   ← byte representation தெரியாது
+```
+
+Raw bytes print பண்ணும்போது **ஒவ்வொரு byte-உம் exactly 2 hex digits-ஆ** வரணும் — `07`, `ff`, `4a` — இல்லன்னா படிக்கவே கஷ்டம்.
+
+---
+
+### Live comparison:
+
+```cpp
+unsigned char vals[] = {7, 10, 255, 64};
+
+// Without formatting:
+for (auto v : vals)
+    cout << hex << (int)v << " ";
+// Output: 7 a ff 40   ← inconsistent width
+
+// With formatting:
+for (auto v : vals)
+    cout << hex << setw(2) << setfill('0') << (int)v << " ";
+// Output: 07 0a ff 40  ← clean, uniform
+```
+
+`07 0a ff 40` — இது தான் proper byte display. IEEE 754, network packets, binary dumps எல்லாத்துலயும் இந்த format use பண்றாங்க.
