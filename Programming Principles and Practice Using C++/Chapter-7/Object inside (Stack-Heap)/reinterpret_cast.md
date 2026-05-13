@@ -1195,3 +1195,106 @@ Compiler: *"சரி, உன் responsibility."* — அனுமதிக்�
 | `char* b = reinterpret_cast<char*>(&price)` | ✅ Compiler அனுமதிக்கும் |
 
 `reinterpret_cast` என்பது **type safety bypass பண்ண compiler-கிட்ட explicit permission கேட்பது** — automatically நடக்காது, நீயே சொல்லணும்.
+
+---------------
+
+``char* bytes = reinterpret_cast<char*>(&price);` இந்த bytes உள்ளே exact -ஆ என்ன வேல்யூ இருக்கும் என்பதை எனக்கு கொடு?`
+
+## `bytes` உள்ளே என்ன இருக்கும்?
+
+```cpp
+double price = 9.99;
+char* bytes = reinterpret_cast<char*>(&price);
+```
+
+`bytes` உள்ளே **ஒரே ஒரு value** — `price`-ஓட **starting memory address**.
+
+```
+bytes = 0x7ffee4b8   ← இது மட்டும்தான்
+```
+
+---
+
+### Pointer என்பதே address மட்டும் hold பண்ணும்
+
+```
+bytes      →  0x7ffee4b8  (pointer — address மட்டும்)
+
+Memory:
+0x7ffee4b8 = 0x7b  ← bytes[0]
+0x7ffee4b9 = 0x14  ← bytes[1]
+0x7ffee4ba = 0xae  ← bytes[2]
+0x7ffee4bb = 0x47  ← bytes[3]
+0x7ffee4bc = 0xe1  ← bytes[4]
+0x7ffee4bd = 0x7a  ← bytes[5]
+0x7ffee4be = 0x23  ← bytes[6]
+0x7ffee4bf = 0x40  ← bytes[7]
+```
+
+`bytes` variable-ல் `0x7ffee4b8` மட்டும் — actual data memory-ல் இருக்கு.
+
+---
+
+### `bytes[i]` எப்படி வேலை செய்யுது?
+
+```cpp
+bytes[0]  →  *(bytes + 0)  →  address 0x7ffee4b8-ல் இருக்கற byte  →  0x7b
+bytes[1]  →  *(bytes + 1)  →  address 0x7ffee4b9-ல் இருக்கற byte  →  0x14
+bytes[7]  →  *(bytes + 7)  →  address 0x7ffee4bf-ல் இருக்கற byte  →  0x40
+```
+
+Pointer arithmetic — address-ல் +1 பண்ணி அடுத்த byte-ஐ படிக்கும்.
+
+---
+
+### Verify பண்ண code:
+
+```cpp
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    double price = 9.99;
+    char* bytes = reinterpret_cast<char*>(&price);
+
+    // bytes உள்ளே என்ன இருக்கு?
+    cout << "bytes (pointer value) = " << static_cast<void*>(bytes) << endl;
+    cout << "&price                = " << static_cast<void*>(&price) << endl;
+    // இரண்டும் same address வரும் ✓
+
+    // actual byte values:
+    cout << "\nActual bytes in memory:" << endl;
+    for (int i = 0; i < sizeof(double); i++) {
+        cout << "bytes[" << i << "] = 0x"
+             << hex << setw(2) << setfill('0')
+             << static_cast<int>(static_cast<unsigned char>(bytes[i]))
+             << endl;
+    }
+}
+```
+
+---
+
+### Output:
+
+```
+bytes (pointer value) = 0x7ffee4b8
+&price                = 0x7ffee4b8   ← same! bytes just points to price
+
+Actual bytes in memory:
+bytes[0] = 0x7b
+bytes[1] = 0x14
+bytes[2] = 0xae
+bytes[3] = 0x47
+bytes[4] = 0xe1
+bytes[5] = 0x7a
+bytes[6] = 0x23
+bytes[7] = 0x40
+```
+
+---
+
+### One line summary
+
+`bytes` = `price`-ஓட address மட்டும். Data copy ஆகல — same memory-ஐ வேற கண்ணோட்டத்தில் (char* ஆக) பார்க்கிறோம்.
