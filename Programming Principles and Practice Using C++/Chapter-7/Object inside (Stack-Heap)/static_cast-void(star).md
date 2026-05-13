@@ -251,3 +251,53 @@ cout << (void*)&grade;       // 0x7ffee4b8 — address mode ✓
 | `void*` | address print | type தெரியாது, value interpret பண்ண முடியாது |
 
 `void*` print **ஆகும்** — ஆனா value இல்லாம address மட்டும் print ஆகும். "Print பண்ணாது" இல்ல — "value தெரியாம address மட்டும் print பண்ணும்" சரியான way to say it.
+
+---------------
+``static_cast<unsigned char>(bytes[i])` data type பாக `unsigned char`இதை இரண்டையும் ஒரே இடத்தில் பயன்படுத்த முடியுமா?`
+
+ஆமா — முடியும். இரண்டும் **same size, same bit pattern** — interpretation மட்டும் வேற.
+
+---
+
+### `char` vs `unsigned char`
+
+```cpp
+// இரண்டும் 1 byte — bit pattern same
+char          b1 = 0xff;   // signed   → -1
+unsigned char b2 = 0xff;   // unsigned → 255
+```
+
+---
+
+### Declaration-லயே `unsigned char*` use பண்ணலாம்
+
+```cpp
+double price = 9.99;
+
+// இப்படி declare பண்ணா — cast தேவையில்ல loop-ல்
+unsigned char* bytes = reinterpret_cast<unsigned char*>(&price);
+
+for (int i = 0; i < sizeof(double); i++) {
+    cout << hex << setw(2) << setfill('0')
+         << static_cast<int>(bytes[i])  // unsigned char cast தேவையில்ல ✓
+         << " ";
+}
+```
+
+`unsigned char*`-ஆ declare பண்ணிட்டா loop-ல் `static_cast<unsigned char>` தேவையில்ல — already unsigned.
+
+---
+
+### Compare பண்ணு
+
+```cpp
+// Method 1: char* declare, loop-ல் cast
+char* bytes = reinterpret_cast<char*>(&price);
+static_cast<int>(static_cast<unsigned char>(bytes[i]))  // 2 casts
+
+// Method 2: unsigned char* declare, loop-ல் ஒரே ஒரு cast
+unsigned char* bytes = reinterpret_cast<unsigned char*>(&price);
+static_cast<int>(bytes[i])  // 1 cast மட்டும் ✓
+```
+
+**Method 2 cleaner** — real code-ல் இப்படித்தான் எழுதுவாங்க.
