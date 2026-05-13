@@ -158,7 +158,7 @@ class Memory_Demo {
                     std::cout 
                        << "\nCHARACTER ADDRESS:\n";
 
-                    for (size_t i = 0; i << name.size(); ++i) {
+                    for (size_t i = 0; i < name.size(); ++i) {
                         
                         std::cout
                            << "name[" << i << "] = "
