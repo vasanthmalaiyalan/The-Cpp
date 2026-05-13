@@ -19,7 +19,7 @@ int main() {
     // element difference
     ptrdiff_t elements_diff = end - start;
     
-    std::cout << "\nElement difference   : "
+    std::cout << "\nElement difference(Pointer Arithmetic: address/sizeof(int))   : "
               << elements_diff
               << '\n';
 
