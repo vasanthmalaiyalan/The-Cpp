@@ -384,3 +384,394 @@ member address - object address
 # One-line summary
 
 > Offset என்பது object starting address-லிருந்து member எவ்வளவு bytes தள்ளி இருக்கிறது என்பதைக் காட்டும் value.
+------------
+
+``Layout becomes
+Plain text
+1000 -> id (4 bytes)
+1004 -> padding (4 bytes)
+1008 -> price
+Therefore:
+Plain text
+price offset = 8`இதுவரை தான் புரிந்தது? இதெல்லாம் சுத்தமா புரியவில்லை `vector numbers
+Suppose vector object size:
+Plain text
+24 bytes
+price occupies:
+Plain text
+1008 - 1015
+Next available:
+Plain text
+1016``
+
+சரி 🔥
+நாம் மிகவும் slow-ஆ step-by-step பார்ப்போம்.
+நீ confusion ஆகும் இடம்:
+
+```text
+1008 - 1015
+Next available:
+1016
+```
+
+இதுதானே?
+
+---
+
+# First Important Rule
+
+Memory addresses:
+
+## byte-by-byte increase ஆகும்.
+
+---
+
+# Example
+
+```text id="zjlwm1"
+Address
+1000
+1001
+1002
+1003
+1004
+...
+```
+
+ஒவ்வொரு address:
+
+## 1 byte.
+
+---
+
+# `int id`
+
+Suppose:
+
+```cpp id="7jlwmy"
+int id;
+```
+
+---
+
+# Usually
+
+```text id="4jlwma"
+sizeof(int) = 4 bytes
+```
+
+---
+
+# If id starts at:
+
+```text id="qjlwmd"
+1000
+```
+
+then it occupies:
+
+```text id="0jlwmm"
+1000
+1001
+1002
+1003
+```
+
+---
+
+# Next free address
+
+```text id="yjlwmu"
+1004
+```
+
+---
+
+# Then compiler inserted padding
+
+Because next member:
+
+```cpp id="9jlwmp"
+double price;
+```
+
+---
+
+# double usually needs:
+
+```text id="zjlwme"
+8-byte alignment
+```
+
+Meaning:
+address divisible by 8.
+
+---
+
+# 1004 divisible by 8?
+
+No.
+
+---
+
+# So compiler adds padding:
+
+```text id="6jlwmg"
+1004
+1005
+1006
+1007
+```
+
+padding bytes.
+
+---
+
+# Then:
+
+```text id="mjlwmy"
+1008
+```
+
+is divisible by 8.
+
+So:
+
+```text id="8jlwma"
+price starts at 1008
+```
+
+---
+
+# Now IMPORTANT PART
+
+## `double`
+
+usually size:
+
+```text id="qjlwmd"
+8 bytes
+```
+
+---
+
+# Therefore:
+
+price occupies:
+
+```text id="0jlwmm"
+1008
+1009
+1010
+1011
+1012
+1013
+1014
+1015
+```
+
+---
+
+# Therefore next free address:
+
+```text id="yjlwmu"
+1016
+```
+
+---
+
+# THIS is the part you missed.
+
+---
+
+# Visual Full Layout
+
+```text id="9jlwmp"
+1000 -> id byte 1
+1001 -> id byte 2
+1002 -> id byte 3
+1003 -> id byte 4
+
+1004 -> padding
+1005 -> padding
+1006 -> padding
+1007 -> padding
+
+1008 -> price byte 1
+1009 -> price byte 2
+1010 -> price byte 3
+1011 -> price byte 4
+1012 -> price byte 5
+1013 -> price byte 6
+1014 -> price byte 7
+1015 -> price byte 8
+
+1016 -> next free space
+```
+
+---
+
+# Now vector starts
+
+Suppose:
+
+```cpp id="zjlwme"
+vector<int> numbers;
+```
+
+---
+
+# Vector object size
+
+Suppose:
+
+```text id="6jlwmg"
+24 bytes
+```
+
+---
+
+# So vector starts at:
+
+```text id="mjlwmy"
+1016
+```
+
+---
+
+# It occupies:
+
+```text id="8jlwma"
+1016 -> byte 1
+1017 -> byte 2
+...
+1039 -> byte 24
+```
+
+---
+
+# Therefore next free:
+
+```text id="qjlwmd"
+1040
+```
+
+---
+
+# This becomes:
+
+```text id="0jlwmm"
+name offset = 40
+```
+
+because:
+
+1040 - 1000 = 40
+
+---
+
+# Most Important Insight
+
+Offsets are:
+
+## cumulative memory distances.
+
+---
+
+# Another Simple Example
+
+```cpp id="yjlwmu"
+class X
+{
+    char a;
+    int b;
+};
+```
+
+---
+
+# Suppose object starts:
+
+```text id="9jlwmp"
+1000
+```
+
+---
+
+# char a
+
+size:
+
+```text id="zjlwme"
+1 byte
+```
+
+occupies:
+
+```text id="6jlwmg"
+1000
+```
+
+---
+
+# But int wants alignment 4
+
+So padding:
+
+```text id="mjlwmy"
+1001
+1002
+1003
+```
+
+---
+
+# int b starts:
+
+```text id="8jlwma"
+1004
+```
+
+---
+
+# Final layout
+
+```text id="qjlwmd"
+1000 -> a
+1001 -> padding
+1002 -> padding
+1003 -> padding
+1004 -> b byte1
+1005 -> b byte2
+1006 -> b byte3
+1007 -> b byte4
+```
+
+---
+
+# Why compiler does this?
+
+CPU aligned memory faster access.
+
+---
+
+# Final Most Important Understanding
+
+## Member occupies multiple byte addresses.
+
+---
+
+# Next member starts after:
+
+```text id="0jlwmm"
+previous member size
++
+possible padding
+```
+
+---
+
+# One-line summary
+
+> `price` 8 bytes என்பதால் அது `1008` முதல் `1015` வரை occupy செய்கிறது.
+> அதனால் next free address `1016` ஆகிறது.
