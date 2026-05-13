@@ -985,3 +985,71 @@ for (int i = 0; i < sizeof(double); i++) {
 ### One line summary
 
 `reinterpret_cast<char*>(&price)` → `price`-ஓட memory-ஐ **double-ஆ இல்லாம, raw byte array-ஆ பாரு** என்று compiler-கிட்ட சொல்வது. Data மாறல, lens மாறுது.
+
+---
+
+```cpp
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    double price = 9.99;
+
+    cout << "=== double price = 9.99 ===" << endl;
+    cout << "Normal print     : " << price << endl;
+    cout << "Address (void*)  : " << static_cast<void*>(&price) << endl;
+
+    // reinterpret_cast — raw bytes-ஆ பாரு
+    char* bytes = reinterpret_cast<char*>(&price);
+
+    cout << "\n=== Raw bytes (hex) ===" << endl;
+    for (int i = 0; i < (int)sizeof(double); i++) {
+        cout << "bytes[" << i << "] address: " << static_cast<void*>(&bytes[i])
+             << "  value: 0x"
+             << hex << setw(2) << setfill('0')
+             << (int)(unsigned char)bytes[i]
+             << dec << endl;
+    }
+
+    // Verify: bytes திரும்ப double-ஆ போட்டா same value வருமா?
+    double* back = reinterpret_cast<double*>(bytes);
+    cout << "\n=== bytes → double* → dereference ===" << endl;
+    cout << "Value : " << *back << endl;  // 9.99 வரணும்
+
+    return 0;
+}
+```
+
+### Output இப்படி வரும்:
+
+```
+=== double price = 9.99 ===
+Normal print     : 9.99
+Address (void*)  : 0x7ffee4b8
+
+=== Raw bytes (hex) ===
+bytes[0] address: 0x7ffee4b8  value: 0x7b
+bytes[1] address: 0x7ffee4b9  value: 0x14
+bytes[2] address: 0x7ffee4ba  value: 0xae
+bytes[3] address: 0x7ffee4bb  value: 0x47
+bytes[4] address: 0x7ffee4bc  value: 0xe1
+bytes[5] address: 0x7ffee4bd  value: 0x7a
+bytes[6] address: 0x7ffee4be  value: 0x23
+bytes[7] address: 0x7ffee4bf  value: 0x40
+
+=== bytes → double* → dereference ===
+Value : 9.99
+```
+
+---
+
+### இதை பார்த்து என்ன புரிஞ்சுக்கணும்?
+
+**1. Address continuity** — `bytes[0]` முதல் `bytes[7]` வரை addresses ஒவ்வொரு step-லயும் +1 ஆகுது. ஏன்? `char` = 1 byte, pointer arithmetic அதுக்கேத்த மாதிரி நகரும்.
+
+**2. Same starting address** — `&price` (void*) பார்த்தா வரும் address, `bytes[0]`-ஓட address same. Reinterpret cast பண்ணும்போது **memory நகரல, label மட்டும் மாறுது.**
+
+**3. Round trip works** — bytes-ஐ திரும்ப `double*`-ஆ cast பண்ணி dereference பண்ணா `9.99` வருது — data corrupt ஆகல.
+
+**4. Little-endian** — உன் machine x86-64 ஆனா, least significant byte முதல்ல வரும் (`bytes[0]`). `0x40 23 d7...` என்பது IEEE 754 format-ல் 9.99.
