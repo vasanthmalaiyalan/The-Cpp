@@ -299,3 +299,282 @@ offset arithmetic
 
 > Heap allocation offset மூலம் நடக்காது.
 > ஆனால் heap-ல் allocate செய்யப்பட்ட contiguous data access செய்ய offset arithmetic பயன்படுத்தப்படும்.
+
+-------------
+
+`stack-ல offset மூலம் தான் நடக்கும்?`
+
+ஆம் 🔥
+Stack memory-லவும் mostly offset-based addressing தான் பயன்படுத்தப்படும்.
+
+இது CPU architecture-ன் core idea.
+
+---
+
+# Very Important
+
+Stack memory:
+
+* continuous memory region
+* function calls
+* local variables
+* objects
+
+store செய்ய பயன்படும்.
+
+---
+
+# CPU எப்படி access செய்கிறது?
+
+Usually:
+
+```text id="k1v0a8"
+base address + offset
+```
+
+---
+
+# Stack Pointer / Frame Pointer
+
+CPU/function call-ல்:
+
+* stack pointer (`rsp`)
+* frame pointer (`rbp`)
+
+போன்ற registers இருக்கும்.
+
+---
+
+# Example
+
+```cpp id="jlwm1g"
+void f()
+{
+    int x = 10;
+    double y = 20;
+}
+```
+
+---
+
+# Stack frame conceptually
+
+```text id="7jlwmy"
+rbp = 1000
+
+1000-4   -> x
+1000-16  -> y
+```
+
+---
+
+# Then compiler internally generates something like
+
+```text id="4jlwma"
+x = [rbp - 4]
+y = [rbp - 16]
+```
+
+---
+
+# This is offset addressing.
+
+---
+
+# Very Important
+
+## Stack variables are NOT searched.
+
+Compiler already knows:
+
+* exact offsets
+* exact layout
+
+at compile time.
+
+---
+
+# Example with class object
+
+```cpp id="qjlwmd"
+class X
+{
+    int a;
+    double b;
+};
+```
+
+---
+
+# Object layout
+
+```text id="0jlwmm"
+object_base + offset
+```
+
+---
+
+# Example
+
+```text id="yjlwmu"
+a offset = 0
+b offset = 8
+```
+
+---
+
+# Then:
+
+```text id="9jlwmp"
+a address = object_base + 0
+b address = object_base + 8
+```
+
+---
+
+# Stack + Object together
+
+Suppose:
+
+```cpp id="zjlwme"
+X obj;
+```
+
+Object itself stored in stack.
+
+---
+
+# Then:
+
+```text id="6jlwmg"
+stack frame
++------------------+
+| obj.a            |
+| padding          |
+| obj.b            |
++------------------+
+```
+
+---
+
+# Access internally
+
+```text id="mjlwmy"
+rbp - offset_to_obj + member_offset
+```
+
+---
+
+# So YES
+
+Stack access heavily offset-based.
+
+---
+
+# Heap vs Stack difference
+
+| Memory         | Access Style                |
+| -------------- | --------------------------- |
+| Stack          | base/frame pointer + offset |
+| Heap array     | base pointer + offset       |
+| Object members | object base + offset        |
+
+---
+
+# Why offsets everywhere?
+
+Because:
+CPUs fundamentally access memory using:
+
+```text id="8jlwma"
+address arithmetic
+```
+
+---
+
+# Assembly Example
+
+```cpp id="qjlwmd"
+int x = 10;
+```
+
+might become:
+
+```asm id="0jlwmm"
+mov DWORD PTR [rbp-4], 10
+```
+
+---
+
+# Meaning
+
+```text id="yjlwmu"
+store 10 at address (rbp - 4)
+```
+
+---
+
+# Another example
+
+```cpp id="9jlwmp"
+obj.b
+```
+
+might become:
+
+```asm id="zjlwme"
+movsd xmm0, [rax+8]
+```
+
+Meaning:
+
+```text id="6jlwmg"
+object_base + 8 offset
+```
+
+---
+
+# Big Insight
+
+Modern programming languages:
+
+* objects
+* arrays
+* structs
+* vectors
+
+almost all eventually become:
+
+```text id="mjlwmy"
+base address + offset
+```
+
+machine instructions.
+
+---
+
+# Final Most Important Understanding
+
+## Stack memory
+
+Uses:
+
+* frame pointer
+* stack pointer
+* fixed compile-time offsets
+
+---
+
+## Heap containers
+
+Use:
+
+* stored heap base pointer
+* runtime offset arithmetic
+
+---
+
+# One-line summary
+
+> Stack-லும் heap-லும் ultimately memory access mostly offset arithmetic-மேல் தான் build ஆகியுள்ளது.
+
