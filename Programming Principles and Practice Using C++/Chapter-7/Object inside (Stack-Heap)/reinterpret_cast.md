@@ -1298,3 +1298,149 @@ bytes[7] = 0x40
 ### One line summary
 
 `bytes` = `price`-ஓட address மட்டும். Data copy ஆகல — same memory-ஐ வேற கண்ணோட்டத்தில் (char* ஆக) பார்க்கிறோம்.
+
+-------------
+
+``reinterpret_cast<char*>(&price);`இது எப்படி read செய்யும் ? like `reinterpret_cast<char*>(&price) - reinterpret_cast<char*>(this);`இதை எப்படி count பண்ணும்? incase int,char, double என்று multiple value assign so that value byte difference தெரிந்து கொள்வதற்கு இவ்வாறு பயன்படுத்தும் போது `reinterpret_cast<char*>(&id) - reinterpret_cast<char*>(this);`, `reinterpret_cast<char*>(&price) - reinterpret_cast<char*>(this);`இது எப்படி calculate செய்கிறது அதாவது இது மாதிரி செய்கிறதா என்று கேட்கிறேன் `reinterpret_cast<char*>(&id)`இது உள்ளே 8 byte count இருக்கும், same as இது உள்ளேயும் `reinterpret_cast<char*>(this);` 8 byte count இருக்கும் இரண்டும் சேர்ந்தால் 0, அதே மாதிரி இதை பார்க்கும்போது `reinterpret_cast<char*>(&price)` இந்த count எப்படி read  செய்யும்? top to bottom இந்த ரீடிங் first int address -சில் இருந்து price end address வரை read செய்து 16 என்று இருக்குமா?`
+
+ஆமா — உன் thinking correct! இப்படித்தான் work ஆகுது.
+
+---
+
+### Setup பார்ப்போம்
+
+```cpp
+struct Product {
+    int    id;     // 4 bytes
+    double price;  // 8 bytes
+};
+
+Product p;
+p.id    = 1;
+p.price = 9.99;
+```
+
+Memory layout (typical, with padding):
+
+```
+Address:  [0]  [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]  [9]  [10] [11] [12] [13] [14] [15]
+Content:  |--- id (4 bytes) ---|--- padding (4 bytes) ---|------- price (8 bytes) -------|
+          ↑                                               ↑
+          this                                            &price
+```
+
+---
+
+### Pointer subtraction எப்படி work ஆகுது?
+
+```cpp
+reinterpret_cast<char*>(&price) - reinterpret_cast<char*>(this)
+```
+
+இரண்டும் `char*` — so **byte-by-byte count** பண்ணும்.
+
+```
+this   address = 0x100   (start)
+&price address = 0x108   (8 bytes after start)
+
+0x108 - 0x100 = 8
+```
+
+**Result: 8** — `this` முதல் `price` வரை 8 bytes.
+
+---
+
+### `id` subtract பண்ணா?
+
+```cpp
+reinterpret_cast<char*>(&id) - reinterpret_cast<char*>(this)
+```
+
+```
+this  address = 0x100
+&id   address = 0x100   (same! id is first member)
+
+0x100 - 0x100 = 0
+```
+
+**Result: 0** — `id` struct-ஓட beginning-லயே இருக்கு.
+
+---
+
+### உன் question — 16 வருமா?
+
+```cpp
+reinterpret_cast<char*>(&price) - reinterpret_cast<char*>(&id)
+```
+
+```
+&id    = 0x100
+&price = 0x108
+
+0x108 - 0x100 = 8
+```
+
+**Result: 8** — 16 இல்ல. ஏன்?
+
+`id` 4 bytes + 4 bytes padding = 8. `price` அதுக்கு அப்புறம் start ஆகுது.
+
+---
+
+### Verify பண்ண code:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+struct Product {
+    int    id;
+    double price;
+};
+
+int main() {
+    Product p;
+
+    cout << "this   offset: "
+         << reinterpret_cast<char*>(&p.id)
+          - reinterpret_cast<char*>(&p)
+         << endl;  // 0
+
+    cout << "price  offset: "
+         << reinterpret_cast<char*>(&p.price)
+          - reinterpret_cast<char*>(&p)
+         << endl;  // 8 (4 bytes id + 4 bytes padding)
+
+    cout << "id → price gap: "
+         << reinterpret_cast<char*>(&p.price)
+          - reinterpret_cast<char*>(&p.id)
+         << endl;  // 8
+}
+```
+
+---
+
+### Output:
+
+```
+this   offset: 0
+price  offset: 8
+id → price gap: 8
+```
+
+---
+
+### Key point — ஏன் `char*`?
+
+`char*` = 1 byte per step. அதனால் subtraction = **exact byte count**.
+
+```cpp
+// int* subtract பண்ணா — byte count இல்ல, int count
+int* a = ...; int* b = ...;
+a - b = 2   // 2 ints = 8 bytes — misleading!
+
+// char* subtract பண்ணா — exact bytes
+char* a = ...; char* b = ...;
+a - b = 8   // 8 bytes — correct ✓
+```
+
+`reinterpret_cast<char*>` பண்றதே இதுக்காகதான் — **exact byte offset தெரிஞ்சுக்க.**
