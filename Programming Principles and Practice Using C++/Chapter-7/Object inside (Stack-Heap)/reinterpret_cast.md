@@ -1444,3 +1444,105 @@ a - b = 8   // 8 bytes — correct ✓
 ```
 
 `reinterpret_cast<char*>` பண்றதே இதுக்காகதான் — **exact byte offset தெரிஞ்சுக்க.**
+
+-------------
+
+`எனக்கு இது புரியவில்லை `this   address = 0x100   (start)
+&price address = 0x108   `இது id start to end address அதாவது id -க்கி சொந்தமானது but இத நீ எப்படி price -க்கு assign செய்கிறாய் இதுதான் என்னுடைய குழப்பம்?`
+
+உன் confusion clear-ஆ புரியுது — இதை step by step பார்ப்போம்.
+
+---
+
+### Memory ஒரு long street மாதிரி
+
+```
+Address: 0x100  0x101  0x102  0x103  0x104  0x105  0x106  0x107  0x108 ...
+```
+
+இந்த addresses எல்லாம் **already exist** — CPU போட்டு வச்சது. நாம் create பண்றதில்லை.
+
+---
+
+### `id` store ஆகும்போது
+
+```cpp
+int id = 1;  // 4 bytes தேவை
+```
+
+OS சொல்லுது:
+
+> *"0x100 முதல் 0x103 வரை உனக்கு — இங்க வச்சுக்கோ"*
+
+```
+0x100 = [01]  ← id-ஓட byte 1
+0x101 = [00]  ← id-ஓட byte 2
+0x102 = [00]  ← id-ஓட byte 3
+0x103 = [00]  ← id-ஓட byte 4
+```
+
+---
+
+### `id` முடிஞ்சதும் — அந்த addresses free
+
+```
+0x104 = [  ]  ← காலி
+0x105 = [  ]  ← காலி
+0x106 = [  ]  ← காலி
+0x107 = [  ]  ← காலி
+```
+
+இந்த 4 bytes — **padding**. Compiler double-ஐ 8-byte boundary-ல் வைக்கணும் என்பதால் காலியாக விடுது.
+
+---
+
+### `price` store ஆகும்போது
+
+```cpp
+double price = 9.99;  // 8 bytes தேவை
+```
+
+OS சொல்லுது:
+
+> *"0x108 முதல் 0x10F வரை உனக்கு — இங்க வச்சுக்கோ"*
+
+```
+0x108 = [7b]  ← price-ஓட byte 1
+0x109 = [14]  ← price-ஓட byte 2
+0x10A = [ae]  ← price-ஓட byte 3
+0x10B = [47]  ← price-ஓட byte 4
+0x10C = [e1]  ← price-ஓட byte 5
+0x10D = [7a]  ← price-ஓட byte 6
+0x10E = [23]  ← price-ஓட byte 7
+0x10F = [40]  ← price-ஓட byte 8
+```
+
+---
+
+### இப்போ full picture
+
+```
+0x100 = [01]  ← id byte 1
+0x101 = [00]  ← id byte 2
+0x102 = [00]  ← id byte 3
+0x103 = [00]  ← id byte 4
+0x104 = [  ]  ← padding
+0x105 = [  ]  ← padding
+0x106 = [  ]  ← padding
+0x107 = [  ]  ← padding
+0x108 = [7b]  ← price byte 1  ← &price இங்க point பண்றது
+```
+
+`&price = 0x108` — இது **price-ஓட முதல் byte இருக்கற address.**
+
+`id`-க்கு assign பண்றதில்லை — `id` முடிஞ்ச இடத்திலிருந்து அடுத்த available address-ல் `price` start ஆகுது.
+
+---
+
+### Subtraction இப்போ clear ஆகும்
+
+```
+&price - this = 0x108 - 0x100 = 8 bytes
+```
+
+**8 bytes** = 4 (id) + 4 (padding). `price` struct start-லிருந்து 8-வது byte-ல் இருக்கு — அவ்வளவுதான்.
