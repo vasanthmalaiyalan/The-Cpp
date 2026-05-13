@@ -51,7 +51,7 @@ class Memory_Demo {
                   // -----------------------------------------
                   
                   std::cout << "&id                          : "
-                            << &id 
+                            << &id                
                             << '\n';
 
                   std::cout << "&price                        : "

@@ -205,7 +205,8 @@ class Heap_based_data {
                                           << (
                                                  reinterpret_cast<char*>(&numbers[i]) - reinterpret_cast<char*>(numbers.data())
                                           )
-                                          << " bytes\n\n";    
+                                          << " bytes\n\n";   
+                                            
                           }
 
                           std::cout 
