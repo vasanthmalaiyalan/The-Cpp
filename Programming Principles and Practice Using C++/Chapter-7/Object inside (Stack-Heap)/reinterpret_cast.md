@@ -897,5 +897,91 @@ means:
 > `reinterpret_cast<char*>` memory-ஐ மாற்றாது;
 > compiler அந்த address-ஐ byte-by-byte memory pointer-ஆக interpret செய்ய சொல்லுகிறது.
 
+--------------
+
+`reinterpret_cast<char*>(&price), இதை எப்படி புரிந்து கொள்வது?`
 
 
+## `reinterpret_cast<char*>(&price)` — breakdown
+
+```cpp
+double price = 9.99;
+reinterpret_cast<char*>(&price)
+```
+
+---
+
+### முதலில் — `&price` என்ன?
+
+`price` ஒரு `double` → 8 bytes memory-ல் இருக்கும்.
+
+`&price` → அந்த 8 bytes-ஓட starting address. Type: `double*`
+
+---
+
+### `reinterpret_cast<char*>` என்ன செய்யுது?
+
+Compiler-கிட்ட சொல்றோம்:
+
+> *"அந்த memory-ஐ double-ஆ பாக்காதே — char bytes-ஆ பாரு"*
+
+**Memory மாறல, data மாறல — பார்க்கும் விதம் மட்டும் மாறுது.**
+
+```
+double* → char*   (reinterpret: raw bytes-ஆ பாரு)
+```
+
+---
+
+### Memory-ல் என்ன நடக்குது?
+
+`9.99` double-ஆ IEEE 754 format-ல் இப்படி இருக்கும்:
+
+```
+Address:  [0x100] [0x101] [0x102] [0x103] [0x104] [0x105] [0x106] [0x107]
+Bytes:      40      23      D7      0A      3D      70      A3      D7
+```
+
+`double*` கொண்டு பார்த்தா → ஒரே ஒரு `double` value: `9.99`
+
+`char*` கொண்டு பார்த்தா → 8 தனி `char` bytes: `0x40, 0x23, 0xD7 ...`
+
+---
+
+### `static_cast` vs `reinterpret_cast` — key difference
+
+| | `static_cast` | `reinterpret_cast` |
+|---|---|---|
+| என்ன செய்யும் | Related types மட்டும் மாத்தும் | எந்த pointer-ஐயும் எந்த pointer-ஆவும் மாத்தும் |
+| Compiler check | உண்டு | இல்ல — நீ சொன்னா சரிதான் |
+| `double*` → `char*` | ❌ refuse | ✅ allow |
+| `char*` → `void*` | ✅ allow | ✅ allow |
+
+`double*` → `char*` என்பது **unrelated types** — `static_cast` இதை refuse செய்யும். அதனால `reinterpret_cast` தேவை.
+
+---
+
+### இதை எங்கே use பண்றாங்க?
+
+```cpp
+// எந்த variable-ஓட raw bytes-ஐயும் பாக்கலாம்
+double price = 9.99;
+char* bytes = reinterpret_cast<char*>(&price);
+
+for (int i = 0; i < sizeof(double); i++) {
+    cout << hex << (int)(unsigned char)bytes[i] << " ";
+}
+// Output: 40 23 d7 0a 3d 70 a3 d7  ← 9.99-ஓட raw IEEE 754 bytes
+```
+
+**Real use cases:**
+- Binary file read/write
+- Network packet parsing  
+- Memory debuggers
+- IEEE 754 internals பாக்கணும்னா
+
+---
+
+### One line summary
+
+`reinterpret_cast<char*>(&price)` → `price`-ஓட memory-ஐ **double-ஆ இல்லாம, raw byte array-ஆ பாரு** என்று compiler-கிட்ட சொல்வது. Data மாறல, lens மாறுது.
