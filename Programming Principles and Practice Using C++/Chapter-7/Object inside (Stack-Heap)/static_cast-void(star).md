@@ -199,3 +199,55 @@ cout << *(static_cast<int*>(ptr));  // ✓
 | `void*` | எந்த type-ஓட address-ஐயும் hold பண்ணும் pointer |
 
 `void*`-ல் `void` என்பது *"type-less"* என்று அர்த்தம் — *"no return"* இல்ல.
+
+----------------
+
+`void* இது என்ன டேட்டா ரிட்டர்ன் டைப் என்று தெரியாததால் பிரிண்ட் பண்ணாது அப்படி பிரிண்ட் செய்ய முயற்சி செய்தால் raw address மட்டும் பிரிண்ட் செய்யும்`
+
+ஆமா — ஆனா ஒரு correction:
+
+`void*` print பண்ணாது என்பதல்ல — **`cout` `void*` பார்த்தா address print பண்ணும்.** இது intentional behavior.
+
+---
+
+### ஏன் address மட்டும் print ஆகுது?
+
+`cout <<` operator-க்கு `void*` கொடுத்தா:
+
+> *"Type தெரியல — value interpret பண்ண முடியாது — address மட்டும் print பண்றேன்."*
+
+```cpp
+int x = 42;
+void* ptr = &x;
+
+cout << ptr;          // 0x7ffee4b8  ← address print (value இல்ல)
+cout << *(int*)ptr;   // 42          ← type சொன்னா value print
+```
+
+---
+
+### இதுவே `char*` problem-க்கு solution ஆச்சு
+
+```cpp
+char grade = 'A';
+
+cout << &grade;              // garbage — char* → string mode
+cout << (void*)&grade;       // 0x7ffee4b8 — address mode ✓
+```
+
+`char*` → `void*` cast பண்ணும்போது:
+
+- String overload — **bypass**
+- Address overload — **trigger**
+
+---
+
+### Summary
+
+| Type | cout behavior | ஏன் |
+|---|---|---|
+| `int*` | address print | int* string overload இல்ல |
+| `char*` | string print | special overload இருக்கு |
+| `void*` | address print | type தெரியாது, value interpret பண்ண முடியாது |
+
+`void*` print **ஆகும்** — ஆனா value இல்லாம address மட்டும் print ஆகும். "Print பண்ணாது" இல்ல — "value தெரியாம address மட்டும் print பண்ணும்" சரியான way to say it.
