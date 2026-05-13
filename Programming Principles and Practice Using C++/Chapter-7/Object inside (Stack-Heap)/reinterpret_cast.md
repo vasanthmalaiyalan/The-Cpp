@@ -1139,3 +1139,59 @@ for (auto v : vals)
 ```
 
 `07 0a ff 40` — இது தான் proper byte display. IEEE 754, network packets, binary dumps எல்லாத்துலயும் இந்த format use பண்றாங்க.
+
+``reinterpret_cast<char*> என்ன செய்யுது?
+Compiler-கிட்ட சொல்றோம்:
+"அந்த memory-ஐ double-ஆ பாக்காதே — char bytes-ஆ பாரு"|இதை நாம் char* data type பாக போடும்போதே பார்க்க ஆரம்பித்து விடுமே அதற்காக அப்புறம் எதற்காக `reinterpret_cast`இதை பயன்படுத்த வேண்டும்?`
+
+நல்ல கேள்வி — இதுவே core confusion.
+
+---
+
+### உன் thinking என்ன?
+
+> *"`char* bytes = &price` போட்டாலே போதுமே — reinterpret_cast எதுக்கு?"*
+
+---
+
+### Compiler அனுமதிக்காது — ஏன்?
+
+```cpp
+double price = 9.99;
+
+char* bytes = &price;  // ❌ Compile error!
+```
+
+**Error:** `cannot convert 'double*' to 'char*'`
+
+`&price` → `double*` type.
+`char*` variable-ல் `double*` போட முடியாது — **unrelated types.**
+
+Compiler-கிட்ட type safety rule இருக்கு:
+
+> *"நான் உன்னை நம்பல — different type pointers automatically assign பண்ண விடமாட்டேன்."*
+
+---
+
+### `reinterpret_cast` என்ன செய்யுது?
+
+```cpp
+char* bytes = reinterpret_cast<char*>(&price);  // ✅
+```
+
+Compiler-கிட்ட explicitly சொல்றோம்:
+
+> *"தெரியும், double* தான் — ஆனா நான் intentionally char*-ஆ treat பண்ண விரும்புறேன். அனுமதி கொடு."*
+
+Compiler: *"சரி, உன் responsibility."* — அனுமதிக்கும்.
+
+---
+
+### Summary
+
+| Code | என்ன நடக்கும் |
+|---|---|
+| `char* b = &price` | ❌ Compile error — type mismatch |
+| `char* b = reinterpret_cast<char*>(&price)` | ✅ Compiler அனுமதிக்கும் |
+
+`reinterpret_cast` என்பது **type safety bypass பண்ண compiler-கிட்ட explicit permission கேட்பது** — automatically நடக்காது, நீயே சொல்லணும்.
