@@ -19,7 +19,7 @@ int main() {
     // element difference
     ptrdiff_t elements_diff = end - start;
     
-    std::cout << "\nElement difference(int byte)   : "
+    std::cout << "\nElement difference   : "
               << elements_diff
               << '\n';
 
