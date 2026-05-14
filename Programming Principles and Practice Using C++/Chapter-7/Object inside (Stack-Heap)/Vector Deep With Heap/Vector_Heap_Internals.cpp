@@ -30,7 +30,7 @@ class My_vector {
          // heap allocation
          data = new int[size];
 
-         data[0] = 10 // internally compailer do this handle it because raw pointer
+         data[0] = 10; // internally compailer do this handle it because raw pointer
          data[1] = 20;
          data[2] = 30;
        }
@@ -195,3 +195,53 @@ int main() {
        << &numbers[2]
        << '\n';   
 }
+
+/*
+./a.out 
+
+============================================
+VECTOR OBJECT MEMORY
+==============================================
+&vector first object                : 0x7ffdff7edf90
+&data member                        : 0x7ffdff7edf90
+
+==========================================
+HEAP ELEMENTS
+==============================================
+element[0] value           : 10
+element[0] address         : 0x63c18f9022b0
+
+element[1] value           : 20
+element[1] address         : 0x63c18f9022b4
+
+element[2] value           : 30
+element[2] address         : 0x63c18f9022b8
+
+
+
+======================================
+NORMAL numbers[2]
+============================================
+
+==================================================
+operator[] CALLED
+index requested                   : 2
+data pointer value              : 0x63c18f9022b0
+calculated address               : 0x63c18f9022b8
+value at address                  : 30
+
+FINAL RETURNED VALUE       : 30
+
+
+===================================
+&numbers[2]
+========================================
+&numbers[2]                  :
+==================================================
+operator[] CALLED
+index requested                   : 2
+data pointer value              : 0x63c18f9022b0
+calculated address               : 0x63c18f9022b8
+value at address                  : 30
+0x63c18f9022b8
+*/
