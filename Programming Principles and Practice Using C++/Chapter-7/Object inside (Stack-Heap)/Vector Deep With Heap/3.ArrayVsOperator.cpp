@@ -100,7 +100,7 @@ int main() {
     std::cout
        << "\nArray base address:\n";
        
-    std::cout
+    std::cout 
        << "arr                           : "
        << arr
        << '\n';
