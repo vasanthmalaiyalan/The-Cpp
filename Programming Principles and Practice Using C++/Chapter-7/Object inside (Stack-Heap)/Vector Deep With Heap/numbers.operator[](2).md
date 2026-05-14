@@ -315,3 +315,343 @@ numbers.operator[](2)
 ```
 
 🔥
+----------------
+
+``இதே மாதிரி பல operators
+நீங்கள் எழுதுவது
+Compiler மாற்றுவது
+a + b
+a.operator+(b)
+a[2]
+a.operator[](2)
+a()
+a.operator()()
+a == b
+a.operator==(b)|இப்படி உருவாக்கப்பட்டது நோக்கம் என்ன?`
+
+இதன் பின்னால் இருக்கும் நோக்கம் C++-ன் மிகப் பெரிய design philosophy-யில் ஒன்று. 🔥
+
+அது:
+
+```text
+"User-defined types should behave like built-in types."
+```
+
+அதாவது:
+
+> நீங்கள் உருவாக்கும் class/object-களும்
+> `int`, `double`, array போன்ற built-in types போலவே பயன்படுத்தப்பட வேண்டும்.
+
+---
+
+# Problem before operator overloading
+
+நாம் ஒரு `Vector` class உருவாக்கினோம் என்று வைத்துக்கொள்ளுங்கள்.
+
+Without operator overloading:
+
+```cpp id="pp9k4j"
+Vector a;
+Vector b;
+
+a.add(b);
+```
+
+இது வேலை செய்யும்.
+
+ஆனால் mathematically awkward.
+
+---
+
+# With operator overloading
+
+```cpp id="i7r2xg"
+Vector c = a + b;
+```
+
+இப்போது:
+
+```text
+math போல தெரிகிறது
+natural ஆக தெரிகிறது
+readability அதிகரிக்கிறது
+```
+
+---
+
+# Same for indexing
+
+Without `operator[]`:
+
+```cpp id="lty8kt"
+numbers.get(2);
+```
+
+---
+
+With operator overloading:
+
+```cpp id="h2nzz8"
+numbers[2];
+```
+
+இது array போலவே feel தருகிறது.
+
+---
+
+# C++ creators என்ன நினைத்தார்கள்?
+
+C++ உருவாக்கிய Bjarne Stroustrup முக்கிய idea:
+
+```text
+High-level abstraction
++
+Low-level power
+```
+
+அதாவது:
+
+* custom types உருவாக்கு
+* ஆனால் usage natural ஆக இருக்கட்டும்
+
+---
+
+# Real-world examples
+
+## std::string
+
+நாம் எழுதுவது:
+
+```cpp id="bfk0hn"
+std::string a = "Hello ";
+std::string b = "World";
+
+std::string c = a + b;
+```
+
+`+` எப்படி string-க்கு வேலை செய்கிறது?
+
+ஏனெனில்:
+
+```cpp id="jlwm3e"
+operator+
+```
+
+overload செய்யப்பட்டிருக்கிறது.
+
+---
+
+# std::vector
+
+```cpp id="d0x3wf"
+vec[3]
+```
+
+↓
+
+```cpp id="6mjlwm"
+vec.operator[](3)
+```
+
+---
+
+# Smart pointers
+
+```cpp id="3jht0q"
+ptr->name
+```
+
+↓
+
+```cpp id="dq1sro"
+ptr.operator->()
+```
+
+---
+
+# Goal = Natural syntax
+
+C++ சொல்லுவது:
+
+```text
+"Object-oriented code ugly ஆக இருக்கக்கூடாது."
+```
+
+அதனால்:
+
+```cpp id="s6v0go"
+matrix.multiply(other_matrix)
+```
+
+பதிலாக:
+
+```cpp id="x0jlwm"
+matrix * other_matrix
+```
+
+எழுத அனுமதி.
+
+---
+
+# Why compiler rewrite செய்கிறது?
+
+ஏனெனில் CPU-க்கு:
+
+```cpp id="0pwjlwm"
+a + b
+```
+
+என்ற syntax புரியாது.
+
+Compiler translate செய்ய வேண்டும்.
+
+Built-in types என்றால்:
+
+```cpp id="lsjlwm"
+int + int
+```
+
+direct machine instruction.
+
+ஆனால் custom object என்றால்:
+
+```cpp id="6hjlwm"
+Vector + Vector
+```
+
+எப்படி add செய்வது?
+
+அதை programmer define செய்கிறார்:
+
+```cpp id="njlwm4"
+operator+
+```
+
+மூலம்.
+
+---
+
+# Example
+
+```cpp id="3gtjlwm"
+class Number
+{
+public:
+
+    int value;
+
+    Number(int v)
+    {
+        value = v;
+    }
+
+    Number operator+(const Number& other)
+    {
+        return Number(value + other.value);
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="jlwm12"
+Number a(10);
+Number b(20);
+
+Number c = a + b;
+```
+
+Compiler internally:
+
+```cpp id="jlwm55"
+Number c = a.operator+(b);
+```
+
+---
+
+# Important philosophy
+
+C++ tries to blur the line between:
+
+```text
+built-in types
+and
+user-defined types
+```
+
+அதனால்:
+
+```cpp id="jlwm90"
+vec[2]
+str1 + str2
+smart_ptr->x
+```
+
+எல்லாமே natural syntax போல தெரிகிறது.
+
+---
+
+# Another deeper reason
+
+C language already had operators:
+
+```cpp id="jlwm44"
++
+-
+[]
+*
+==
+```
+
+C++ creators நினைத்தார்கள்:
+
+```text
+"இந்த syntax already programmers-க்கு familiar.
+அதை custom types-க்கும் reuse பண்ணலாம்."
+```
+
+இதனால் learning easier.
+
+---
+
+# ஆனால் danger-மும் இருக்கு
+
+Overloading தவறாக பயன்படுத்தினால் confusing code வரும்.
+
+உதாரணம்:
+
+```cpp id="0njlwm"
+obj + obj
+```
+
+உண்மையில் addition செய்யாமல்:
+
+```text
+delete file
+```
+
+செய்தால் horrible design.
+
+அதனால் operator overloading powerful ஆனாலும் carefully பயன்படுத்த வேண்டும்.
+
+---
+
+# Final essence
+
+Operator overloading purpose:
+
+* custom types natural ஆக பயன்படுத்த
+* mathematical syntax support செய்ய
+* readability improve செய்ய
+* built-in types போல behavior கொடுக்க
+* abstraction powerful ஆக்க
+
+அதனால்:
+
+```cpp id="jlwmzz"
+numbers[2]
+```
+
+போன்ற syntax possible ஆனது.
