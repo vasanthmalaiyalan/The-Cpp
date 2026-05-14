@@ -101,7 +101,7 @@ class My_vector {
              << '\n';
              
           // return reference
-          return *(data + i)   
+          return *(data + i);
                 
        }
 
@@ -122,25 +122,25 @@ class My_vector {
               
            // vector object address
            std::cout
-              << "&vector object (first address)                     : "
+              << "&vector object (first address)             : "
               << this   
               << '\n';
               
            // address of pointer member
            std::cout
-              << "&data member (seperate)                      : "
+              << "&data member (seperate)                   : "
               << &data 
               << '\n';
 
           // pointer value
           std::cout
-             << "data pointer value (inside stack ref)           : "
+             << "data pointer value (inside stack ref)      : "
              << data 
              << '\n';
              
           // size member address
           std::cout
-             << "&size member                   : "
+             << "&size member                               : "
              << &size 
              << '\n';   
 
@@ -250,6 +250,6 @@ int main() {
        
     std::cout
        << "&numbers[2]                       : "
-       << &numbers[2];
+       << &numbers[2]
        << '\n';    
 }
