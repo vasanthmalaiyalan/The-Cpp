@@ -39,7 +39,7 @@ class My_vector {
 
          data[0] = 10; // raw pointer with compailer automatic decode
          data[1] = 20;
-         data[3] = 30;
+         data[2] = 30;
 
          std::cout
             << "Heap memory allocator\n";
@@ -97,6 +97,7 @@ class My_vector {
              
           // actual value
           std::cout
+             << "\nActual Value          : "
              << *(data + i)
              << '\n';
              
@@ -146,7 +147,7 @@ class My_vector {
 
           // size value
           std::cout
-             << "size value                      : "
+             << "size value                                 : "
              << size 
              << '\n';
 
@@ -163,7 +164,7 @@ class My_vector {
 
               std::cout
                  << "data[" << i << "] value         : "
-                 << data[i]
+                 << data[i] // compailer itself print
                  << '\n';
 
               std::cout
