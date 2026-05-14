@@ -655,3 +655,341 @@ numbers[2]
 ```
 
 போன்ற syntax possible ஆனது.
+---------------
+
+``இதே மாதிரி பல operators
+நீங்கள் எழுதுவது
+Compiler மாற்றுவது
+a + b
+a.operator+(b)
+a[2]
+a.operator[](2)
+a()
+a.operator()()
+a == b
+a.operator==(b)`இதை உள்ளே vector internal-லில் பயன்படுத்தப்பட்டுள்ளதா? `
+
+
+ஆம்! 🔥
+`std::vector` internal implementation-ல் இவை உண்மையாகவே பயன்படுத்தப்படுகின்றன.
+
+நீங்கள் எழுதுவது:
+
+```cpp id="m6l7dq"
+std::vector<int> vec;
+
+vec[2];
+```
+
+ஆனால் vector class உள்ளே actual-ஆக இருக்கும் function:
+
+```cpp id="c8i94j"
+reference operator[](size_type pos);
+```
+
+---
+
+# Actual std::vector internal idea
+
+Simplified version:
+
+```cpp id="ol8i7w"
+template<typename T>
+class vector
+{
+private:
+
+    T* data;
+
+public:
+
+    T& operator[](size_t i)
+    {
+        return *(data + i);
+    }
+};
+```
+
+---
+
+அதனால்:
+
+```cpp id="43vwwj"
+vec[2]
+```
+
+↓
+
+compiler converts:
+
+```cpp id="3m9mzw"
+vec.operator[](2)
+```
+
+↓
+
+inside:
+
+```cpp id="xjuxqn"
+return *(data + 2);
+```
+
+↓
+
+pointer arithmetic.
+
+---
+
+# std::vector actual implementation concept
+
+உள்ளே roughly:
+
+```cpp id="9e89k7"
+class vector
+{
+    T* start;
+    T* finish;
+    T* end_of_storage;
+};
+```
+
+---
+
+Memory:
+
+```text id="ry6uv8"
+start -----------> heap array
+finish -----------> last used element
+end_of_storage ---> capacity end
+```
+
+---
+
+# operator[] actual logic
+
+Simplified:
+
+```cpp id="qq5qjw"
+T& operator[](size_t n)
+{
+    return start[n];
+}
+```
+
+ஆனால்:
+
+```cpp id="bnjjlwm"
+start[n]
+```
+
+இதுவும் internally:
+
+```cpp id="jlwm123"
+*(start + n)
+```
+
+🔥
+
+---
+
+# அதனால் chain இப்படிச் செல்கிறது
+
+```cpp id="6jlwmx"
+vec[2]
+```
+
+↓
+
+```cpp id="jlwmab"
+vec.operator[](2)
+```
+
+↓
+
+```cpp id="jlwmcd"
+start[2]
+```
+
+↓
+
+```cpp id="jlwmef"
+*(start + 2)
+```
+
+↓
+
+real memory access.
+
+---
+
+# std::string-லும் same
+
+```cpp id="jlwmgh"
+str[1]
+```
+
+↓
+
+```cpp id="jlwmij"
+str.operator[](1)
+```
+
+---
+
+# smart pointer-லும்
+
+```cpp id="jlwmkl"
+ptr->x
+```
+
+↓
+
+```cpp id="jlwmmn"
+ptr.operator->()->x
+```
+
+---
+
+# function object
+
+```cpp id="jlwmop"
+obj()
+```
+
+↓
+
+```cpp id="jlwmqr"
+obj.operator()()
+```
+
+இதைத்தான்:
+
+* lambda
+* functor
+* comparator objects
+
+உள்ளே use செய்கின்றன.
+
+---
+
+# Example — sort comparator
+
+```cpp id="jlwmst"
+class Compare
+{
+public:
+
+    bool operator()(int a, int b)
+    {
+        return a < b;
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="jlwmuv"
+Compare comp;
+
+comp(10,20);
+```
+
+↓
+
+compiler:
+
+```cpp id="jlwmwx"
+comp.operator()(10,20);
+```
+
+🔥
+
+இதைத்தான் STL algorithms heavily use செய்கின்றன.
+
+---
+
+# std::vector internal-ல் heavily used operators
+
+| Operator     | Usage               |
+| ------------ | ------------------- |
+| `operator[]` | indexing            |
+| `operator=`  | copy assignment     |
+| `operator==` | comparison          |
+| `operator!=` | comparison          |
+| `operator*`  | iterators           |
+| `operator++` | iterators           |
+| `operator->` | iterators/smart ptr |
+| `operator+`  | iterator arithmetic |
+
+---
+
+# Example iterator
+
+```cpp id="jlwmyz"
+auto it = vec.begin();
+
+++it;
+```
+
+இதுவும் actual:
+
+```cpp id="jlwm01"
+it.operator++();
+```
+
+---
+
+```cpp id="jlwm23"
+*it
+```
+
+↓
+
+```cpp id="jlwm45"
+it.operator*();
+```
+
+🔥 STL முழுக்க operator overloading மீது கட்டப்பட்டுள்ளது.
+
+---
+
+# மிகவும் deep truth
+
+C++ STL containers:
+
+* vector
+* string
+* iterator
+* smart pointers
+* algorithms
+
+இவை எல்லாம்:
+
+```text id="a30gm4"
+operator overloading
++
+templates
++
+pointer arithmetic
+```
+
+இந்த 3 pillars மேல் நிற்கின்றன.
+
+---
+
+# அதனால் நீங்கள் இப்போது பார்க்கும்:
+
+```cpp id="jlwm67"
+vec[2]
+```
+
+இது simple syntax போல தோன்றினாலும் உள்ளே:
+
+* function call
+* pointer arithmetic
+* reference return
+* heap memory access
+
+எல்லாம் நடக்கிறது. 🔥
