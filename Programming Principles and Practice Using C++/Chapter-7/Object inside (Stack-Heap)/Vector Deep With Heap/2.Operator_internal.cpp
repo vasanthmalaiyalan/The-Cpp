@@ -254,3 +254,89 @@ int main() {
        << &numbers[2]
        << '\n';    
 }
+
+/*
+ ./a.out 
+
+===================================
+CONSTRUCTOR CALLED
+=======================================
+Heap memory allocator
+data pointer value        : 0x5b3a46b586c0
+
+=====================================
+VECTOR OBJECT LAYOUT
+========================================
+&vector object (first address)             : 0x7fff0384f6a0      
+&data member (seperate)                   : 0x7fff0384f6a0       
+data pointer value (inside stack ref)      : 0x5b3a46b586c0      
+&size member                               : 0x7fff0384f6a8      
+size value                                 : 3
+
+=======================================
+HEAP ELEMENTS
+=========================================
+data[0] value         : 10
+data[0] address       : 0x5b3a46b586c0
+
+data[1] value         : 20
+data[1] address       : 0x5b3a46b586c4
+
+data[2] value         : 30
+data[2] address       : 0x5b3a46b586c8
+
+
+
+===================================
+USING numbers[2]
+========================================
+
+========================================
+operator[] FUNCTION CALLED
+=====================================
+Request index           : 2
+Stored data pointer     : 0x5b3a46b586c0
+
+Address calculation:
+data + index            : 0x5b3a46b586c8
+
+Actual Value          : 30
+
+Final returned values   : 30
+
+
+=========================================
+USING numbers.operator[](2)
+===============================================
+
+========================================
+operator[] FUNCTION CALLED
+=====================================
+Request index           : 2
+Stored data pointer     : 0x5b3a46b586c0
+
+Address calculation:
+data + index            : 0x5b3a46b586c8
+
+Actual Value          : 30
+
+Final returned value            : 30
+
+
+========================================
+&numbers[2]
+=============================================
+&numbers[2]                       :
+========================================
+operator[] FUNCTION CALLED
+=====================================
+Request index           : 2
+Stored data pointer     : 0x5b3a46b586c0
+
+Address calculation:
+data + index            : 0x5b3a46b586c8
+
+Actual Value          : 30
+0x5b3a46b586c8
+
+*/
