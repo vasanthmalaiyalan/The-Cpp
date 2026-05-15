@@ -681,3 +681,376 @@ vec[2];
 ```
 
 🔥
+-----------
+
+``int* data;
+
+data[2]`இப்படி கம்பைளரே செய்கிறது என்றால் real vector உள்ளே நாம எழுதியது போல் `numbers.operator[](2)` custom function எழுதத் தேவையில்லை கம்பைளரை செய்து விடுமே?`
+
+இல்லை — அதுதான் மிக முக்கியமான distinction. 🔥
+
+Compiler built-in `[]` support செய்வது:
+
+```cpp id="x8m2p5"
+raw arrays
+raw pointers
+```
+
+க்கு மட்டும்.
+
+---
+
+# Example
+
+இது compiler built-in:
+
+```cpp id="k4v7m1"
+int* data;
+
+data[2];
+```
+
+↓
+
+compiler directly:
+
+```cpp id="u1m8x4"
+*(data + 2)
+```
+
+செய்யும்.
+
+---
+
+# ஆனால் இது?
+
+```cpp id="r6k3p9"
+My_vector numbers;
+
+numbers[2];
+```
+
+இங்கே:
+
+```cpp id="y2m7v5"
+numbers
+```
+
+ஒரு pointer இல்லை.
+
+ஒரு:
+
+```cpp id="q9x1k6"
+class object
+```
+
+🔥
+
+---
+
+# Compiler confusion
+
+Compiler internally கேட்கும்:
+
+```text id="m4v8p2"
+"My_vector object-க்கு [] எப்படி வேலை செய்ய வேண்டும்?"
+```
+
+அதற்கு compiler-க்கு தெரியாது.
+
+---
+
+# Because class memory arbitrary
+
+உதாரணம்:
+
+```cpp id="t7k2m5"
+class My_vector
+{
+    int* data;
+    size_t size;
+};
+```
+
+---
+
+இந்த object memory:
+
+```text id="v1m9x4"
+[data pointer][size]
+```
+
+இப்படித்தான் இருக்கும்.
+
+---
+
+அப்படியானால்:
+
+```cpp id="n5k8p3"
+numbers[2]
+```
+
+என்றால்:
+
+```text id="u4x1m7"
+எதை index செய்ய வேண்டும்?
+```
+
+* `data`-ஆ?
+* `size`-ஆ?
+* object bytes-ஆ?
+
+Compiler-க்கு தெரியாது.
+
+🔥
+
+---
+
+# அதனால் custom rule தேவை
+
+நீங்கள் சொல்ல வேண்டும்:
+
+```cpp id="q7m2v8"
+இந்த object-ல் [] பயன்படுத்தினால்
+இப்படிச் செய்
+```
+
+அதுதான்:
+
+```cpp id="r3k9p1"
+operator[]
+```
+
+---
+
+# Without operator[]
+
+இந்த class:
+
+```cpp id="x6m4v2"
+class Test
+{
+};
+```
+
+---
+
+```cpp id="f8k1p7"
+Test t;
+
+t[2];
+```
+
+❌ compile error.
+
+---
+
+ஏனெனில் compiler:
+
+```text id="m2x7v5"
+இந்த object-க்கு [] meaning தெரியவில்லை
+```
+
+---
+
+# With operator[]
+
+```cpp id="u9k3m4"
+class Test
+{
+public:
+
+    int operator[](int i)
+    {
+        return i * 10;
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="w5m8x1"
+Test t;
+
+t[2];
+```
+
+works.
+
+---
+
+Compiler converts:
+
+```cpp id="q1k7v6"
+t.operator[](2)
+```
+
+🔥
+
+---
+
+# Raw pointer special case
+
+Pointers மட்டும் language built-in special support.
+
+---
+
+# Why special support?
+
+ஏனெனில் C language itself array-based language.
+
+C-ல் இருந்து வந்தது:
+
+```cpp id="r4m9p2"
+arr[i]
+```
+
+↓
+
+```cpp id="t8k1v5"
+*(arr + i)
+```
+
+---
+
+இதுதான் fundamental language syntax.
+
+---
+
+# But classes are user-defined
+
+Compiler உங்கள் class intention-ஐ guess செய்ய முடியாது.
+
+அதனால்:
+
+```cpp id="y3m7x4"
+operator[]
+```
+
+மூலம் meaning define செய்ய வேண்டும்.
+
+---
+
+# Deep comparison
+
+## Raw pointer
+
+```cpp id="n6k2p8"
+int* data;
+
+data[2];
+```
+
+Compiler knows:
+
+```text id="u1m5v9"
+pointer arithmetic
+```
+
+---
+
+# Custom vector
+
+```cpp id="c7x3k1"
+My_vector numbers;
+
+numbers[2];
+```
+
+Compiler does NOT know:
+
+```text id="m4p8v2"
+எந்த member access செய்ய வேண்டும்?
+```
+
+---
+
+You define:
+
+```cpp id="q9k1m6"
+int& operator[](size_t i)
+{
+    return *(data + i);
+}
+```
+
+Now compiler understands.
+
+---
+
+# Most important truth
+
+Compiler raw pointers-க்கு மட்டும்:
+
+```cpp id="v5m2x7"
+[]
+```
+
+built-in support தருகிறது.
+
+---
+
+Custom containers:
+
+* vector
+* string
+* deque
+
+இவைகள்:
+
+```text id="u8k4p1"
+built-in pointer behavior-ஐ
+manually recreate செய்கின்றன
+```
+
+using:
+
+```cpp id="r2m9v5"
+operator[]
+```
+
+🔥
+
+---
+
+# Final essence
+
+இந்த:
+
+```cpp id="x1k7m4"
+data[2]
+```
+
+compiler built-in syntax.
+
+ஆனால்:
+
+```cpp id="q6m2v9"
+numbers[2]
+```
+
+compiler automatically புரிந்துகொள்ளாது.
+
+ஏனெனில்:
+
+```cpp id="u3k8p5"
+numbers
+```
+
+ஒரு class object.
+
+அதனால் நீங்கள் explicit-ஆக:
+
+```cpp id="f9m1x6"
+operator[]
+```
+
+எழுதி:
+
+```text id="w4k7v2"
+"இந்த object-ல் [] எப்படி வேலை செய்ய வேண்டும்"
+```
+
+என்று define செய்ய வேண்டும்.
