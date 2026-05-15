@@ -909,3 +909,314 @@ resizable
 ```
 
 🔥 இதனால்தான் vector heap memory பயன்படுத்துகிறது.
+--------------
+
+ஆம்! 🔥
+அப்படித்தான் templates வேலை செய்கின்றன.
+
+நீங்கள் class definition-ல்:
+
+```cpp id="y2m7k4"
+template<typename T>
+class MyVector
+```
+
+என்று generic blueprint உருவாக்கியிருக்கிறீர்கள்.
+
+அதனால் வெளியே இருந்து:
+
+```cpp id="n5x1p8"
+MyVector<int>
+MyVector<double>
+MyVector<char>
+MyVector<std::string>
+```
+
+எல்லாம் create செய்ய முடியும்.
+
+---
+
+# Example
+
+உங்கள் `main()`-ல் இதைப் போடலாம்:
+
+```cpp id="k8v3m1"
+MyVector<double> nums;
+
+nums.push_back(1.5);
+nums.push_back(2.7);
+nums.push_back(9.99);
+
+nums.debug_memory();
+```
+
+🔥 இது perfectly வேலை செய்யும்.
+
+---
+
+# Compiler என்ன செய்யும்?
+
+இந்த line:
+
+```cpp id="r4m9x2"
+MyVector<double> nums;
+```
+
+பார்த்தவுடன் compiler:
+
+```text id="t7k1p5"
+T = double
+```
+
+என்று fix செய்கிறது.
+
+---
+
+# Then internally almost
+
+```cpp id="q2x8m4"
+class MyVector_Double
+{
+    double* data_ptr;
+};
+```
+
+போன்ற class generate செய்யும்.
+
+---
+
+# Then this line:
+
+```cpp id="j6p3v9"
+new T[current_capacity]
+```
+
+↓
+
+Compiler sees:
+
+```cpp id="w1m7k2"
+new double[current_capacity]
+```
+
+🔥
+
+---
+
+# Memory addresses now
+
+Suppose:
+
+```cpp id="a5x9p3"
+sizeof(double) == 8
+```
+
+Then heap memory:
+
+```text id="m8k2v6"
+1000 -> double
+1008 -> double
+1016 -> double
+```
+
+கவனியுங்கள்:
+
+```text id="u3p7m1"
+8-byte jumps
+```
+
+ஏனெனில் `double = 8 bytes`.
+
+---
+
+# Your same vector code works!
+
+இதுதான் templates power.
+
+ஒரே code:
+
+```cpp id="v9m4x2"
+MyVector<T>
+```
+
+எழுதினீர்கள்.
+
+ஆனால்:
+
+* int vector
+* double vector
+* string vector
+
+எல்லாம் compiler auto-generate செய்கிறது.
+
+---
+
+# Example with string
+
+```cpp id="x7p2k5"
+MyVector<std::string> names;
+
+names.push_back("Ironman");
+names.push_back("Thor");
+
+names.debug_memory();
+```
+
+🔥 இதுவும் வேலை செய்யும்.
+
+---
+
+# Real std::vector same thing
+
+நாம் பயன்படுத்துவது:
+
+```cpp id="c1m8v4"
+std::vector<int>
+std::vector<double>
+std::vector<std::string>
+```
+
+அனைத்தும் template instantiations.
+
+---
+
+# “வெளியே இருந்து தானே செய்ய முடியும்?”
+
+ஆம் exactly. 🔥
+
+நீங்கள் class எழுதும் போது:
+
+```cpp id="b4x7m2"
+template<typename T>
+```
+
+என்று generic-ஆ எழுதுகிறீர்கள்.
+
+---
+
+பிறகு user decides:
+
+```cpp id="n8p1k6"
+எந்த type வேண்டும்?
+```
+
+---
+
+# Visualize
+
+நீங்கள் உருவாக்குவது:
+
+```text id="f2m9v5"
+ஒரு machine blueprint
+```
+
+---
+
+User சொல்வார்:
+
+```text id="u6k3x1"
+எனக்கு int version வேண்டும்
+```
+
+↓
+
+Compiler creates:
+
+```cpp id="r5m8p2"
+MyVector<int>
+```
+
+---
+
+அல்லது:
+
+```text id="w9x4k7"
+எனக்கு double version வேண்டும்
+```
+
+↓
+
+Compiler creates:
+
+```cpp id="q3p1m6"
+MyVector<double>
+```
+
+🔥
+
+---
+
+# Important
+
+இது runtime polymorphism இல்லை.
+
+இது compile-time code generation.
+
+Compiler actual class versions உருவாக்குகிறது.
+
+---
+
+# Super important truth
+
+இந்த code:
+
+```cpp id="t8m2x5"
+MyVector<int> a;
+MyVector<double> b;
+```
+
+🔥
+
+உண்மையில்:
+
+```text id="y1k7p4"
+2 different generated classes
+```
+
+போலவே இருக்கும் internally.
+
+---
+
+# You can even verify
+
+இந்த மாதிரி:
+
+```cpp id="m4v9x2"
+std::cout
+    << sizeof(MyVector<int>)
+    << '\n';
+
+std::cout
+    << sizeof(MyVector<double>)
+    << '\n';
+```
+
+அல்லது:
+
+```cpp id="p7k1m5"
+typeid(a).name()
+```
+
+போன்றவற்றால் பார்க்கலாம்.
+
+---
+
+# Final essence
+
+ஆம் — நீங்கள் உருவாக்கிய:
+
+```cpp id="x2m8v4"
+MyVector<T>
+```
+
+class-ஐ வெளியே இருந்து:
+
+```cpp id="r9p3k1"
+MyVector<double>
+MyVector<int>
+MyVector<std::string>
+```
+
+போல instantiate செய்யலாம்.
+
+🔥 இதுதான் real `std::vector` வேலை செய்யும் அடிப்படை concept.
