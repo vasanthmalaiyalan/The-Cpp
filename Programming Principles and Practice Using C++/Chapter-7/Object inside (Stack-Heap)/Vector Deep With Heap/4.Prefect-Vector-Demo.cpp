@@ -17,7 +17,7 @@ class MyVector {
        T* data_ptr;
 
        // current used elements
-       size_t currrent_size;
+       size_t current_size;
 
        // total allocated memory
        size_t current_capacity;
@@ -240,7 +240,7 @@ class MyVector {
              << index
              << ")\n";
 
-          T* calulated_address = data_ptr + index;
+          T* calculated_address = data_ptr + index;
           
           std::cout
              << "\nCalculated address    : "
@@ -291,7 +291,7 @@ class MyVector {
              
           std::cout
              << "current size            : "
-             << current_size;
+             << current_size
              << '\n';
              
           std::cout
