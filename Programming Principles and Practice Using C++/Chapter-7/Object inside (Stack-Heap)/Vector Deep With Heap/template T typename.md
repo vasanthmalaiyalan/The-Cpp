@@ -424,3 +424,488 @@ real class/function generate செய்கிறது
 ```
 
 🔥
+--------------
+
+`data_ptr = new T[current_capacity];
+, நான் இந்த வகையான object creation -னை இதுவரை நான் பார்த்ததில்லை , like someclass obj; cpp படிக்க ஆரம்பத்தில் இருந்து இப்படி கிரியேட் செய்துதான் பார்த்திருக்கிறேன் `data_ptr = new T[current_capacity];
+`இதைப் பற்றி விளக்கி நாம் ஏன் `someclass obj;`இப்படி கிரியேட் செய்யாமல் இப்படி கிரியேட் செய்கிறோம் data_ptr = new T[current_capacity];?`
+
+இது C++ memory model-ன் மிக முக்கியமான பகுதி. 🔥
+நீங்கள் இப்போது:
+
+```cpp id="jlwm1"
+stack object
+```
+
+மற்றும்
+
+```cpp id="jlwm2"
+heap object
+```
+
+இவைகளின் வித்தியாசம் இருக்கும் இடத்துக்கு வந்துவிட்டீர்கள்.
+
+---
+
+# நீங்கள் இதுவரை பார்த்தது
+
+```cpp id="jlwm3"
+SomeClass obj;
+```
+
+இது:
+
+```text id="jlwm4"
+stack memory allocation
+```
+
+---
+
+# ஆனால் இது:
+
+```cpp id="jlwm5"
+data_ptr = new T[current_capacity];
+```
+
+இது:
+
+```text id="jlwm6"
+heap memory allocation
+```
+
+🔥
+
+---
+
+# முதலில் stack object
+
+```cpp id="jlwm7"
+int x = 10;
+```
+
+அல்லது:
+
+```cpp id="jlwm8"
+SomeClass obj;
+```
+
+இவை usually:
+
+```text id="jlwm9"
+stack memory
+```
+
+ல் உருவாகும்.
+
+---
+
+# Stack memory characteristics
+
+* automatic cleanup
+* fast
+* function முடிந்தால் அழியும்
+* fixed size
+* compile-time oriented
+
+---
+
+# Example
+
+```cpp id="jlwm10"
+void test()
+{
+    int x = 10;
+}
+```
+
+`test()` முடிந்தவுடன்:
+
+```text id="jlwm11"
+x destroyed automatically
+```
+
+---
+
+# ஆனால் vector-க்கு பெரிய பிரச்சனை
+
+Vector size runtime-ல் தெரியாது.
+
+உதாரணம்:
+
+```cpp id="jlwm12"
+std::vector<int> vec;
+
+vec.push_back(10);
+vec.push_back(20);
+vec.push_back(30);
+```
+
+🔥 elements எவ்வளவு வரும் என்று முன்பே தெரியாது.
+
+---
+
+# Stack-ல் impossible
+
+இதுபோல முடியாது:
+
+```cpp id="jlwm13"
+int data[???];
+```
+
+ஏனெனில் compile time-ல் size தெரியாது.
+
+---
+
+# அதனால் heap memory தேவை
+
+Heap என்பது:
+
+```text id="jlwm14"
+runtime dynamic memory area
+```
+
+---
+
+# `new` என்றால்?
+
+```cpp id="jlwm15"
+new
+```
+
+means:
+
+```text id="jlwm16"
+"heap-ல் memory allocate செய்"
+```
+
+---
+
+# Example
+
+```cpp id="jlwm17"
+int* ptr = new int;
+```
+
+---
+
+What happens?
+
+## Step 1
+
+Heap-ல் memory உருவாகும்.
+
+```text id="jlwm18"
+address 5000
+```
+
+---
+
+## Step 2
+
+அந்த address return ஆகும்.
+
+```cpp id="jlwm19"
+ptr = 5000
+```
+
+---
+
+# Array version
+
+```cpp id="jlwm20"
+new int[5]
+```
+
+means:
+
+```text id="jlwm21"
+heap-ல் 5 integers continuous memory allocate செய்
+```
+
+---
+
+Suppose:
+
+```text id="jlwm22"
+address 1000
+```
+
+returned.
+
+---
+
+Memory:
+
+```text id="jlwm23"
+1000 -> int
+1004 -> int
+1008 -> int
+1012 -> int
+1016 -> int
+```
+
+---
+
+# உங்கள் vector code-ல்
+
+```cpp id="jlwm24"
+data_ptr = new T[current_capacity];
+```
+
+Suppose:
+
+```cpp id="jlwm25"
+T = int
+current_capacity = 4
+```
+
+---
+
+Compiler sees:
+
+```cpp id="jlwm26"
+data_ptr = new int[4];
+```
+
+---
+
+Heap memory:
+
+```text id="jlwm27"
+2000 -> int
+2004 -> int
+2008 -> int
+2012 -> int
+```
+
+---
+
+# Why pointer needed?
+
+ஏனெனில்:
+
+```cpp id="jlwm28"
+new
+```
+
+returns:
+
+```text id="jlwm29"
+address
+```
+
+---
+
+அதனால்:
+
+```cpp id="jlwm30"
+int* data_ptr
+```
+
+தேவை.
+
+---
+
+# Why not normal object?
+
+நீங்கள் கேட்டது:
+
+```cpp id="jlwm31"
+SomeClass obj;
+```
+
+ஏன் இதுபோல் இல்லையென?
+
+---
+
+ஏனெனில்:
+
+```cpp id="jlwm32"
+SomeClass obj;
+```
+
+stack object.
+
+---
+
+ஆனால் vector needs:
+
+* dynamic resizing
+* runtime allocation
+* reallocations
+* unknown size
+
+இதெல்லாம் stack-ல் முடியாது.
+
+---
+
+# Important visualization
+
+## Stack object
+
+```cpp id="jlwm33"
+int arr[3];
+```
+
+Memory:
+
+```text id="jlwm34"
+STACK
+------
+10
+20
+30
+```
+
+fixed size.
+
+---
+
+# Heap object
+
+```cpp id="jlwm35"
+int* ptr = new int[3];
+```
+
+Memory:
+
+```text id="jlwm36"
+STACK
+------
+ptr = 5000
+
+HEAP
+------
+5000 -> 10
+5004 -> 20
+5008 -> 30
+```
+
+🔥
+
+---
+
+# Vector internal reality
+
+Vector object itself stack-ல் இருக்கலாம்:
+
+```cpp id="jlwm37"
+std::vector<int> vec;
+```
+
+---
+
+But actual elements:
+
+```text id="jlwm38"
+HEAP
+```
+
+ல் இருக்கும்.
+
+---
+
+# Real std::vector idea
+
+```cpp id="jlwm39"
+class vector
+{
+    int* start;
+    int* finish;
+    int* end_of_storage;
+};
+```
+
+---
+
+The vector object contains only pointers.
+
+Actual data:
+
+```text id="jlwm40"
+heap memory
+```
+
+ல்.
+
+---
+
+# Why heap is essential for vector?
+
+Because vector does:
+
+```cpp id="jlwm41"
+push_back()
+```
+
+Suppose capacity full:
+
+```text id="jlwm42"
+old heap full
+```
+
+Vector internally:
+
+1. bigger heap allocate
+2. copy old elements
+3. delete old heap
+4. point to new heap
+
+🔥
+
+இதைத்தான் dynamic array என்பார்கள்.
+
+---
+
+# Why delete[] needed?
+
+```cpp id="jlwm43"
+new[]
+```
+
+பயன்படுத்தினால்:
+
+```cpp id="jlwm44"
+delete[]
+```
+
+வேண்டும்.
+
+இல்லையெனில்:
+
+```text id="jlwm45"
+memory leak
+```
+
+---
+
+# Final essence
+
+```cpp id="jlwm46"
+SomeClass obj;
+```
+
+↓
+
+```text id="jlwm47"
+stack object
+fixed size
+automatic lifetime
+```
+
+---
+
+```cpp id="jlwm48"
+new T[current_capacity]
+```
+
+↓
+
+```text id="jlwm49"
+heap dynamic array
+runtime size
+manual memory management
+resizable
+```
+
+🔥 இதனால்தான் vector heap memory பயன்படுத்துகிறது.
