@@ -101,7 +101,7 @@ class MyIterator {
           std::cout
              << "\n[operator== CALLED]\n";
 
-          return ptr = other.ptr;   
+          return ptr == other.ptr;   
        }
 
        // -----------------------------------------
@@ -220,9 +220,14 @@ class MyVector {
             << "\n[MyVector CONSTRUCTOR]\n";
 
          std::cout
-            << "heap address          : "
+            << "heap address (old)        : "
             << data 
-            << '\n';   
+            << '\n';  
+            
+          std::cout
+             << "Object seperate Stack          : "
+             << this 
+             << '\n';  
       }
 
       // ---------------------------------------
@@ -307,6 +312,11 @@ class MyVector {
             delete[] data;
 
             data = new_block;
+
+            std::cout
+               << "After old Heap clean Data heap address       : "
+               << data 
+               << '\n';
          }
 
          data[current_size] = value;
