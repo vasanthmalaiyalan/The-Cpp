@@ -501,3 +501,228 @@ int main() {
         << diff
         << '\n';
 }
+
+/*
+./a.out
+
+[CONSTRUCTOR]
+heap allocated
+capacity : 2
+heap start address  : 0x60fef040d2b0
+
+=======================================
+push_back(10) CALLED
+
+[STORING ELEMENT]
+index    : 0
+target address   : 0x60fef040d2b0
+size after push      : 1
+
+=======================================
+push_back(20) CALLED
+
+[STORING ELEMENT]
+index    : 1
+target address   : 0x60fef040d2b4
+size after push      : 2
+
+=======================================
+push_back(30) CALLED
+
+[REALLOCATION REQUIRED]
+old heap address   : 0x60fef040d2b0
+new heap address    : 0x60fef040d6e0
+old capacity        : 2
+new capacity        : 4
+copying element 0
+from address   : 0x60fef040d2b0
+to address      : 0x60fef040d6e0
+copying element 1
+from address   : 0x60fef040d2b4
+to address      : 0x60fef040d6e4
+old heap delete : 0x60fef040d2b0
+
+[STORING ELEMENT]
+index    : 2
+target address   : 0x60fef040d6e8
+size after push      : 3
+
+=======================================
+push_back(40) CALLED
+
+[STORING ELEMENT]
+index    : 3
+target address   : 0x60fef040d6ec
+size after push      : 4
+
+=======================================
+push_back(50) CALLED
+
+[REALLOCATION REQUIRED]
+old heap address   : 0x60fef040d6e0
+new heap address    : 0x60fef040d700
+old capacity        : 4
+new capacity        : 8
+copying element 0
+from address   : 0x60fef040d6e0
+to address      : 0x60fef040d700
+copying element 1
+from address   : 0x60fef040d6e4
+to address      : 0x60fef040d704
+copying element 2
+from address   : 0x60fef040d6e8
+to address      : 0x60fef040d708
+copying element 3
+from address   : 0x60fef040d6ec
+to address      : 0x60fef040d70c
+old heap delete : 0x60fef040d6e0
+
+[STORING ELEMENT]
+index    : 4
+target address   : 0x60fef040d710
+size after push      : 5
+
+
+================================
+VECTOR INTERNAL MEMORY
+
+====================================
+vector object address  : 0x7ffd82533770
+data_ptr member addr   : 0x7ffd82533770
+heap start address      : 0x60fef040d700
+current size            : 5
+current capacity        : 8
+
+=========================================
+HEAP ELEMENTS
+==================================================
+
+index    :
+value      : 10
+address    : 0x60fef040d700
+
+index    :
+value      : 20
+address    : 0x60fef040d704
+
+index    :
+value      : 30
+address    : 0x60fef040d708
+
+index    :
+value      : 40
+address    : 0x60fef040d70c
+
+index    :
+value      : 50
+address    : 0x60fef040d710
+
+
+======================================
+numbers[2]
+=============================================
+
+======================================
+operator[] called
+requested index    : 2
+data_ptr value    : 0x60fef040d700
+
+[POINTER ARITHMETIC]
+formula:
+(data_ptr + index)
+
+actual:
+(0x60fef040d700 + 2)
+
+Calculated address    : 0x60fef040d708
+value in address   : 30
+
+FINAL VALUE     : 30
+
+
+======================================
+numbers[2] = 999
+=============================================
+
+======================================
+operator[] called
+requested index    : 2
+data_ptr value    : 0x60fef040d700
+
+[POINTER ARITHMETIC]
+formula:
+(data_ptr + index)
+
+actual:
+(0x60fef040d700 + 2)
+
+Calculated address    : 0x60fef040d708
+value in address   : 30
+
+
+================================
+VECTOR INTERNAL MEMORY
+
+====================================
+vector object address  : 0x7ffd82533770
+data_ptr member addr   : 0x7ffd82533770
+heap start address      : 0x60fef040d700
+current size            : 5
+current capacity        : 8
+
+=========================================
+HEAP ELEMENTS
+==================================================
+
+index    :
+value      : 10
+address    : 0x60fef040d700
+
+index    :
+value      : 20
+address    : 0x60fef040d704
+
+index    :
+value      : 999
+address    : 0x60fef040d708
+
+index    :
+value      : 40
+address    : 0x60fef040d70c
+
+index    :
+value      : 50
+address    : 0x60fef040d710
+
+
+======================================
+ITERATOR WALK
+=========================================
+
+iteration address     : 0x60fef040d700
+value                   : 10
+
+iteration address     : 0x60fef040d704
+value                   : 20
+
+iteration address     : 0x60fef040d708
+value                   : 999
+
+iteration address     : 0x60fef040d70c
+value                   : 40
+
+iteration address     : 0x60fef040d710
+value                   : 50
+
+
+=========================================
+POINTER DIFFERENCE
+=============================================
+start address       : 0x60fef040d700
+finish address       : 0x60fef040d714
+element difference   : 5
+
+[DESTRUCTOR]
+deleting heap memory
+heap address   : 0x60fef040d700
+*/
