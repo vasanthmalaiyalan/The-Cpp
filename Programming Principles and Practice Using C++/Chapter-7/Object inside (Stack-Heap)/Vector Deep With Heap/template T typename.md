@@ -1,0 +1,426 @@
+``template<typename T>`cpp இப்போதுதான் படித்து வருகிறேன் நான் படித்தவரையில் `template<typename T>`இதைப் பற்றி நான் இன்னும் படிக்க ஆரம்பிக்கவில்லை இதற்கு என்ன அர்த்தம் இது என்ன செய்கிறது?`
+
+இது C++-ன் மிக powerful feature-களில் ஒன்று. 🔥
+ஆனால் ஆரம்பத்தில் confusing ஆக இருக்கும்.
+
+---
+
+# முதலில் problem என்ன?
+
+இந்த class பாருங்கள்:
+
+```cpp id="c54p1v"
+class MyVector
+{
+    int data[10];
+};
+```
+
+இது `int` மட்டும் store செய்யும்.
+
+---
+
+ஆனால் நீங்கள் இதையும் செய்ய வேண்டும்:
+
+```cpp id="4p72ji"
+float
+double
+char
+std::string
+```
+
+---
+
+அப்படியானால் ஒவ்வொன்றுக்கும் தனி class எழுத வேண்டி வரும்:
+
+```cpp id="m6ww55"
+class IntVector {};
+class FloatVector {};
+class StringVector {};
+```
+
+😵 இது terrible.
+
+---
+
+# இதற்குத்தான் templates வந்தது
+
+C++ சொல்கிறது:
+
+```text id="k3nmh7"
+"Type-ஐ later decide பண்ணிக்கலாம்."
+```
+
+---
+
+# இதுதான் template
+
+```cpp id="a1w4pr"
+template<typename T>
+```
+
+இதன் அர்த்தம்:
+
+```text id="1btjlwm"
+"T என்பது ஒரு placeholder type"
+```
+
+---
+
+# Example
+
+```cpp id="dn44ye"
+template<typename T>
+class Box
+{
+public:
+
+    T value;
+};
+```
+
+---
+
+இங்கே:
+
+```cpp id="jlwm111"
+T
+```
+
+என்பது actual type இல்லை.
+
+Placeholder மட்டும்.
+
+---
+
+# Later நாம் actual type கொடுக்கிறோம்
+
+```cpp id="jlwm222"
+Box<int> a;
+```
+
+இப்போது compiler:
+
+```text id="jlwm333"
+T = int
+```
+
+ஆக replace செய்கிறது.
+
+---
+
+Compiler internally almost இதைப் போல உருவாக்கும்:
+
+```cpp id="jlwm444"
+class Box
+{
+public:
+
+    int value;
+};
+```
+
+---
+
+# Another example
+
+```cpp id="jlwm555"
+Box<double> b;
+```
+
+↓
+
+Compiler உருவாக்குவது:
+
+```cpp id="jlwm666"
+class Box
+{
+public:
+
+    double value;
+};
+```
+
+🔥
+
+---
+
+# அதனால் templates = type generator
+
+நீங்கள்:
+
+```cpp id="jlwm777"
+ஒரு generic blueprint
+```
+
+எழுதுகிறீர்கள்.
+
+Compiler:
+
+```text id="jlwm888"
+வேண்டிய type-க்கு actual class generate செய்கிறது
+```
+
+---
+
+# உங்கள் vector code-ல்
+
+```cpp id="jlwm999"
+template<typename T>
+class MyVector
+```
+
+இதன் அர்த்தம்:
+
+```text id="3fjlwm"
+"MyVector எந்த type-யும் store செய்யலாம்"
+```
+
+---
+
+# Example
+
+## int vector
+
+```cpp id="jlwmabc"
+MyVector<int> numbers;
+```
+
+↓
+
+Compiler internally:
+
+```cpp id="jlwmded"
+class MyVector
+{
+    int* data_ptr;
+};
+```
+
+---
+
+# string vector
+
+```cpp id="jlwmfgh"
+MyVector<std::string> names;
+```
+
+↓
+
+Compiler internally:
+
+```cpp id="jlwmijk"
+class MyVector
+{
+    std::string* data_ptr;
+};
+```
+
+---
+
+# அதனால் std::vector-லும் same
+
+நாம் எழுதுவது:
+
+```cpp id="jlwmlmn"
+std::vector<int>
+std::vector<double>
+std::vector<std::string>
+```
+
+🔥 எல்லாமே templates.
+
+---
+
+# typename என்றால்?
+
+```cpp id="jlwmopq"
+template<typename T>
+```
+
+இங்கே:
+
+```cpp id="jlwmrst"
+typename
+```
+
+means:
+
+```text id="jlwmuvw"
+"T என்பது type"
+```
+
+---
+
+இதையும் எழுதலாம்:
+
+```cpp id="jlwmxyz"
+template<class T>
+```
+
+இரண்டும் almost same.
+
+---
+
+# Example without template
+
+Without template:
+
+```cpp id="jlwm101"
+class Calculator
+{
+public:
+
+    int add(int a, int b)
+    {
+        return a + b;
+    }
+};
+```
+
+இது `int` மட்டும்.
+
+---
+
+# With template
+
+```cpp id="jlwm202"
+template<typename T>
+
+class Calculator
+{
+public:
+
+    T add(T a, T b)
+    {
+        return a + b;
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="jlwm303"
+Calculator<int>
+Calculator<double>
+```
+
+இரண்டுக்கும் வேலை செய்யும்.
+
+---
+
+# Very important
+
+Templates runtime feature இல்லை.
+
+🔥 இது compile-time feature.
+
+Compiler code generate செய்கிறது.
+
+---
+
+# Internal idea
+
+நீங்கள் எழுதுவது:
+
+```cpp id="jlwm404"
+MyVector<int>
+```
+
+Compiler almost:
+
+```cpp id="jlwm505"
+search and replace
+```
+
+போல செய்கிறது.
+
+---
+
+# Visualize
+
+```cpp id="jlwm606"
+template<typename T>
+
+class Test
+{
+    T x;
+};
+```
+
+---
+
+If:
+
+```cpp id="jlwm707"
+Test<int>
+```
+
+↓
+
+Compiler sees:
+
+```cpp id="jlwm808"
+class Test
+{
+    int x;
+};
+```
+
+---
+
+If:
+
+```cpp id="jlwm909"
+Test<double>
+```
+
+↓
+
+Compiler sees:
+
+```cpp id="jlwm010"
+class Test
+{
+    double x;
+};
+```
+
+---
+
+# Why templates are powerful?
+
+இதனால்தான் STL possible:
+
+* vector
+* map
+* set
+* queue
+* stack
+* sort
+
+இவை எந்த type-க்கும் வேலை செய்கின்றன.
+
+---
+
+# Final essence
+
+```cpp id="jlwm1111"
+template<typename T>
+```
+
+அதாவது:
+
+```text id="jlwm1212"
+"T என்பது later decide செய்யப்படும் type placeholder"
+```
+
+Compiler actual type கிடைத்த பிறகு:
+
+```text id="jlwm1313"
+real class/function generate செய்கிறது
+```
+
+🔥
