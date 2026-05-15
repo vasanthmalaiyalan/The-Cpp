@@ -383,3 +383,374 @@ real memory semantics
 ```
 
 என்ற பெரிய difference.
+-----------
+
+`copy பயன்படுத்தும்போது `But if return type:
+C++
+int operator[](size_t i)
+Then:
+C++
+numbers[2]
+↓
+Plain text
+copy of 30` return ஆகக்கூடிய 30 address , அப்புறம் இதுடைய actual heap &numbers[2] address  வேறு வேறாக தான் இருக்கும்?`
+
+ஆம்! 🔥
+அப்படித்தான். இரண்டு completely different memory locations இருக்கும்.
+
+இதுதான்:
+
+```text id="u4m8p1"
+reference return
+vs
+value copy return
+```
+
+இரண்டுக்கும் உள்ள மிக முக்கியமான வித்தியாசம்.
+
+---
+
+# CASE 1 — Reference return
+
+```cpp id="q1k7v4"
+int& operator[](size_t i)
+```
+
+---
+
+Suppose heap:
+
+```text id="r9m3x6"
+0x22b0 -> 10
+0x22b4 -> 20
+0x22b8 -> 30
+```
+
+---
+
+Now:
+
+```cpp id="t5k1m8"
+numbers[2]
+```
+
+↓
+
+```text id="v2m9x4"
+reference to actual heap int at 0x22b8
+```
+
+---
+
+Then:
+
+```cpp id="c7k3p1"
+&numbers[2]
+```
+
+↓
+
+```text id="n4m8v5"
+0x22b8
+```
+
+🔥 actual heap address.
+
+---
+
+# CASE 2 — Value copy return
+
+```cpp id="u1k7x9"
+int operator[](size_t i)
+```
+
+---
+
+Inside:
+
+```cpp id="q5m2v8"
+return *(data + i);
+```
+
+Suppose heap still:
+
+```text id="x8k1p4"
+0x22b8 -> 30
+```
+
+---
+
+But now function returns:
+
+```text id="r2m7v5"
+copy of value 30
+```
+
+🔥
+
+---
+
+# Where is this copy stored?
+
+Usually:
+
+* register
+* temporary memory
+* stack temporary
+
+compiler/runtime decide செய்யும்.
+
+---
+
+# Important
+
+இந்த copied `30`:
+
+```text id="t4k8x1"
+actual heap object இல்லை
+```
+
+---
+
+அதனால்:
+
+```text id="u7m3p9"
+copy address
+```
+
+மற்றும்:
+
+```text id="p1k9v6"
+heap address
+```
+
+வேறு.
+
+🔥
+
+---
+
+# Visualize
+
+## Actual heap
+
+```text id="n5m4x8"
+0x22b8 -> 30
+```
+
+---
+
+# Function returns copy
+
+Suppose temporary copy stored at:
+
+```text id="q3k7v1"
+0x5000 -> 30
+```
+
+---
+
+Then:
+
+| Thing               | Address  |
+| ------------------- | -------- |
+| real heap int       | `0x22b8` |
+| copied temporary 30 | `0x5000` |
+
+🔥 different addresses.
+
+---
+
+# Why dangerous?
+
+Suppose:
+
+```cpp id="r8m1v4"
+int operator[](size_t i)
+```
+
+---
+
+Then:
+
+```cpp id="u6k2x9"
+&numbers[2]
+```
+
+means:
+
+```text id="c4m9p5"
+address of temporary copy
+```
+
+❌
+
+Temporary may disappear immediately.
+
+---
+
+# That's why invalid/problematic
+
+Because temporary lifetime short.
+
+---
+
+# But reference version
+
+```cpp id="v1k7m3"
+int&
+```
+
+returns:
+
+```text id="f8m2x6"
+actual heap memory itself
+```
+
+No temporary copy.
+
+---
+
+# Visual chain
+
+# Reference version
+
+```cpp id="y5k1v9"
+numbers[2]
+```
+
+↓
+
+```text id="u3m8k4"
+actual heap int at 0x22b8
+```
+
+↓
+
+```cpp id="q7k2v5"
+&numbers[2]
+```
+
+↓
+
+```text id="r1m9x7"
+0x22b8
+```
+
+---
+
+# Value copy version
+
+```cpp id="t5k3m1"
+numbers[2]
+```
+
+↓
+
+```text id="n8m2v4"
+temporary copied 30
+```
+
+↓
+
+```cpp id="u4k7x6"
+&numbers[2]
+```
+
+↓
+
+```text id="p9m1v5"
+temporary object's address
+```
+
+NOT heap address.
+
+🔥
+
+---
+
+# Real analogy
+
+## Reference return
+
+```text id="q2k8m7"
+Original house key
+```
+
+Same house.
+
+---
+
+## Value copy return
+
+```text id="r6m3v1"
+Photocopy of house picture
+```
+
+Different physical object.
+
+🔥
+
+---
+
+# Deep truth
+
+C++ references avoid unnecessary copies.
+
+இதனால்:
+
+* faster
+* real memory modification possible
+* array-like behavior possible
+
+---
+
+# Final essence
+
+ஆம் — இந்த:
+
+```cpp id="t9k1x4"
+int operator[](size_t i)
+```
+
+version-ல்:
+
+```cpp id="u5m7v2"
+numbers[2]
+```
+
+ஒரு:
+
+```text id="n1k8x5"
+temporary copied value
+```
+
+மட்டும்.
+
+அதன் address:
+
+```text id="q4m2v9"
+actual heap address-இலிருந்து வேறு
+```
+
+🔥
+
+ஆனால்:
+
+```cpp id="r7k3m6"
+int&
+```
+
+version-ல்:
+
+```cpp id="t2m9x1"
+numbers[2]
+```
+
+↓
+
+```text id="u8k4v5"
+actual original heap memory itself
+```
+
+அதனால் same address கிடைக்கும்.
