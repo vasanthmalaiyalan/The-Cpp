@@ -266,7 +266,9 @@ class MyVector {
       bool operator==(const MyVector& other) {
 
           std::cout
-             << "\n[operator== CALLED]\n";
+             << "\n[operator== CALLED]"
+             << this 
+             << '\n';
 
           if (current_size != other.current_size) {
 
