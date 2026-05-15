@@ -35,13 +35,13 @@ class MyVector {
           current_capacity = 2;
 
           // RAW HEAP ALLOCATION
-          data_ptr = new T[current_capacity];
+          data_ptr = new T[current_capacity]; // malloc itselft raw address return
 
           std::cout
              << "\n[CONSTRUCTOR]\n";
 
           std::cout
-             << "heap allocated\n";
+             << "heap allocated\n"; 
              
           std::cout
              << "capacity : "
@@ -157,7 +157,9 @@ class MyVector {
             delete[] data_ptr;
 
             std::cout
-               << "old heap delete\n";
+               << "old heap delete : "
+               << data_ptr
+               << '\n';
 
             // point to new memory
             data_ptr = new_block;   
@@ -281,7 +283,7 @@ class MyVector {
 
           std::cout
              << "data_ptr member addr   : "
-             <<  &data_ptr
+             <<  &data_ptr 
              << '\n';
              
           std::cout
@@ -316,6 +318,7 @@ class MyVector {
              
               std::cout
                  << "\nindex    : "
+                 << i
                  << '\n';
 
               std::cout
