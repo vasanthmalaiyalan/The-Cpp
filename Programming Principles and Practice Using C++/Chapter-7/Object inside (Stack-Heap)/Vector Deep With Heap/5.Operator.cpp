@@ -465,7 +465,7 @@ int main() {
     std::cout
        << "ITERATOR WALK\n";
        
-    for (MyIterator<int> it = nembers.begin(); it != numbers.end(); it++) {
+    for (MyIterator<int> it = numbers.begin(); it != numbers.end(); ++it) {
 
         std::cout
            << "\nVALUE FROM ITERATOR  : "
@@ -486,7 +486,7 @@ int main() {
     std::cout
        << "==========================================\n";
        
-    MyItertor<int> it = numbers.begin();
+    MyIterator<int> it = numbers.begin();
     
     MyIterator<int> moved = it + 2;
 
@@ -508,7 +508,7 @@ int main() {
     std::cout
        << "=============================================\n";
        
-    SmartPtr<person> person(
+    SmartPtr<Person> person(
         new Person("Tony Stark")
     );
     
