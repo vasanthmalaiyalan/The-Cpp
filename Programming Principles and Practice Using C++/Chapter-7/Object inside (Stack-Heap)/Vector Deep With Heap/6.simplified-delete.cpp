@@ -9,6 +9,7 @@ class Person {
     public:
       Person() {
         std::cout
+           << this
            << "Person constructor\n";
       }
 
