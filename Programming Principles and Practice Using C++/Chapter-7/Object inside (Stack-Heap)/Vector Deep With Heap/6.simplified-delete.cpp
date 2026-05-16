@@ -111,3 +111,32 @@ int main() {
 
        fake_delete_array(people, 3);
 }  
+
+/*
+ ./a.out
+
+AllOCATED MEMORY
+heap address         : 0x5e4eb486f6c0
+
+[MANUAL CONSTRUCTION]
+Person constructor
+Person constructor
+Person constructor
+
+==========================================
+FAKE DELETE[] START
+==========================================
+
+[CALLING DESTRUCTOR]
+destorying object at     : 0x5e4eb486f6c0
+Person destructor
+destorying object at     : 0x5e4eb486f6c1
+Person destructor
+destorying object at     : 0x5e4eb486f6c2
+Person destructor
+
+[FREEING HEAP MEMORY]
+heap block address      : 0x5e4eb486f6c0
+
+MEMORY FREED
+*/
