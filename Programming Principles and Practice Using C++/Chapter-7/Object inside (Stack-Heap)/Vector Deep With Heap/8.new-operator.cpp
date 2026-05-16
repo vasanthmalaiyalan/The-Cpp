@@ -201,3 +201,53 @@ int main() {
        
      std::free(raw);  
 }
+
+/*
+ ./a.out
+================================================
+STEP 1 : RAW MEMORY
+====================================================
+
+raw memory address         : 0x64de286206c0
+
+NO OBJECT YET
+
+========================================
+CUSTOM PLACEMENT NEW
+============================================
+
+[STEP 1]
+raw memoery address     :
+casted to Person*      : 0x64de286206c0
+
+[STEP 2]
+calling constructor manually
+
+[Person CONSTRUCTOR]
+this pointer      : 0x64de286206c0
+name member address   : 0x64de286206c0
+name value         : Tony Stark
+
+
+=========================================
+VERIFY OBJECT
+==================================================
+
+person pointer       : 0x64de286206c0
+person->name           : Tony Stark
+address of name member  : 0x64de286206c0
+
+
+=====================================
+MANUAL DESTRUCTOR
+==============================================
+
+[PERSON DESTRUCTOR]
+destroying object at      : 0x64de286206c0
+
+
+======================================
+FREE RAW MEMEORY
+==============================================
+
+*/
