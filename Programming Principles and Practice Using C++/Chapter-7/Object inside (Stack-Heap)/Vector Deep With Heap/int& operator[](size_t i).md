@@ -1,3 +1,5 @@
+`call ஆகக்கூடியதை இப்படி `int& operator[](size_t i)` direct ref ஆக வாங்குகிறது அல்லவா எதை அப்படி வாங்கும் `numbers.operator[](2)`அதாவது இரண்டுடைய address -சை வாங்குமா?`
+
 இல்லை — அது function-ன் address-ஐ வாங்கவில்லை. 🔥
 இதுதான் முக்கியமான confusion point.
 
