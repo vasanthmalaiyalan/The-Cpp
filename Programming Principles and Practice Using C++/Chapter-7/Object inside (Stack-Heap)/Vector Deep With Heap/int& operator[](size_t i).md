@@ -761,3 +761,271 @@ real memory semantics
 ```
 
 என்ற பெரிய difference.
+
+-------------
+
+``int&
+original memory reference
+int
+copied value`இதத்தான் நான் கேட்க வர நம்ம கால் பண்றது `numbers[2] `இப்படி இருக்கும்போது return ஆகக் கூடியது தான் original memory reference right?`
+
+ஆம்! 🔥
+அப்படித்தான். நீங்கள் இப்போது exact core point-ஐப் பிடித்துவிட்டீர்கள்.
+
+---
+
+# இந்த expression:
+
+```cpp id="m7k2x5"
+numbers[2]
+```
+
+என்ன return ஆகும் என்பது:
+
+```cpp id="u4m8p1"
+operator[] return type
+```
+
+மேல் depend ஆகிறது.
+
+---
+
+# If operator[] is:
+
+```cpp id="q1k7v4"
+int& operator[](size_t i)
+```
+
+Then:
+
+```cpp id="r9m3x6"
+numbers[2]
+```
+
+↓
+
+```text id="t5k1m8"
+original heap int object reference
+```
+
+🔥
+
+அதாவது:
+
+```text id="v2m9x4"
+actual memory itself
+```
+
+---
+
+# Suppose heap
+
+```text id="c7k3p1"
+0x22b0 -> 10
+0x22b4 -> 20
+0x22b8 -> 30
+```
+
+---
+
+Then:
+
+```cpp id="n4m8v5"
+numbers[2]
+```
+
+↓
+
+```text id="u1k7x9"
+reference to int at 0x22b8
+```
+
+---
+
+# அதனால்தான் இது valid
+
+```cpp id="q5m2v8"
+numbers[2] = 999;
+```
+
+ஏனெனில்:
+
+```text id="x8k1p4"
+numbers[2]
+```
+
+actual heap memory object.
+
+---
+
+# And this also valid
+
+```cpp id="r2m7v5"
+&numbers[2]
+```
+
+↓
+
+```text id="t4k8x1"
+0x22b8
+```
+
+---
+
+# But if return type:
+
+```cpp id="u7m3p9"
+int operator[](size_t i)
+```
+
+Then:
+
+```cpp id="p1k9v6"
+numbers[2]
+```
+
+↓
+
+```text id="n5m4x8"
+copy of 30
+```
+
+🔥
+
+---
+
+# Not original memory
+
+இதில்:
+
+```text id="q3k7v1"
+temporary copied value
+```
+
+மட்டும் கிடைக்கும்.
+
+---
+
+# So this fails
+
+```cpp id="r8m1v4"
+numbers[2] = 999;
+```
+
+ஏனெனில்:
+
+```text id="u6k2x9"
+copy-ஐ modify செய்கிறீர்கள்
+```
+
+---
+
+# Deep truth
+
+இந்த:
+
+```cpp id="c4m9p5"
+numbers[2]
+```
+
+itself:
+
+```text id="v1k7m3"
+ஒரு memory location expression
+```
+
+ஆக இருக்க வேண்டுமெனில்:
+
+```cpp id="f8m2x6"
+operator[]
+```
+
+must return:
+
+```cpp id="y5k1v9"
+int&
+```
+
+🔥
+
+---
+
+# Real array same behavior
+
+```cpp id="u3m8k4"
+int arr[3];
+```
+
+---
+
+```cpp id="q7k2v5"
+arr[2]
+```
+
+↓
+
+```text id="r1m9x7"
+actual memory object
+```
+
+---
+
+அதனால்தான்:
+
+```cpp id="t5k3m1"
+arr[2] = 999;
+```
+
+works.
+
+---
+
+# std::vector imitates this
+
+அதனால் vector:
+
+```cpp id="n8m2v4"
+T& operator[](size_t i)
+```
+
+return செய்கிறது.
+
+🔥
+
+---
+
+# Final essence
+
+ஆம் — இந்த:
+
+```cpp id="u4k7x6"
+numbers[2]
+```
+
+expression:
+
+```text id="p9m1v5"
+original heap memory reference
+```
+
+ஆக இருக்க வேண்டுமெனில்:
+
+```cpp id="q2k8m7"
+operator[]
+```
+
+must return:
+
+```cpp id="r6m3v1"
+int&
+```
+
+அதனால்:
+
+```cpp id="t9k1x4"
+numbers[2]
+```
+
+ஒரு copied value அல்ல.
+
+🔥 அது actual heap memory object alias/reference.
