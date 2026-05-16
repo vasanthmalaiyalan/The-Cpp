@@ -1054,3 +1054,357 @@ operator[]
 ```
 
 என்று define செய்ய வேண்டும்.
+
+--------------
+
+`operator என்பது c++சில் தனி பங்க்ஷன் அப்படித்தானே `operator[]`இந்த பெயரை மாற்றி போட்டால் எதுவும் வேலை செய்யாது தான்?`
+
+ஆம்! 🔥
+நீங்கள் சரியாகப் புரிந்துகொண்டீர்கள்.
+
+```cpp id="x7m2p5"
+operator[]
+```
+
+என்பது C++-ல் special reserved function name.
+
+---
+
+# இது normal function இல்லை
+
+உதாரணம்:
+
+```cpp id="k4v8m1"
+void hello()
+{
+}
+```
+
+இது normal function.
+
+நீங்கள்:
+
+```cpp id="u1m7x4"
+hello();
+```
+
+என்று direct-ஆ call செய்ய வேண்டும்.
+
+---
+
+# ஆனால்:
+
+```cpp id="r6k3p9"
+operator[]
+```
+
+ஒரு special operator overload function.
+
+Compiler இதற்கு special meaning கொடுக்கிறது.
+
+---
+
+# Compiler special rule
+
+நீங்கள் எழுதுவது:
+
+```cpp id="y2m8v5"
+numbers[2]
+```
+
+Compiler internally:
+
+```cpp id="q9x1k6"
+numbers.operator[](2)
+```
+
+ஆக rewrite செய்கிறது.
+
+🔥
+
+---
+
+# Important
+
+இந்த பெயர் exact-ஆ இருக்க வேண்டும்:
+
+```cpp id="m4v7p2"
+operator[]
+```
+
+---
+
+# பெயரை மாற்றினால்?
+
+உதாரணம்:
+
+```cpp id="t8k2m5"
+int& my_operator(size_t i)
+{
+    return data[i];
+}
+```
+
+---
+
+இப்போது:
+
+```cpp id="v1m9x4"
+numbers[2]
+```
+
+❌ வேலை செய்யாது.
+
+Compile error.
+
+---
+
+ஏனெனில் compiler தேடுவது:
+
+```cpp id="n5k8p3"
+operator[]
+```
+
+மட்டும்.
+
+---
+
+# But direct call works
+
+இந்த function:
+
+```cpp id="u4x1m7"
+my_operator()
+```
+
+normal function.
+
+அதனால்:
+
+```cpp id="q7m2v8"
+numbers.my_operator(2);
+```
+
+வேலை செய்யும்.
+
+---
+
+# Why exact name required?
+
+ஏனெனில்:
+
+```cpp id="r3k9p1"
+operator+
+operator[]
+operator==
+operator()
+```
+
+இவை language grammar-ல் predefined special names.
+
+---
+
+Compiler hardcoded rules:
+
+| Syntax   | Compiler looks for |
+| -------- | ------------------ |
+| `a + b`  | `operator+`        |
+| `a[2]`   | `operator[]`       |
+| `a()`    | `operator()`       |
+| `a == b` | `operator==`       |
+
+🔥
+
+---
+
+# Example
+
+```cpp id="x6m4v2"
+class Test
+{
+public:
+
+    int operator[](int i)
+    {
+        return i * 100;
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="f8k1p7"
+Test t;
+
+t[5];
+```
+
+↓
+
+compiler:
+
+```cpp id="m2x7v5"
+t.operator[](5)
+```
+
+↓
+
+returns:
+
+```text id="u1m5v9"
+500
+```
+
+---
+
+# Rename it
+
+```cpp id="c7x3k1"
+class Test
+{
+public:
+
+    int hello(int i)
+    {
+        return i * 100;
+    }
+};
+```
+
+---
+
+Now:
+
+```cpp id="m4p8v2"
+t[5];
+```
+
+❌ error.
+
+---
+
+Only:
+
+```cpp id="q9k1m6"
+t.hello(5);
+```
+
+works.
+
+---
+
+# Deep truth
+
+`operator[]` என்பது:
+
+```text id="v5m2x7"
+special syntax hook
+```
+
+---
+
+Compiler சொல்வது:
+
+```text id="u8k4p1"
+"[] பயன்படுத்தப்பட்டால்
+operator[] function தேடு"
+```
+
+🔥
+
+---
+
+# Important
+
+இது actual keyword இல்லை.
+
+```cpp id="r2m9v5"
+operator
+```
+
+ஒரு keyword.
+
+ஆனால்:
+
+```cpp id="x1k7m4"
+operator[]
+```
+
+ஒரு special function signature.
+
+---
+
+# Similar examples
+
+## Plus
+
+```cpp id="q6m2v9"
+a + b
+```
+
+↓
+
+```cpp id="u3k8p5"
+a.operator+(b)
+```
+
+---
+
+## Compare
+
+```cpp id="f9m1x6"
+a == b
+```
+
+↓
+
+```cpp id="w4k7v2"
+a.operator==(b)
+```
+
+---
+
+## Function call
+
+```cpp id="t2m8x5"
+obj()
+```
+
+↓
+
+```cpp id="k5v1m7"
+obj.operator()()
+```
+
+🔥
+
+---
+
+# Final essence
+
+ஆம் — `operator[]` என்பது C++-ல் special operator overload function name.
+
+Compiler specifically:
+
+```cpp id="y8m3p1"
+[]
+```
+
+syntax-ஐ:
+
+```cpp id="n4k7v5"
+operator[]
+```
+
+உடன் connect செய்திருக்கிறது.
+
+அதனால்:
+
+```cpp id="u1m9x2"
+பெயரை மாற்றினால்
+[] syntax வேலை செய்யாது
+```
+
+🔥
