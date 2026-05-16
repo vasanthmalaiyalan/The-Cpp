@@ -25,7 +25,7 @@ class Person {
 template<typename T>
 void fake_delete_array(
     T* ptr,
-    size_t cout 
+    size_t count 
 ) {
     std::cout
        << "\n==========================================\n";
@@ -52,7 +52,7 @@ void fake_delete_array(
            << '\n';
 
        // manual destructor call
-       ptr[i]~T();    
+       ptr[i].~T();    
     }
 
     // ---------------------------------------
