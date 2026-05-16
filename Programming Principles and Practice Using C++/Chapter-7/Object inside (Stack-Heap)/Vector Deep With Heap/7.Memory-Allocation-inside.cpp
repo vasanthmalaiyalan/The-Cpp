@@ -81,7 +81,7 @@ int main() {
     // ============================================
     
     std::cout
-       << \"\n\n=======================================\n";
+       << "\n\n=======================================\n";
 
     std::cout
        << "STEP 2 : PLACEMENT NEW\n";
@@ -107,7 +107,7 @@ int main() {
     // ============================================
     
     std::cout
-       << '\n\n====================================\n';
+       << "\n\n====================================\n";
     std::cout
        << "STEP 3 : USING OBJECT\n";
     std::cout
@@ -135,7 +135,7 @@ int main() {
      std::cout
         << "========================================\n";
         
-     person_ptr->Person();
+     person_ptr->~Person();
      
      std::cout
        << "\nOBJECT DESTROYED\n";
@@ -164,3 +164,50 @@ int main() {
        << "\nRAW MEMORY GREED\n";
 
 }
+
+/*
+./a.out
+=======================================
+STEP 1 : RAW MEMORY ONLY
+=========================================
+
+raw memory address       : 0x63699e0c56c0
+
+NO OBJECT EXISTS YET
+
+
+=======================================
+STEP 2 : PLACEMENT NEW
+==============================================
+
+[CONSTRUCTOR CALLED]
+object address : 0x63699e0c56c0
+name initialized : Tony Stark
+
+person_ptr      : 0x63699e0c56c0
+person name       : Tony Stark
+
+
+====================================
+STEP 3 : USING OBJECT
+=========================================
+
+modified name      : IronMan
+
+
+===================================
+STEP 4 : MANUAL DESTRUCTOR
+========================================
+
+[Destructor Called]
+destroying object at : 0x63699e0c56c0
+
+OBJECT DESTROYED
+
+
+=====================================
+STEP 5 : FREE RAW MEMORY
+=========================================
+
+RAW MEMORY GREED
+*/
