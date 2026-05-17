@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <new>
 #include <string>
+#include <cstddef>
 
 
 // ==============================================
@@ -58,13 +59,12 @@ class Person {
 
         std::cout << "this pointer  : " << this << '\n';
     }
-};
 
-// =============================================
-// CUSTOM PLACEMENT NEW
-// =============================================
+    // =============================================
+    // CUSTOM PLACEMENT NEW
+    // =============================================
 
-void* operator new(std::size_t size, void* raw_memory) {
+ void* operator new(std::size_t size, void* raw_memory) {
 
     std::cout << "\n===============================\n";
     std::cout << "PLACEMENT OPERATOR NEW CALLED\n";
@@ -74,13 +74,13 @@ void* operator new(std::size_t size, void* raw_memory) {
     // SIZE
     // =========================================
 
-    std::cout << "\nsize requested         : " << size << '\n';
+    std::cout << "\nsize requested (comapiler Automatic added)        : " << size << '\n';
 
     // -------------------------------------------
     // RAW MEMEORY
     // ------------------------------------------
 
-    std::cout << "raw memory received     : " << raw_memory << '\n';
+    std::cout << "raw memory received (we have added)                             : " << raw_memory << '\n';
     
     // ---------------------------------------
     // IMPORTANT
@@ -89,7 +89,10 @@ void* operator new(std::size_t size, void* raw_memory) {
     std::cout << "\nRETURNING SAME ADDRESS\n";
 
     return raw_memory;
-}
+}    
+    
+};
+
 
 // =============================================
 // MAIN
@@ -99,7 +102,7 @@ int main() {
 
     std::cout << "============================================\n";
     std::cout << "STEP 1 : RAW MEMORY ONLY\n";
-    std::cout << "=============================================\n";
+    std::cout << "=============================================\n\n";
 
     std::cout << "FIRST CHECK SIZE OF PERSON IN CLASS\n";
     std::cout << "WHY BECUASE MALLOC ALLOCATED MEMORY CLASS OF PERSON SIZE BASED RIGHT\n";
@@ -110,7 +113,7 @@ int main() {
     // RAW MEMORY
     // -------------------------------------------
 
-    void* raw = std::malloc(sizeof(size(Person)));
+    void* raw = std::malloc(sizeof(Person));
 
     std::cout << "\nraw memory address    : " << raw << '\n';
 
@@ -127,6 +130,7 @@ int main() {
     // -----------------------------------------
     // THIS IS THE ENTIRE MAGIC
     // -----------------------------------------
+    std::cout << "THIS ONE CALLED  Person* person = new(raw) Person();" << '\n';
 
     Person* person = new(raw) Person();
 
@@ -157,6 +161,13 @@ int main() {
 
     std::cout << "\nbase object address   : " << (void*)base << '\n';
 
+    // Let the compailer tell you the exact byte offsets
+    std::size_t age_offset = offsetof(Person, age);
+    std::size_t name_offset = offsetof(Person, name);
+
+    std::cout << "Actual age offset = " << age_offset << '\n'; // will print 0
+    std::cout << "Actual name offset = " << name_offset << '\n'; // will print 8
+    
     // ------------------------------------------
     // MANUAL OFFET CALCULATION 
     // -------------------------------------------
@@ -166,10 +177,10 @@ int main() {
     std::cout << "name offset = sizeof(int)\n";
 
     // age address
-    int* age_ptr = (int*)(base + 0);
+    int* age_ptr = (int*)(base + age_offset);
 
     // name address
-    std::string* name_ptr = (std::string*)(base + sizeof(int));
+    std::string* name_ptr = (std::string*)(base + name_offset);
 
     std::cout << "\nMANUAL MEMBER ADDRESS CALCUALTION\n";
     std::cout << "\nage_ptr      : " << age_ptr << '\n';
