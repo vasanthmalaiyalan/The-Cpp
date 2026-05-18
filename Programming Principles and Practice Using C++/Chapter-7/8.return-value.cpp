@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 // ========================================
 // Function returning int
@@ -53,9 +54,7 @@ int main() {
     std::cout << "Sum : " << sum << '\n';
 
     double avg = average(10, 20);
-
     std::cout << "Average : " << avg << '\n';
-
     int abs_value = absolute_value(-99);
 
     std::cout << "Absolute value : " << abs_value << '\n';
