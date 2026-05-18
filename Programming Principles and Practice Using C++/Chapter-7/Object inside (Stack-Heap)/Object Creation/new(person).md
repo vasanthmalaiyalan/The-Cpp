@@ -1331,3 +1331,335 @@ Compiler internally:
 🔥🔥🔥
 
 இதுதான் actual internal flow.
+-----------
+
+``Person* p =
+    new Person();`சரியான இந்த `p` itself தனி அட்ரஸ் எப்படி இதற்கு கிடைத்த?`
+
+    ஆம் 🔥
+இப்போ நீங்கள் pointer variable itself எப்படி உருவாகிறது என்று கேட்கிறீர்கள். இது மிக முக்கியமான புரிதல்.
+
+---
+
+# இந்த code
+
+```cpp id="aa1"
+Person* p =
+    new Person();
+```
+
+இதில் இரண்டு separate memory இருக்கிறது.
+
+🔥🔥🔥
+
+---
+
+# MEMORY 1 — POINTER VARIABLE `p`
+
+```text id="aa2"
+p itself
+```
+
+இதற்கு:
+
+```text id="aa3"
+தனி memory இருக்கும்
+```
+
+Usually:
+
+```text id="aa4"
+stack memory
+```
+
+இல்.
+
+---
+
+# MEMORY 2 — OBJECT MEMORY
+
+```text id="aa5"
+new Person()
+```
+
+இதற்கு:
+
+```text id="aa6"
+heap memory
+```
+
+allocate ஆகும்.
+
+---
+
+# Visualize
+
+Suppose:
+
+```text id="aa7"
+STACK:
+
+0x7000 -> p variable
+
+HEAP:
+
+0x5000 -> Person object
+```
+
+🔥
+
+---
+
+# THEN
+
+Inside `p`
+
+stored value:
+
+```text id="aa8"
+0x5000
+```
+
+🔥🔥🔥
+
+---
+
+# Therefore
+
+| Expression | Meaning                                       |
+| ---------- | --------------------------------------------- |
+| `p`        | value inside pointer = `0x5000`               |
+| `&p`       | address of pointer variable itself = `0x7000` |
+
+🔥
+
+---
+
+# Compiler internally
+
+```cpp id="aa9"
+Person* p;
+```
+
+means:
+
+```text id="aa10"
+reserve sizeof(Person*) bytes
+for pointer variable
+```
+
+Usually:
+
+```text id="aa11"
+8 bytes on 64-bit system
+```
+
+🔥
+
+---
+
+# Then
+
+```cpp id="aa12"
+p = new Person();
+```
+
+means:
+
+```text id="aa13"
+store returned heap address
+inside pointer variable
+```
+
+🔥
+
+---
+
+# Visualization
+
+Suppose:
+
+```text id="aa14"
+new Person() returned:
+0x5000
+```
+
+---
+
+Then memory becomes:
+
+```text id="aa15"
+STACK
+--------------------------------
+0x7000 -> 0x5000   (p variable)
+
+HEAP
+--------------------------------
+0x5000 -> age
+0x5004 -> salary
+```
+
+🔥🔥🔥
+
+---
+
+# Therefore
+
+```cpp id="aa16"
+p
+```
+
+↓
+
+```text id="aa17"
+0x5000
+```
+
+---
+
+# But
+
+```cpp id="aa18"
+&p
+```
+
+↓
+
+```text id="aa19"
+0x7000
+```
+
+🔥
+
+---
+
+# MOST IMPORTANT
+
+பலர் நினைப்பது:
+
+```text id="aa20"
+pointer = just address
+```
+
+⚠️ incomplete.
+
+---
+
+# Correct truth
+
+Pointer variable:
+
+```text id="aa21"
+normal variable
+```
+
+🔥
+
+It stores:
+
+```text id="aa22"
+an address value
+```
+
+---
+
+# Similar to:
+
+```cpp id="aa23"
+int x = 10;
+```
+
+Suppose:
+
+```text id="aa24"
+x stored at 0x3000
+```
+
+---
+
+Then:
+
+```cpp id="aa25"
+x
+```
+
+↓
+
+```text id="aa26"
+10
+```
+
+---
+
+Similarly:
+
+```cpp id="aa27"
+Person* p
+```
+
+Suppose:
+
+```text id="aa28"
+p stored at 0x7000
+```
+
+---
+
+Then:
+
+```cpp id="aa29"
+p
+```
+
+↓
+
+```text id="aa30"
+0x5000
+```
+
+🔥🔥🔥
+
+---
+
+# Final essence
+
+ஆம் — இந்த:
+
+```cpp id="aa31"
+Person* p =
+    new Person();
+```
+
+இல்:
+
+## `p`
+
+ஒரு actual variable.
+
+அதற்கு:
+
+```text id="aa32"
+தனி memory address இருக்கு
+```
+
+Usually stack-ல்.
+
+---
+
+## `new Person()`
+
+ஒரு separate heap object உருவாக்குகிறது.
+
+---
+
+## Then
+
+heap object address:
+
+```text id="aa33"
+0x5000
+```
+
+pointer variable `p` உள்ளே value-ஆக store ஆகிறது.
+
+🔥🔥🔥
