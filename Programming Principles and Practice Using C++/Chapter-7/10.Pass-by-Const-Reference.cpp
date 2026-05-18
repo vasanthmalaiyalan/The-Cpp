@@ -87,3 +87,20 @@ int main() {
 
     std::cout << "\nContains words? " << found << '\n';
 }
+
+/*
+./a.out
+Original vector:
+10 20 30
+
+Inside print_by_value():
+999 20 30
+
+After print_by_value():
+10 20 30
+
+Inside print_by_by_const_reference():
+10 20 30
+
+Contains words? 1
+*/
