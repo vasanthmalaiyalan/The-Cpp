@@ -93,7 +93,7 @@ int main() {
     
     int b = 20;
 
-    std::cout << '\nBefore swap"\n';
+    std::cout << "\nBefore swap\n";
     std::cout << "a = " << a << " b = " << b << '\n';
 
     swap_values(a, b);
