@@ -193,3 +193,160 @@ fake_delete_array(c, 3);  // T = Person
 ## One Line Answer:
 
 > Compiler, `people`-ன் **declared type** `Person*` -ஐ பார்த்து, `T*` pattern-உடன் match பண்ணி, **`T = Person`** என்று compile time-லேயே decide பண்ணும். Runtime-ல் எதுவும் நடக்காது — இது pure compile-time deduction.
+
+----------------
+
+## நல்ல catch! என்னை நான் correct பண்ணிக்கிறேன்:
+
+---
+
+## உண்மை என்னவென்றால்:
+
+```cpp
+class Person {
+public:
+    Person() { ... }
+    ~Person() { ... }
+    // data members இல்லை — empty class
+};
+```
+
+```cpp
+sizeof(Person)   = 1 byte   // ✅ empty class object size
+sizeof(Person*)  = 8 bytes  // ✅ pointer size (64-bit system)
+```
+
+---
+
+## இந்த இரண்டும் **வேறு வேறு questions:**
+
+```
+sizeof(Person)   → "Object எவ்வளவு பெரியது?"     = 1 byte
+sizeof(Person*)  → "Pointer எவ்வளவு பெரியது?"    = 8 bytes
+```
+
+```
+Person object:          Person* pointer:
+┌─────┐                ┌──────────────────┐
+│ 1B  │                │ address (8 bytes) │
+└─────┘                └──────────────────┘
+                               ↓ points to
+                        ┌─────┐
+                        │ 1B  │ ← Person object
+                        └─────┘
+```
+
+---
+
+## Pointer Arithmetic-ல் என்ன ஆகும்?
+
+```cpp
+Person* p = (Person*)malloc(sizeof(Person) * 3);
+
+p + 0  // 0x1000
+p + 1  // 0x1001  ← +1 byte (sizeof Person = 1!)
+p + 2  // 0x1002  ← +1 byte
+```
+
+Empty class-ல் sizeof = 1 என்பதால் **+1 byte மட்டுமே jump ஆகும்.**
+
+---
+
+## Summary
+
+| Question | Answer |
+|---|---|
+| `sizeof(Person)` empty class | **1 byte** |
+| `sizeof(Person*)` pointer | **8 bytes** always |
+| Pointer arithmetic jump | **sizeof(Person) = 1 byte** unit |
+
+நான் முன்பு pointer size பற்றி பேசும்போது clearly distinguish பண்ணவில்லை — அதற்கு மன்னிப்பு கேட்கிறேன்! ✅
+
+---------------
+
+Excellent question! That guy is **100% correct**. Let me clarify:
+
+---
+
+## 🎯 Core Concept: T is determined by **pointer type**, not by what's inside memory
+
+```cpp
+Person* people = (Person*)std::malloc(sizeof(Person) * 3);
+fake_delete_array(people, 3);
+```
+
+Compiler பார்ப்பது:
+
+```
+people → type is Person*
+T* matches Person*
+∴ T = Person
+```
+
+**Memory-ல் என்ன இருக்கிறது என்று compiler பார்க்கவே மாட்டாது.**
+
+---
+
+## 📦 "Box" Analogy — புரிந்துகொள்ள
+
+```
+Memory box-ல் உள்ளது:    [int bytes][int bytes][int bytes]
+                          ↑
+                    actual content
+
+Pointer label சொல்வது:   "இது Person* box"
+                          ↑
+                    T = Person  ← compiler இதை மட்டும் பார்க்கும்
+```
+
+Template-க்கு box-ன் **label** மட்டுமே தெரியும் — content தெரியாது.
+
+---
+
+## 🔢 Pointer Arithmetic difference — இதுதான் Key
+
+```cpp
+// T = int ஆனால்
+&ptr[0] → 0x1000
+&ptr[1] → 0x1004  (+4 bytes, sizeof(int))
+&ptr[2] → 0x1008
+
+// T = Person ஆனால்
+&ptr[0] → 0x1000
+&ptr[1] → 0x1008  (+8 bytes, sizeof(Person))
+&ptr[2] → 0x1010
+```
+
+```cpp
+// Proof code:
+class Person {
+public:
+    int age;      // 4 bytes
+    int id;       // 4 bytes
+    // Total = 8 bytes
+};
+
+int main() {
+    Person* people = (Person*)std::malloc(sizeof(Person) * 3);
+
+    // T = Person → jumps by 8 bytes
+    fake_delete_array(people, 3);
+
+    // T = int → jumps by 4 bytes (WRONG usage!)
+    // fake_delete_array((int*)people, 3); // different behavior!
+}
+```
+
+---
+
+## ✅ Summary — உங்கள் original doubt vs reality
+
+| நீங்கள் நினைத்தது | உண்மை |
+|---|---|
+| T = int (memory-ல் int இருக்கு) | ❌ Wrong |
+| T = Person (pointer type Person*) | ✅ Correct |
+| Compiler memory content பார்க்கும் | ❌ Wrong |
+| Compiler pointer label மட்டும் பார்க்கும் | ✅ Correct |
+
+**One line rule:**
+> **T = pointer-ன் declared type** — memory-ல் என்ன store ஆனது என்பது T-ஐ decide பண்ணாது.
