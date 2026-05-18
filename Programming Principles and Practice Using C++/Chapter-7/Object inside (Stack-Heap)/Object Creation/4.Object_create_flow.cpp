@@ -161,7 +161,7 @@ void show_internal_layout(Person* person) {
 // DESTORY OBJECT
 // =============================================
 
-void destory_person(Person* person) {
+void destroy_person(Person* person) {
     
     std::cout << "\n\n================================\n";
     std::cout << "STEP 5 : DESTORY OBJECT\n";
