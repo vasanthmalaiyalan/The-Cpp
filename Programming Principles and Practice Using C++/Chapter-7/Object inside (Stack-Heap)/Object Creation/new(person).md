@@ -849,3 +849,169 @@ actual internal flow:
 | result         | raw bytes become Person object         |
 
 🔥🔥🔥
+-----------
+
+`என்னுடைய கேள்வி ரொம்ப சிம்பிள் `new(person_ptr) Person();`ரிட்டன் ஆகக்கூடிய raw address எப்படி this -க்கும் first member ஆன `&age` உடைய அட்ரஸ் ஆக மாறுகிறது???????? இந்த கேள்விக்கு மட்டும் பதில் சொல்`
+
+ஆம். இதுதான் exact answer. 🔥
+
+Suppose:
+
+```cpp id="q1"
+class Person
+{
+public:
+
+    int age;
+};
+```
+
+Compiler already knows:
+
+```text id="q2"
+age offset = 0
+```
+
+🔥
+
+---
+
+Now:
+
+```cpp id="q3"
+void* raw = malloc(sizeof(Person));
+```
+
+Suppose:
+
+```text id="q4"
+raw = 0x5000
+```
+
+---
+
+Then:
+
+```cpp id="q5"
+new(raw) Person();
+```
+
+compiler internally almost:
+
+```cpp id="q6"
+Person constructor with:
+this = 0x5000
+```
+
+🔥🔥🔥
+
+---
+
+NOW IMPORTANT:
+
+Inside constructor:
+
+```cpp id="q7"
+this == 0x5000
+```
+
+---
+
+Compiler already knows:
+
+```text id="q8"
+age member offset = 0
+```
+
+---
+
+Therefore:
+
+```cpp id="q9"
+&age
+```
+
+internally almost:
+
+```cpp id="q10"
+(this + 0)
+```
+
+↓
+
+```text id="q11"
+0x5000
+```
+
+🔥🔥🔥
+
+---
+
+# THIS IS THE ANSWER
+
+`&age` magically create ஆகவில்லை.
+
+Compiler simply calculates:
+
+```text id="q12"
+member address
+=
+this pointer
++
+member offset
+```
+
+🔥
+
+---
+
+So:
+
+| Thing        | Value        |
+| ------------ | ------------ |
+| `this`       | `0x5000`     |
+| `age offset` | `0`          |
+| `&age`       | `0x5000 + 0` |
+
+🔥
+
+---
+
+If:
+
+```cpp id="q13"
+class Person
+{
+    int age;
+    int salary;
+};
+```
+
+then:
+
+| Member | Offset |
+| ------ | ------ |
+| age    | 0      |
+| salary | 4      |
+
+---
+
+Therefore:
+
+```text id="q14"
+&age
+=
+this + 0
+=
+0x5000
+
+&salary
+=
+this + 4
+=
+0x5004
+```
+
+🔥🔥🔥
+
+இதுதான் actual internal mechanism.
