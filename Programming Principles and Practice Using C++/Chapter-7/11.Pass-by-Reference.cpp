@@ -6,7 +6,7 @@
 // =============================================
 
 void initialize(std::vector<double>& values) {
-    for (int i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         values[i] = i * 10;
     }
 }
