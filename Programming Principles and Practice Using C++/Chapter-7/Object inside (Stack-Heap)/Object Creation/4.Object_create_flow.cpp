@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <new>
 #include <string>
+#include <cstddef>
 
 // =============================================
 // SIMPLE PERSON CLASS
@@ -128,6 +129,9 @@ void show_internal_layout(Person* person) {
 
     char* base = (char*)person;
 
+    size_t age_offset = offsetof(Person, age);
+    size_t name_offset = offsetof(Person, name);
+
     std::cout << "\nbase object address  : " << (void*)base << '\n';
 
     // ---------------------------------------
@@ -142,9 +146,9 @@ void show_internal_layout(Person* person) {
     // MANUAL ADDRESS CALCUALTION
     // ------------------------------------------
 
-    int* age_ptr = (int*)(base + 0);
+    int* age_ptr = (int*)(base + age_offset);
 
-    std::string* name_ptr = (std::string*)(base + sizeof(int));
+    std::string* name_ptr = (std::string*)(base + name_offset);
 
     std::cout << "\nage_ptr     : " << age_ptr << '\n';
     std::cout << "name_ptr      : " << name_ptr << '\n';
