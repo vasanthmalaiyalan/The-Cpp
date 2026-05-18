@@ -23,18 +23,6 @@ constexpr double yscale = 0.8;
 constexpr Point scale(Point p) {
 
     return {
-        xscale * p.x;
-        yscale * p.y;
-    };
-}
-
-// ===========================================
-// consteval function
-// ==========================================
-
-constexpr Point scale(Point p) {
-
-    return {
         xscale * p.x,
         yscale * p.y
     };
@@ -44,7 +32,7 @@ constexpr Point scale(Point p) {
 // consteval function
 // =============================================
 
-consteval double half(double d) {
+constexpr double half(double d) {
 
     return d / 2;
 }
@@ -59,7 +47,7 @@ int main() {
     int y = 8;
 
     // runtime object
-    Point p1 {x , y};
+    Point p1 {double(x) , double(y)};
 
     // compaile-time object
     constexpr Point p2 {10, 10};
