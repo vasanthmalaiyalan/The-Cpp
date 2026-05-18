@@ -1015,3 +1015,319 @@ this + 4
 🔥🔥🔥
 
 இதுதான் actual internal mechanism.
+----------
+
+ஆம்!!! 🔥🔥🔥
+இப்போதுதான் நீங்கள் exact core mechanism-ஐ கேட்கிறீர்கள்.
+
+உங்கள் confusion perfectly valid.
+
+நீங்கள் சொல்வது சரி:
+
+```cpp id="s1"
+void* operator new(
+    std::size_t size,
+    void* raw_memory
+)
+{
+    return raw_memory;
+}
+```
+
+🔥
+
+இதில்:
+
+❌ constructor call இல்லை
+❌ object creation இல்லை
+❌ member initialization இல்லை
+
+---
+
+# THEN HOW constructor runs???
+
+இதுதான் most important truth:
+
+🔥🔥🔥
+
+```text id="s2"
+constructor-ஐ operator new run செய்யாது
+```
+
+---
+
+# Compiler itself does it
+
+இந்த syntax:
+
+```cpp id="s3"
+new(person_ptr) Person();
+```
+
+ஒரு ordinary function call இல்லை.
+
+🔥
+
+இது:
+
+```text id="s4"
+special compiler syntax
+```
+
+---
+
+# Compiler internally splits it
+
+இந்த line:
+
+```cpp id="s5"
+new(person_ptr) Person();
+```
+
+compiler internally almost:
+
+---
+
+# STEP 1
+
+```cpp id="s6"
+void* temp =
+    operator new(
+        sizeof(Person),
+        person_ptr
+    );
+```
+
+↓
+
+returns:
+
+```text id="s7"
+0x5000
+```
+
+---
+
+# STEP 2 🔥🔥🔥
+
+Compiler itself now does:
+
+```cpp id="s8"
+Person::Person(
+    this = (Person*)temp
+);
+```
+
+🔥🔥🔥
+
+---
+
+# THIS IS THE REAL ANSWER
+
+`operator new` constructor-ஐ call செய்யாது.
+
+🔥
+
+Instead:
+
+```text id="s9"
+compiler syntax rule
+```
+
+சொல்கிறது:
+
+```text id="s10"
+new(...) Type(...)
+```
+
+என்றால்:
+
+1. operator new call செய்
+2. returned address எடு
+3. அந்த address-ல் constructor ஓட்டு
+
+🔥🔥🔥
+
+---
+
+# Very important
+
+இந்த:
+
+```cpp id="s11"
+operator new(...)
+```
+
+ஒரு ordinary function.
+
+---
+
+ஆனால்:
+
+```cpp id="s12"
+new(...)
+```
+
+ஒரு:
+
+```text id="s13"
+language construct
+```
+
+🔥
+
+---
+
+# Huge difference
+
+| Thing            | Meaning               |
+| ---------------- | --------------------- |
+| `operator new()` | ordinary function     |
+| `new Type()`     | compiler-level syntax |
+
+🔥🔥🔥
+
+---
+
+# Think like compiler
+
+Compiler sees:
+
+```cpp id="s14"
+new(person_ptr) Person();
+```
+
+and expands almost into:
+
+```cpp id="s15"
+void* addr =
+    operator new(
+        sizeof(Person),
+        person_ptr
+    );
+
+Person* obj =
+    (Person*)addr;
+
+obj->Person::Person();
+```
+
+🔥🔥🔥
+
+---
+
+# THIS is why constructor runs
+
+NOT because:
+
+```cpp id="s16"
+operator new()
+```
+
+calls it.
+
+❌
+
+---
+
+But because:
+
+```text id="s17"
+compiler automatically inserts constructor call
+after operator new returns
+```
+
+🔥🔥🔥
+
+---
+
+# Deep truth
+
+`new expression` has TWO phases:
+
+| Phase             | Who does it             |
+| ----------------- | ----------------------- |
+| memory allocation | `operator new`          |
+| constructor call  | compiler-generated code |
+
+🔥🔥🔥
+
+---
+
+# Normal new also same
+
+```cpp id="s18"
+new Person();
+```
+
+internally almost:
+
+```cpp id="s19"
+void* raw =
+    operator new(sizeof(Person));
+
+Person* obj =
+    (Person*)raw;
+
+Person::Person(this = obj);
+```
+
+🔥
+
+---
+
+# Placement new version
+
+```cpp id="s20"
+new(person_ptr) Person();
+```
+
+internally almost:
+
+```cpp id="s21"
+void* raw =
+    operator new(
+        sizeof(Person),
+        person_ptr
+    );
+
+Person::Person(
+    this = raw
+);
+```
+
+🔥🔥🔥
+
+---
+
+# Final essence
+
+ஆம் — நீங்கள் சரியாக கண்டுபிடித்தீர்கள்:
+
+```cpp id="s22"
+operator new(...)
+```
+
+தனியாக:
+
+❌ constructor run செய்யாது
+
+🔥
+
+Constructor run ஆக காரணம்:
+
+```text id="s23"
+new expression syntax-ஐ compiler special-ஆக handle செய்வது
+```
+
+---
+
+Compiler internally:
+
+1. `operator new` call செய்கிறது
+2. returned address எடுக்கிறது
+3. அந்த address-ஐ `this` ஆக constructor-க்கு pass செய்கிறது
+
+🔥🔥🔥
+
+இதுதான் actual internal flow.
