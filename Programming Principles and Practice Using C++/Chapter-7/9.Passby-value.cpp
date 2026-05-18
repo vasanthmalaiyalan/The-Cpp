@@ -51,3 +51,25 @@ int main() {
     std::cout << "\nAfter multiply_by_two():\n";
     std::cout << "x = " << x << '\n';
 }
+
+/*
+./a.out
+Before function call:
+x = 10
+
+Inside function BEFORE change:
+value  = 10
+Inside function AFTER change:
+value = 11
+
+After function call:
+x = 10
+returned result = 11
+
+Inside multiply _by_two():
+number = 20
+
+After multiply_by_two():
+x = 10
+
+*/
