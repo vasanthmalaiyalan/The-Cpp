@@ -349,4 +349,4 @@ int main() {
 | Compiler pointer label மட்டும் பார்க்கும் | ✅ Correct |
 
 **One line rule:**
-> **T = pointer-ன் declared type** — memory-ல் என்ன store ஆனது என்பது T-ஐ decide பண்ணாது.
+> **T = pointer-ன் declared type** — memory-ல் என்ன store ஆனது என்பது T-ஐ decide பண்ணாது.,
