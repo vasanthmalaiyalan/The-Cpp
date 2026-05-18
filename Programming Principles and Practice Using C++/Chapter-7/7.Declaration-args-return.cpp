@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <vector>
 // ============================================
 // Function declaration
 // ============================================
@@ -33,7 +33,7 @@ int current_power() {
 }
 
 int find_value(std::vector<int> values, int target, int) {
-    for (int i = 0; i < values.size(); ++i) {
+    for (size_t i = 0; i < values.size(); ++i) {
         if (values[i] == target) {
             return i;
         }
