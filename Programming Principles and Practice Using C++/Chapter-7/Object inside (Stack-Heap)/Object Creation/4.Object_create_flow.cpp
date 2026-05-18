@@ -223,3 +223,81 @@ int main() {
 
     destroy_person(person);
 }
+
+/*
+ ./a.out
+
+
+=====================================
+STEP 1 : ALLOCTE RAW MEMORY
+========================================
+
+raw memory address   : 0x5ad4a0a876c0
+
+IMPORTANT:
+NO OBJECT EXISTS YET
+
+
+================================
+STEP 2 : CAST MEMORY
+====================================
+
+object_ptr value   : 0x5ad4a0a876c0
+
+IMPORTANT:
+still NO REAL OBJECT
+
+
+=================================
+STEP 3 : CONSTRUCTOR CALL
+=================================
+
+[CONSTRUCTOR RUNNING]
+this pointer   : 0x5ad4a0a876c0
+&age memeber   : 0x5ad4a0a876c0
+&name memeber  : 0x5ad4a0a876c8
+
+VALUES INITIALIZED
+age     : 25
+name    : Tony Stark
+
+IMPORTANT:
+NOW OBJECT LIFETIME STARTED
+
+
+================================
+VERIFY OBJECT
+===================================
+
+person pointer     : 0x5ad4a0a876c0
+person->age          : 25
+person->name         : Tony Stark
+
+
+=============================
+STEP 4 : INTERNAL MEMBER LOGIC
+================================
+
+base object address  : 0x5ad4a0a876c0
+
+Compailer internal know:
+age offset = 0
+name offset = depends on layout
+
+age_ptr     : 0x5ad4a0a876c0
+name_ptr      : 0x5ad4a0a876c8
+
+*age_ptr   : 25
+*name_ptr    : Tony Stark
+
+
+================================
+STEP 5 : DESTORY OBJECT
+==================================
+
+[DESTRUCTOR RUNNING]
+destroying object at   : 0x5ad4a0a876c0
+
+OBJECT LEFTTIME ENDED
+RAW MEMORY FREED
+*/
