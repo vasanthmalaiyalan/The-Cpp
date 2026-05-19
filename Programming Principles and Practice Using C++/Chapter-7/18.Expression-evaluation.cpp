@@ -60,7 +60,7 @@ int main() {
 
     int index = -1;
 
-    if (0 <= index && index < v.size() && v[index] != 0) {
+    if (0 <= index && static_cast<std::size_t>(index) < v.size() && v[index] != 0) {
 
         std::cout << "Vaild access\n";
     }
@@ -74,5 +74,6 @@ int main() {
 
     int n = 1;
 
-    std::cout << ++n << ' ' << ++n << '\n';
+    std::cout << ++n << ' ';
+    std::cout << ++n << '\n';
 }
