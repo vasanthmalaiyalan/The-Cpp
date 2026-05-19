@@ -77,3 +77,13 @@ int main() {
     std::cout << ++n << ' ';
     std::cout << ++n << '\n';
 }
+
+/*
+ ./a.out
+x = 4
+f(10)
+g(20)
+z = 51
+Invaild access avoided
+2 3
+*/
