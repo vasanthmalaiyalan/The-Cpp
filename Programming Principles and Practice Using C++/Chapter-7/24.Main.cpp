@@ -1,5 +1,5 @@
 #include <iostream>
-#include <f.h>
+#include "24.f.h"
 
 int main() {
 
