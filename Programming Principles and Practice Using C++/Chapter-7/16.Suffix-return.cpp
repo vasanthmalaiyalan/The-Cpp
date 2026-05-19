@@ -15,7 +15,7 @@ double multiply(int a, double b) {
 // Trailing return syntax
 // =================================================
 
-suto divide(double x, double y) -> double {
+auto divide(double x, double y) -> double {
     
     return x / y;
 }
@@ -47,11 +47,11 @@ auto square(int x) {
 
 int main() {
 
-    double m = multiple(5, 2.5);
+    double m = multiply(5, 2.5);
 
     double d = divide(20, 4);
 
-    auto names = make_name();
+    auto names = make_names();
 
     auto s = square(6);
 
@@ -61,7 +61,7 @@ int main() {
     std::cout << "names    : ";
 
     for (const auto& n : names) {
-        std::cout << n << ' '\n
+        std::cout << n << '\n';
     }
 
     std::cout << '\n';
