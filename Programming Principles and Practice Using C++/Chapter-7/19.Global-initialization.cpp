@@ -22,7 +22,7 @@ struct Date {
 // Simulated clock function
 // ===========================================
 
-Date get_data_from_clock() { // if you use return type of struct or class names so retrun only object
+Date get_date_from_clock() { // if you use return type of struct or class names so retrun only object
 
     std::cout << "Getting current data\n";
 
