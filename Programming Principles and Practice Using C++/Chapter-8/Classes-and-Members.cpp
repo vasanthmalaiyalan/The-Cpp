@@ -33,7 +33,7 @@ int main() {
     acc.balance = 1000;
 
     // calling member functions
-    acc.deposit(500);
+    acc.deposit(500);  // like inside acc.deposit(&acc, 500)
     acc.withdraw(200);
 
     // display final state
