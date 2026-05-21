@@ -16,3 +16,10 @@ int main() {
     std::cout << MY_OFFSETOF(Person, height) << '\n';
     std::cout << MY_OFFSETOF(Person, weight) << '\n';
 }
+
+/*
+ ./a.out
+0
+4
+8
+*/
