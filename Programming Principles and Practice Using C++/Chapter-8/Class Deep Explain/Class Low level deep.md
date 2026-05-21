@@ -524,3 +524,218 @@ set_age(&p, 50);
 
 இது 100% exact machine code அல்ல, ஆனால் class internals புரிந்து கொள்ள மிகவும் சரியான mental model.
 
+------------------
+
+``இது 100% exact machine code அல்ல, ஆனால் class internals புரிந்து கொள்ள மிகவும் சரியான mental model.`machine code தேவையில்லை class internal exact comaplier code என்ன என்பது தெ
+
+மிக நல்ல clarification. 👍
+
+நான் முன்பு சொன்னது ஒரு **mental model**. ஆனால் நீங்கள் கேட்பது:
+
+> "Compiler உண்மையில் member function-ஐ எப்படி represent செய்கிறது? Exact compiler-level transformation என்ன?"
+
+என்பது.
+
+இதற்கு பதில்:
+
+**C++ standard compiler எப்படி transform செய்ய வேண்டும் என்று சொல்லாது.**
+அது behavior-ஐ மட்டும் define செய்கிறது.
+
+அதனால் GCC, Clang, MSVC வெவ்வேறு implementation வைத்திருக்கலாம்.
+
+ஆனால் non-virtual member function-க்கு GCC/Clang போன்ற compiler-கள் conceptually மிகவும் அருகில் செய்வது:
+
+```cpp
+class Person
+{
+public:
+    int age;
+
+    void set_age(int a)
+    {
+        age = a;
+    }
+};
+```
+
+---
+
+Compiler symbol table-ல் கிட்டத்தட்ட:
+
+```cpp
+void Person::set_age(Person* const this, int a);
+```
+
+போன்ற internal signature இருக்கும்.
+
+நீ source-ல் `this` எழுதவில்லை என்றாலும் compiler add பண்ணுகிறது.
+
+---
+
+Function body:
+
+```cpp
+void Person::set_age(Person* const this, int a)
+{
+    this->age = a;
+}
+```
+
+---
+
+Call site:
+
+```cpp
+Person p;
+p.set_age(50);
+```
+
+கிட்டத்தட்ட:
+
+```cpp
+Person::set_age(&p, 50);
+```
+
+ஆக code generation phase-ல் மாறும்.
+
+---
+
+### Assembly பார்த்தால்?
+
+```cpp
+class Person
+{
+public:
+    int age;
+
+    void set_age(int a)
+    {
+        age = a;
+    }
+};
+
+int main()
+{
+    Person p;
+    p.set_age(50);
+}
+```
+
+x86-64 GCC optimization off-ல் roughly:
+
+```asm
+lea     rax, [rbp-4]     ; &p
+mov     esi, 50          ; a
+mov     rdi, rax         ; this
+call    _ZN6Person7set_ageEi
+```
+
+இங்கே:
+
+```text
+rdi = this
+esi = a
+```
+
+---
+
+`set_age` function:
+
+```asm
+_ZN6Person7set_ageEi:
+    mov DWORD PTR [rdi], esi
+    ret
+```
+
+Meaning:
+
+```cpp
+*(int*)rdi = esi;
+```
+
+அதாவது:
+
+```cpp
+this->age = a;
+```
+
+---
+
+### Compiler generated C++ equivalent
+
+இந்த particular class-க்கு மிகவும் அருகிலான equivalent:
+
+```cpp
+struct Person
+{
+    int age;
+};
+
+inline void Person_set_age(Person* this_ptr, int a)
+{
+    this_ptr->age = a;
+}
+```
+
+call:
+
+```cpp
+Person p;
+
+Person_set_age(&p, 50);
+```
+
+---
+
+### Important
+
+இது **non-virtual member function** க்கு மட்டும்.
+
+Virtual function வந்தால்:
+
+```cpp
+class Person
+{
+public:
+    virtual void set_age(int);
+};
+```
+
+compiler:
+
+* vptr
+* vtable
+* indirect dispatch
+
+சேர்க்கும்.
+
+அப்போது exact transformation மிகவும் complex ஆகும்.
+
+---
+
+அதனால்:
+
+```cpp
+p.set_age(50);
+```
+
+என்ற code-க்கு compiler-level representation (non-virtual case) மிகவும் அருகில் இருப்பது:
+
+```cpp
+Person_set_age(&p, 50);
+```
+
+மற்றும் function definition:
+
+```cpp
+void Person_set_age(Person* this_ptr, int a)
+{
+    this_ptr->age = a;
+}
+```
+
+என்பதே. இது வெறும் teaching model மட்டும் அல்ல; modern C++ compiler-கள் code generation செய்யும்போது இதே idea-ஐ அடிப்படையாகக் கொண்டு machine instructions உருவாக்குகின்றன.
+
+
+
+
