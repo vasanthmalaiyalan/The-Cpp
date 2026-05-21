@@ -19,7 +19,7 @@ struct Employee {
 // ===============================================
 
 #define MY_OFFSETOF(type, member) \
-   (size_t)((char*)&((type*)0)->member = (char*)0)
+   (size_t)((char*)&((type*)0)->member - (char*)0)
 
 // ===============================================
 // main
@@ -27,7 +27,7 @@ struct Employee {
 
 int main() {
 
-    cout << "=== struct Employee Layout ===" << "\n\n";
+    std::cout << "=== struct Employee Layout ===" << "\n\n";
 
     // Using standard offsetof
     std::cout << "offsetof(Employee, id) = " << offsetof(Employee, id) << " bytes\n";
@@ -42,6 +42,7 @@ int main() {
     std::cout << "MY_OFFSETOF(Employee, id) = " << MY_OFFSETOF(Employee, id) << " bytes\n";
     std::cout << "MY_OFFSETOF(Employee, age) = " << MY_OFFSETOF(Employee, age) << " bytes\n";
     std::cout << "MY_OFFSETOF(Employee, salary) = " << MY_OFFSETOF(Employee, salary) << " bytes\n";
+    std::cout << "MY_OFFSETOF(Employee, grade) = " << MY_OFFSETOF(Employee, grade) << " bytes\n";
 
     return 0;
 }
