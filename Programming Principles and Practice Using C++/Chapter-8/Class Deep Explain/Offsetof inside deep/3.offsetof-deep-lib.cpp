@@ -46,3 +46,21 @@ int main() {
 
     return 0;
 }
+
+/*
+ ./a.out
+=== struct Employee Layout ===
+
+offsetof(Employee, id) = 0 bytes
+offsetof(Employee, age) = 4 bytes
+offsetof(Employee, salary) = 8 bytes
+offsetof(Employee, grade) = 16 bytes
+
+Total struct size = 24 bytes
+
+=== Manual offset (internal trick) ===
+
+MY_OFFSETOF(Employee, id) = 0 bytes
+MY_OFFSETOF(Employee, age) = 4 bytes
+MY_OFFSETOF(Employee, salary) = 8 bytes
+*/
