@@ -737,5 +737,463 @@ void Person_set_age(Person* this_ptr, int a)
 என்பதே. இது வெறும் teaching model மட்டும் அல்ல; modern C++ compiler-கள் code generation செய்யும்போது இதே idea-ஐ அடிப்படையாகக் கொண்டு machine instructions உருவாக்குகின்றன.
 
 
+------------------
+
+
+``void Person::set_age(Person* const this, int a)
+{
+    this->age = a;
+}`சரி ஒன்றுக்கு மேற்பட்ட member இருக்கும்போது compailer என்ன செய்யும்? அப்புறம் இப்படி கம்பைளர் பார்க்கும் என்கிறாய் அல்லவா `void Person::set_age(Person* const this, int a)
+{
+    this->age = a;
+}`அது எப்படி automatic-ஆ கம்பைளர் இதுபோல் எழுதிக் கொள்கிறது `Person::set_age` அதற்குப் பின்னால் இருக்கும் அந்த விஷயத்தை தெளிவாக கூறு`
+
+
+நீங்கள் கேட்பது மிகவும் core compiler concept. இதை `machine code` இல்லாமல் compiler/C++ language level-ல் பார்ப்போம்.
+
+---
+
+## முதலில்: ஒரு class என்பது compiler-க்கு என்ன?
+
+```cpp
+class Person
+{
+public:
+    int age;
+    int height;
+
+    void set_age(int a)
+    {
+        age = a;
+    }
+};
+```
+
+Compiler இதைப் பார்த்தவுடன் இரண்டு விஷயங்களை உருவாக்குகிறது:
+
+### 1. Object layout
+
+```cpp
+struct Person
+{
+    int age;
+    int height;
+};
+```
+
+மாதிரியான memory layout information.
+
+---
+
+### 2. Member function metadata
+
+```cpp
+void set_age(int a)
+{
+    age = a;
+}
+```
+
+இந்த function எந்த class-க்கு சொந்தமானது?
+
+```text
+Person
+```
+
+என்பதை symbol table-ல் பதிவு செய்கிறது.
+
+---
+
+# ஒரு object உருவானால்
+
+```cpp
+Person p;
+```
+
+Memory:
+
+```text
+Address 1000  -> age
+Address 1004  -> height
+```
+
+உதாரணம்:
+
+```cpp
+p.age = 25;
+p.height = 170;
+```
+
+Memory:
+
+```text
+1000 -> 25
+1004 -> 170
+```
+
+---
+
+# இப்போது முக்கிய கேள்வி
+
+Function உள்ளே:
+
+```cpp
+void set_age(int a)
+{
+    age = a;
+}
+```
+
+இங்கே
+
+```cpp
+age
+```
+
+எந்த object-ன் age?
+
+---
+
+ஏனெனில்:
+
+```cpp
+Person p1;
+Person p2;
+Person p3;
+```
+
+இருக்கலாம்.
+
+Compiler எப்படி தெரிந்து கொள்கிறது?
+
+---
+
+# இதற்காகத்தான் `this`
+
+Compiler member function உருவாக்கும் போது:
+
+```cpp
+void set_age(int a)
+```
+
+என்பதை internal representation-ல்:
+
+```cpp
+void set_age(Person* this, int a)
+```
+
+என்று நினைக்கிறது.
+
+---
+
+அதனால் function-க்கு object address கிடைக்கும்.
+
+---
+
+உதாரணம்:
+
+```cpp
+p1.set_age(50);
+```
+
+Compiler:
+
+```cpp
+set_age(&p1, 50);
+```
+
+போல call உருவாக்குகிறது.
+
+---
+
+அப்போது:
+
+```cpp
+this = &p1
+```
+
+---
+
+# பல members இருந்தால்?
+
+உதாரணம்:
+
+```cpp
+class Person
+{
+public:
+    int age;
+    int height;
+    int weight;
+
+    void update(int a,int h,int w)
+    {
+        age = a;
+        height = h;
+        weight = w;
+    }
+};
+```
+
+Compiler memory layout:
+
+```text
+offset 0  -> age
+offset 4  -> height
+offset 8  -> weight
+```
+
+---
+
+Object:
+
+```cpp
+Person p;
+```
+
+Suppose address:
+
+```text
+p = 1000
+```
+
+---
+
+Function call:
+
+```cpp
+p.update(20,170,70);
+```
+
+Compiler:
+
+```cpp
+update(&p,20,170,70);
+```
+
+---
+
+Inside:
+
+```cpp
+age = a;
+```
+
+Compiler:
+
+```cpp
+this->age = a;
+```
+
+---
+
+Memory calculation:
+
+```text
+base address = 1000
+age offset   = 0
+```
+
+So:
+
+```text
+1000 + 0
+```
+
+---
+
+For:
+
+```cpp
+height = h;
+```
+
+Compiler:
+
+```cpp
+this->height = h;
+```
+
+Offset:
+
+```text
+1000 + 4
+```
+
+---
+
+For:
+
+```cpp
+weight = w;
+```
+
+Offset:
+
+```text
+1000 + 8
+```
+
+---
+
+அதனால் compiler member name-ஐ offset-ஆக மாற்றுகிறது.
+
+---
+
+# இப்போது முக்கியமான கேள்வி
+
+நீ கேட்டது:
+
+> compiler எப்படி automatic-ஆக
+>
+> ```cpp
+> void Person::set_age(Person* this,int a)
+> ```
+>
+> மாதிரி உருவாக்குகிறது?
+
+---
+
+உண்மையில் compiler source code rewrite செய்து file உருவாக்குவதில்லை.
+
+அது parsing phase-ல் class information சேகரிக்கிறது.
+
+---
+
+உதாரணம்:
+
+```cpp
+class Person
+{
+public:
+    int age;
+
+    void set_age(int a)
+    {
+        age = a;
+    }
+};
+```
+
+Parse செய்த பிறகு compiler AST (Abstract Syntax Tree) உருவாக்கும்.
+
+அதற்குள் function information:
+
+```text
+Function Name:
+    set_age
+
+Belongs To:
+    Person
+
+Parameters:
+    int a
+
+Implicit Parameter:
+    Person* this
+```
+
+என்று store ஆகும்.
+
+---
+
+அதாவது compiler literally source file-ல்:
+
+```cpp
+void Person::set_age(Person* this,int a)
+```
+
+எழுதுவதில்லை.
+
+ஆனால் internal compiler representation-ல்:
+
+```text
+member function
++
+owning class
++
+implicit this parameter
+```
+
+என்று வைத்துக்கொள்கிறது.
+
+---
+
+பிறகு semantic analysis phase-ல்:
+
+```cpp
+age = a;
+```
+
+பார்க்கும்போது:
+
+```text
+age is member of Person
+```
+
+என்று தெரியும்.
+
+அதனால் compiler:
+
+```cpp
+this->age = a;
+```
+
+என்று resolve செய்கிறது.
+
+---
+
+அதாவது:
+
+```cpp
+age
+```
+
+என்பது magic keyword இல்லை.
+
+Compiler அதை:
+
+```cpp
+this->age
+```
+
+என்று பொருள் கண்டுபிடிக்கிறது.
+
+---
+
+இதுதான் பின்னால் நடப்பது:
+
+```text
+p.set_age(50)
+
+↓
+
+member call expression
+
+↓
+
+object = p
+
+↓
+
+hidden this = &p
+
+↓
+
+member access:
+age
+
+↓
+
+this->age
+
+↓
+
+object memory + member offset
+```
+
+இந்த hidden `this` mechanism தான் member function-கள் எந்த object-இன் data-வை பயன்படுத்த வேண்டும் என்பதை compiler-க்கு தெரியப்படுத்துகிறது. இதுவே classes வேலை செய்வதற்கான மிக அடிப்படை உள் அமைப்பு.
+
+
 
 
