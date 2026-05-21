@@ -419,3 +419,108 @@ Class internal working புரிய வேண்டுமெனில் இ�
 10. Inheritance
 
 இந்த 1–5 concepts புரிந்த பிறகு, class என்பது "data + hidden pointer கொண்ட functions" என்ற மாதிரி மிகவும் எளிதாகத் தெரியும்.
+
+
+`நீ சொல்வது போல் இப்படி அனுப்பாமல் `p.set_age(50);`இப்படி raw வாக அனுப்பினால் வேலை செய்யுமா? `set_age(&p, 50);`?`
+
+
+இல்லை. `p.set_age(50);`-ஐ நேரடியாக
+
+```cpp
+set_age(&p, 50);
+```
+
+என்று எழுத முடியாது, ஏனெனில் compiler உண்மையில் உருவாக்கும் function சாதாரண global function அல்ல.
+
+உதாரணம்:
+
+```cpp
+class Person
+{
+public:
+    int age;
+
+    void set_age(int a)
+    {
+        age = a;
+    }
+};
+```
+
+நீங்கள்:
+
+```cpp
+Person p;
+p.set_age(50);
+```
+
+எழுதினால் compiler உள்ளுக்குள்:
+
+```cpp
+Person::set_age(&p, 50);
+```
+
+என்ற மாதிரி நினைக்கலாம்.
+
+அதாவது:
+
+* `set_age` என்பது `Person` class-க்கு சொந்தமான member function.
+* `&p` என்பது hidden `this` pointer.
+* இந்த மாற்றத்தை compiler தானாக செய்கிறது.
+
+---
+
+நீங்கள் raw-ஆக எழுத வேண்டுமென்றால்:
+
+```cpp
+struct Person
+{
+    int age;
+};
+
+void set_age(Person* p, int a)
+{
+    p->age = a;
+}
+
+int main()
+{
+    Person p;
+
+    set_age(&p, 50);   // valid
+}
+```
+
+இது class இல்லாமல், pure C style.
+
+---
+
+இப்போது கவனியுங்கள்:
+
+Class version:
+
+```cpp
+p.set_age(50);
+```
+
+C-style version:
+
+```cpp
+set_age(&p, 50);
+```
+
+இரண்டும் conceptually ஒரே idea.
+
+வேறுபாடு என்னவென்றால்:
+
+* C style-ல் object address-ஐ நீங்களே pass செய்ய வேண்டும்.
+* Class style-ல் compiler `this` pointer-ஆக தானாக pass செய்கிறது.
+
+---
+
+அதனால்தான் Stroustrup மற்றும் பல compiler engineers சொல்வது:
+
+> Non-virtual member function என்பது "ஒரு object pointer-ஐ hidden first argument-ஆக பெறும் சாதாரண function" போல நினைத்துக்கொள்ளலாம்.
+
+இது 100% exact machine code அல்ல, ஆனால் class internals புரிந்து கொள்ள மிகவும் சரியான mental model.
+
