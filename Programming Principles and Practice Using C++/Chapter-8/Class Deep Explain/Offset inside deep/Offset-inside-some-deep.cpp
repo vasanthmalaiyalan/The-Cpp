@@ -12,8 +12,8 @@ void Person_set_age(Person* this_ptr, int a) {
     std::cout << "\n[Person_set_age]\n";
 
     std::cout << "this_ptr      : " << this_ptr << '\n';
-    std::cout << "age offset    : " << offset(Person, age) << '\n';
-    std::cout << "height offset : " << offset(Person, height) << '\n';
+    std::cout << "age offset    : " << offsetof(Person, age) << '\n';
+    std::cout << "height offset : " << offsetof(Person, height) << '\n';
 
     // compailer conception knows:
     // age offset = 0
