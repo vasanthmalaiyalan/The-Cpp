@@ -28,7 +28,7 @@ int main() {
 
     std::cout << "\nvoid* address = " << p1 << "\n";
     std::cout << "int* address = " << p2 << "\n";
-    std::cout << "*p1 void* p1 = (void*)&num = " << *p1 << "\n";
+    // std::cout << "*p1 void* p1 = (void*)&num = " << *p1 << "\n";
     std::cout << "*p2 int* p2 = (int*)&num = " << *p2 << "\n";
 
     // ======================================
@@ -45,13 +45,13 @@ int main() {
 
     void* age_addr = (void*)&(e->age);
     std::cout << "\n&e->age address = " << age_addr << "\n";
-    std::cout << "\nonly access addr not value = " << *age_addr << "\n";
+    // std::cout << "\nonly access addr not value = " << *age_addr << "\n";
 
     // ======================================
     // STEP 5 : Offset
     // =====================================
 
-    size_t offset = (size_t)((char*)&((Empolyee*)0)->age);
+    size_t offset = (size_t)((char*)&((Employee*)0)->age);
     std::cout << "\noffset of age = " << offset << "\n"; // 4
 
 
@@ -66,3 +66,27 @@ int main() {
 
     return 0;
 }
+
+
+/*
+ ./a.out
+(int)   x = 65
+(char)  x = A
+(float) x = 65
+
+void* address = 0x7ffdd2caf5c8
+int* address = 0x7ffdd2caf5c8
+*p2 int* p2 = (int*)&num = 42
+
+Employee* e = 0
+
+&e->age address = 0x4
+
+offset of age = 4
+offsetof macro = 4
+
+Employee layout:
+id  offset = 0
+age offset = 4
+salary offset = 8
+*/
