@@ -43,3 +43,24 @@ int main() {
     std::cout << "age   : " << p.age << '\n';
     std::cout << "height : " << p.height << '\n';
 }
+
+/*
+ ./a.out
+[Object Layout]
+object address  : 0x7ffefd18d930
+age address     : 0x7ffefd18d930
+height address  : 0x7ffefd18d934
+
+Offsets
+age offset      : 0
+height offset   : 4
+
+[Person_set_age]
+this_ptr      : 0x7ffefd18d930
+age offset    : 0
+height offset : 4
+
+After update
+age   : 25
+height : 170
+*/
