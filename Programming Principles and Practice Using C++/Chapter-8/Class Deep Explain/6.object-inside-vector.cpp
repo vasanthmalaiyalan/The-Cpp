@@ -61,4 +61,31 @@ int main() {
 
         ++begin;
     }
+
+    /*
+     ./a.out
+sizeof(FieldInfo) = 56
+
+begin = 0x619450459370
+end = 0x619450459418
+
+Object Address : 0x619450459370
+name    = age
+size    = 4
+alignment = 4
+offset    = 0
+-------------------------------------
+Object Address : 0x6194504593a8
+name    = salary
+size    = 8
+alignment = 8
+offset    = 8
+-------------------------------------
+Object Address : 0x6194504593e0
+name    = grade
+size    = 1
+alignment = 1
+offset    = 16
+-------------------------------------
+    */
 }
