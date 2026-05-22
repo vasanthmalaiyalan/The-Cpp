@@ -15,7 +15,7 @@ int main() {
 
     Item* begin = &arr[0];
 
-    Item& end = &arr[3];
+    Item* end = &arr[3];
 
     while(begin != end) {
 
