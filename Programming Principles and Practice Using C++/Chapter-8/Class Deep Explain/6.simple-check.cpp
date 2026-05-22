@@ -14,3 +14,9 @@ int main() {
     std::cout << sizeof(std::string) << '\n';
     std::cout << sizeof(FieldInfo) << "\n";
 }
+
+/*
+./a.out
+32
+56
+*/
