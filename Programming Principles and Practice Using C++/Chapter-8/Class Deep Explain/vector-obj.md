@@ -534,3 +534,9 @@ end()    -> one-past-last element
 ```
 
 என்ற rule பயன்படுத்தப்படுகிறது. இதே rule `vector`, `string`, `array`, `map` எல்லாவற்றிலும் இருக்கும்.
+
+----------------------
+
+`அப்படி என்றால் இதன் size 56 `FieldInfo* end   = begin + fields.size();
+`56 ? `
+

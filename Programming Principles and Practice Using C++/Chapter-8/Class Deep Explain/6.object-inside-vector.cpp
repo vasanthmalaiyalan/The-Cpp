@@ -46,8 +46,8 @@ int main() {
     FieldInfo* begin = fields.data();
     FieldInfo* end = begin + fields.size();
 
-    std::cout << "begin = " << begin << '\n';
-    std::cout << "end = " << end << "\n\n";
+    std::cout << "begin  : " << begin << '\n';
+    std::cout << "end    : " << end << '\n';
 
     while(begin != end) {
 
