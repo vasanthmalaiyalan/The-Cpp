@@ -38,3 +38,11 @@ int main() {
     std::cout << "Object base address : " << static_cast<void*>(base) << "\n";
     std::cout << "Member address  : " << address << "\n";
 }
+
+/*
+ ./a.out
+Compiler sees member : height
+Lookup offset  : 4
+Object base address : 0x7fff43d7ee64
+Member address  : 0x7fff43d7ee68
+*/
