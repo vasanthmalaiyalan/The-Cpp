@@ -47,3 +47,10 @@ int main() {
     std::cout << salary.name << " offset=" << salary.offset << '\n';
     std::cout << grade.name << " offset=" << grade.offset << '\n'; 
 }
+
+/*
+/a.out
+age offset=0
+salary offset=8
+grade offset=16
+*/
