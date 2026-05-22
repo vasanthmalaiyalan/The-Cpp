@@ -14,3 +14,10 @@ int main() {
     std::cout << "As pointer (hex) : " << addr << '\n';
     std::cout << "As size_t (int) : " << (size_t)addr << "\n";
 }
+
+
+/*
+./a.out
+As pointer (hex) : 0x4
+As size_t (int) : 4
+*/
