@@ -67,3 +67,12 @@ int main() {
 
 
 }
+
+/*
+ ./a.out
+age offset=0 size=4
+salary offset=4 size=8
+grade offset=12 size=1
+
+object size=13
+*/
