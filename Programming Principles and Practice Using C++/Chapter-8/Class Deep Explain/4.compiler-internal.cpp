@@ -47,20 +47,20 @@ int main() {
 
     for (auto& field : fields) {
 
-        size_t remainder = current_offset % fields.alignment;
+        size_t remainder = current_offset % field.alignment;
 
         if (remainder != 0) {
-            current_offset += fields.alignment - remainder;
+            current_offset += field.alignment - remainder;
         }
 
-        fields.offset = current_offset;
+        field.offset = current_offset;
 
-        current_offset += fields.size;
+        current_offset += field.size;
     }
 
     for (const auto& field : fields) {
 
-        std::cout << fields.name << " offset=" << fields.offset << " size=" << fields.size << '\n';
+        std::cout << field.name << " offset=" << field.offset << " size=" << field.size << '\n';
     }
 
     std::cout << "\nobject size=" << current_offset << '\n';
