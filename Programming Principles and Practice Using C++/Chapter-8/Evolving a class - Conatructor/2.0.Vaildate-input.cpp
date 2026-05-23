@@ -4,7 +4,7 @@
 class Date {
 
     private:
-      int dev;
+      int day;
       int month;
       int year;
 
