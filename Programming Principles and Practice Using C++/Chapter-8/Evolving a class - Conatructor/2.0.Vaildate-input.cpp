@@ -9,7 +9,7 @@ class Date {
       int year;
 
     public:
-      Date(int d, int m, int y) {
+      Date(int d, int m, int y) { // this pointer
 
         if (d < 1 || d > 31)
            throw std::runtime_error("Invaild day");
