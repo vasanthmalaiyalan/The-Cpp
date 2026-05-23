@@ -3,7 +3,7 @@
 
 class Date {
     private:
-       int dev_;
+       int day_;
        int month_;
        int year_;
 
