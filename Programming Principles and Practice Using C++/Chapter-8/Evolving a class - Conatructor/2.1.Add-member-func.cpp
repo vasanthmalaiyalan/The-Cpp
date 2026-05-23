@@ -26,7 +26,7 @@ class Date {
         std::cout << day << '/' << month << '/' << year << '\n';
        }
 
-       void add_day(int m) {
+       void add_day(int n) {
 
           day += n;
        }
