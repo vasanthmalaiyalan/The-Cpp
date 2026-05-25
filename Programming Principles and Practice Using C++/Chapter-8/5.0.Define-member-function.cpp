@@ -32,4 +32,5 @@ int Date::month() {
 int main() {
     Date today{2025, 12, 24};
     std::cout << today.month() << '\n';
+    //std::cout << today << '\n';
 }
