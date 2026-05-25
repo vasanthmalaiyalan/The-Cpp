@@ -48,6 +48,8 @@ try {
     std::cout << dxy << '\n';
 
     dxy.add_day(2);
+
+    std::cout << dxy << '\n';
 }
 catch(Date::Invalid) {
 
