@@ -18,7 +18,9 @@ int main() {
 
     Date today;     // uninitialized
 
-    std::cout << today.d << '\n'; // BUG
+    std::cout << "today.d (Manual constructor garbage) : " << today.d << '\n'; // BUG
 
     init_day(today, 2025, 12, 24);
+
+    std::cout << "today.d (After initialized): " << today.d << '\n';
 }
