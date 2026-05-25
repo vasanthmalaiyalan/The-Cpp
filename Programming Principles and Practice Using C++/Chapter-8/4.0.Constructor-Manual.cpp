@@ -29,7 +29,7 @@ struct Date {
 
 int main() {
 
-    Date today{2025,12,13};
+    Date today(2025,12,13); // direct initialization
 
     today.add_day(1);
 
