@@ -18,7 +18,7 @@ bool is_valid_date(int y, int m, int d) {
     return true;   
 }
 
-void init_day(Date& dd, int y, it m, int d) {
+void init_day(Date& dd, int y, int m, int d) {
 
     if (!is_valid_date(y, m, d)) {
         std::cout << "Invalid date\n";
