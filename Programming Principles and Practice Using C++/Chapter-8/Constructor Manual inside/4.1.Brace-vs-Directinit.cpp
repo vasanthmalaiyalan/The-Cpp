@@ -57,3 +57,22 @@ int main() {
 
     return 0;
 }
+
+/*
+./a.out
+=== Constructor don't have struct (Point) ===
+
+=== Braces {} only work in (Point) because don't have Constructor in (Point) ====
+p1 (aggregate init {}): 10, 20, 30
+If you use p2 like p2(10, 20, 30) didn't work because don't have constructor
+
+=== Constructor inside struct ====
+Person constructor called
+Person constructor called
+person1: Arun, 25
+person2: Priya, 30
+
+==== Narrowing conversion =====
+int a(3.9) = 3  <- truncate warning
+int b{3.9} - ERROR , Compile
+*/
