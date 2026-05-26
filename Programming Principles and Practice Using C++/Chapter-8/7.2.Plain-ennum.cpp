@@ -18,3 +18,8 @@ int main() {
         std::cout << "Compiler allowed nonsense\n";
     }
 }
+
+/*
+ ./a.out
+Compiler allowed nonsense
+*/
