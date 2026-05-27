@@ -28,3 +28,8 @@ int main() {
 
     std::cout << d.day() << '/' << d.month() << '/' << d.year() << '\n';
 }
+
+/*
+/a.out
+24/12/2025
+*/
