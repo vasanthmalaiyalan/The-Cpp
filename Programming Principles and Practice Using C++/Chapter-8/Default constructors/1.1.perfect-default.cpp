@@ -22,7 +22,7 @@ struct Year {
 
 class Date {
     public:
-      Date() : {}
+      Date() {}
 
       Date(Year yy) : y{yy} {}
 
