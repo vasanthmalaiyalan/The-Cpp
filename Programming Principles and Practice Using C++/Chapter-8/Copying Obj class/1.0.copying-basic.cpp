@@ -29,7 +29,7 @@ class Date {
       }
 
     private:
-      year y;
+      Year y;
       Month m;
       int d;  
 };
