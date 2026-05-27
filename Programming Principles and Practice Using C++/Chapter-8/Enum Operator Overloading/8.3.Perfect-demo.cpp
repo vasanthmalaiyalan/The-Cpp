@@ -29,3 +29,11 @@ int main() {
 
     std::cout << "Point = " << p.x << " " << p.y << '\n';
 }
+
+/*
+ ./a.out
+Month value = 2
+Address of object m = 0x7fff231effa8
+Month{2} == Month::feb
+Point = 10 20
+*/
