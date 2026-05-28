@@ -281,7 +281,7 @@ int main() {
     std::cout << "MONTH LITERAL STYLE\n";
     std::cout << "=======================================\n";
 
-    auto birthday = December / 16 / 1770;
+    year_month_day birthday = December / 16 / 1770;
 
     birthday.print();
 
