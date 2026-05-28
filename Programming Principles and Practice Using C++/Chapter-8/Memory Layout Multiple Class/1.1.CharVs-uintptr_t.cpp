@@ -18,7 +18,7 @@ class year_month_day {
       year y;
       month m;
 
-   year_month_day(year yy, month mm) :: y(yy), m(mm) {}   
+   year_month_day(year yy, month mm) : y(yy), m(mm) {}   
 };
 
 int main() {
@@ -41,7 +41,7 @@ int main() {
     // unintptr_t
     // ==================================
 
-    uintptr_t base_unit = reinterpret_cast<uintptr_t>(&date);
+    uintptr_t base_uint = reinterpret_cast<uintptr_t>(&date);
 
     std::cout << "\n=== uintptr_t ====\n";
 
@@ -61,3 +61,17 @@ int main() {
     return 0;
 
 }
+
+/*
+inciples and Practice Using C++/Chapter-8/Memory Layout Multiple Class$ ./a.out
+=== char* ====
+base   : 0x7ffc091312e0
+base + 4 (m) : 0x7ffc091312e4
+
+=== uintptr_t ====
+base   : 140720460731104
+base + 4 (m) : 140720460731108
+
+=== Same result char used ===
+match : YES
+*/
