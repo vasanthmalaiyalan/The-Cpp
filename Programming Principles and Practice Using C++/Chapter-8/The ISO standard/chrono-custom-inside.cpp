@@ -59,7 +59,7 @@ class day {
       unsigned value;
 
     public:
-       constexpr explicit day(unsigned d) : value {}
+       constexpr explicit day(unsigned d) : value(d) {}
        
        constexpr bool ok() const {
           return value >= 1 && value <= 31;
@@ -213,17 +213,17 @@ class sys_days{
        long long total_day;
 
     public:
-      explicit sys_days(long long d = 0) ; total_days(d) {}
+      explicit sys_days(long long d = 0) : total_day(d) {}
       
       sys_days& operator+=(days d) {
 
-         total_days += d.count();
+         total_day += d.count();
          return *this;
       }
 
       void print() const {
          
-         std::cout << "stored days : " << total_days << '\n';
+         std::cout << "stored days : " << total_day << '\n';
       }
 };
 
@@ -312,7 +312,7 @@ int main() {
     std::cout << "===============================\n";
 
     year y1{2024};
-    std::cout << "2024 leap? : " << y1.is.leap() << '\n';
+    std::cout << "2024 leap? : " << y1.is_leap() << '\n';
 
     year y2{2025};
     std::cout << "2025 leap? : " << y2.is_leap() << '\n';
@@ -334,7 +334,7 @@ int main() {
     // system_clock
     // =======================================
 
-    std::cout << '\n=================================\n';
+    std::cout << "\n=================================\n";
     std::cout << "system_clock\n";
     std::cout << "===================================\n";
 
