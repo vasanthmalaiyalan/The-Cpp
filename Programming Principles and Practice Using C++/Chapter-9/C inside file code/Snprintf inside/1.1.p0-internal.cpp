@@ -12,7 +12,7 @@ int main() {
 
         std::cout << "p address : " << (void*)p << '\n';
         std::cout << "i         : " << i << '\n';
-        std::cout << "p[i]      : " << p[i] << '\n\n';
+        std::cout << "p[i]      : " << p[i] << "\n\n";
     }
 
     std::cout << "=== p++: i fixed, p changes ===\n";
@@ -23,7 +23,7 @@ int main() {
 
         std::cout << "p address : " << (void*)p << '\n';
         std::cout << "i         : " << 0 << '\n';
-        std::cout << "p[0]      : " << p[0] << '\n\n';
+        std::cout << "p[0]      : " << p[0] << "\n\n";
         p++;
     }
 
