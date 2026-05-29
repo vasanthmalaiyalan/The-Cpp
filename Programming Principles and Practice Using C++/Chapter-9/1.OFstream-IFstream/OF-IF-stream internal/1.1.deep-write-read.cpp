@@ -9,7 +9,7 @@ int main() {
     std::cout << "STEP 1 : OPEN FILE\n";
     std::cout << "======================================\n";
 
-    int fd = open("person.txt", O_WRONLY | O_CREAT | O+TRUNC, 0644);
+    int fd = open("person.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
     std::cout << "open() return value (fd) : " << fd << '\n';
     std::cout << "\n=====================================\n";
@@ -63,3 +63,39 @@ int main() {
 
     return 0;
 }
+
+/*
+ ./a.out
+====================================
+STEP 1 : OPEN FILE
+======================================
+open() return value (fd) : 3
+
+=====================================
+STEP 2 : WRITE FILE
+========================================
+text                 : Tony Stark
+strlen(text)         : 10
+write() return value : 10
+
+=====================================
+STEP 3 : CLOSEE FILE
+=======================================
+close() return value : 0
+
+========================================
+STEP 4 : OPEN AGAIN FOR READ
+===========================================
+open() return value (fd) : 3
+
+===========================================
+STEP 5 : READ FILE
+==============================================
+read() return value : 10
+buffer content      : Tony Stark
+
+============================================
+STEP 6 : CLOSE FILE
+==============================================
+ close() return value : 0
+*/
