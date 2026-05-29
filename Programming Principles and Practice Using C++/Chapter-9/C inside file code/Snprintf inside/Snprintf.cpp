@@ -70,3 +70,8 @@ int main() {
 
     printf("%s\n", buffer);
 }
+
+/*
+./a.out
+Age = 45
+*/
