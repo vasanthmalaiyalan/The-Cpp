@@ -100,7 +100,7 @@ int main() {
 
     MyOfstream fout("person.txt");
 
-    fout << "Name : TTony Stark\n";
+    fout << "Name : Tony Stark\n";
 
     fout << "Age : ";
 
@@ -114,3 +114,20 @@ int main() {
     fin.read_all();
 }
 }
+
+/*
+ ./a.out
+[OPEN FOR WRITE]
+fd : 3
+[WRITE]
+[WRITE]
+[WRITE]
+[CLOSE WRITE FILE]
+[OPEN FOR READ]
+fd : 3
+[FILE CONTENT]
+Name : Tony Stark
+Age : 45
+
+[CLOSE READ FILE]
+*/
