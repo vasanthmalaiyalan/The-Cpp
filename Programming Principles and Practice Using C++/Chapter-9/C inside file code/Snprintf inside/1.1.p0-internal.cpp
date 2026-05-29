@@ -10,7 +10,7 @@ int main() {
 
     for (int i = 0; i < 3; i++) {
 
-        std::cout << "p address : " << (void*)p << '\n';
+        std::cout << "p address : " << "*(" << (void*)p << ' ' << '+' << ' ' << i << ") "<< '\n';
         std::cout << "i         : " << i << '\n';
         std::cout << "p[i]      : " << p[i] << "\n\n";
     }
@@ -21,7 +21,7 @@ int main() {
 
     for (int i = 0; i < 3; i++) {
 
-        std::cout << "p address : " << (void*)p << '\n';
+        std::cout << "p address : " << "p = " << (void*)p << " + " << "1" << '\n';
         std::cout << "i         : " << 0 << '\n';
         std::cout << "p[0]      : " << p[0] << "\n\n";
         p++;
