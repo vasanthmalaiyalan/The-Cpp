@@ -49,5 +49,24 @@ int my_snprintf(
 
             format += 2;
         }
+
+        else {
+            buffer[pos++] = *format;
+
+            format++;
+        }
     }
+
+    buffer[pos] = '\0';
+
+    return pos;
+}
+
+int main() {
+
+    char buffer[100];
+
+    my_snprintf(buffer, sizeof(buffer), "Age = %d", 45);
+
+    printf("%s\n", buffer);
 }
