@@ -13,7 +13,7 @@ class MyOfstream {
        int fd;
 
     public:
-       MyOfstream(const char* filement) {
+       MyOfstream(const char* filename) {
           
            fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644 );
 
@@ -23,7 +23,7 @@ class MyOfstream {
 
        MyOfstream& operator<<(const char* text) {
           
-          std::cout << *this <<"[WRITE]\n";
+          std::cout  <<"[WRITE]\n";
 
           write(fd,text,strlen(text));
 
