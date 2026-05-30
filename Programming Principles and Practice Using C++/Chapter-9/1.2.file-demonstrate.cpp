@@ -31,7 +31,7 @@ bool load_person(Person& person) {
         return false;
     }
 
-    input_file >> person.name << person.age;
+    input_file >> person.name >> person.age;
 
     return static_cast<bool>(input_file);
 }
@@ -60,3 +60,13 @@ int main() {
     std::cout << "Name : " << loaded_person.name << '\n';
     std::cout << "Age  : " << loaded_person.age << '\n';
 }
+
+/*
+ ./a.out
+Enter name : king
+Enter age: 23
+
+Date read from file
+Name : king
+Age  : 23
+*/
