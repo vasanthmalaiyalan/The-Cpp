@@ -46,6 +46,27 @@ void write_temperatures(const std::vector<Reading>& readings, const std::string&
 
     for (const Reading& reading : readings) {
 
-        output_file << "(" << reading.hour
+        output_file << "(" 
+                    << reading.hour 
+                    << ',' 
+                    << reading.temperature 
+                    << ")\n";
+    }
+}
+
+int main() {
+
+    try {
+
+        const auto readings = read_temperatures("temps.txt");
+
+        write_temperatures(readings, "formatted_temps.txt");
+
+        std::cout << "Temperature data processed.\n";
+    }
+    catch (const std::exception& ex) {
+        std::cerr << ex.what() << '\n';
+
+        return 1;
     }
 }
