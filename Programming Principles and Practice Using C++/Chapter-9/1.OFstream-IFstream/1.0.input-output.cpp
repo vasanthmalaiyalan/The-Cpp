@@ -74,3 +74,15 @@ int main() {
 
     return 0;
 }
+
+/*
+ ./a.out
+Enter name: jarvis
+Enter age: 24
+
+Data saved successfully.
+
+Reading from file:
+Name : jarvis
+Age  : 24
+*/
