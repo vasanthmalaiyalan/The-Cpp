@@ -18,3 +18,10 @@ int main() {
     std::cout << "Age    : " << age  << '\n'; // 25
     std::cout << "Weight : " << weight << '\n'; // 75.5
 }
+
+/*
+./a.out
+Name   : John
+Age    : 25
+Weight : 75.5
+*/
