@@ -20,8 +20,10 @@ int main() {
 }
 
 /*
+
 ./a.out
 Name   : John
 Age    : 25
 Weight : 75.5
+
 */
