@@ -22,3 +22,9 @@ int main() {
     std::cout << "Your age is: " << age << '\n';
     return 0;
 }
+
+/*
+./a.out
+Enter age: 23
+Your age is: 23
+*/
