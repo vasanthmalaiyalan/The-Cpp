@@ -7,14 +7,14 @@ std::vector<int> read_numbers(const std::string& file_name) {
 
     std::ifstream file;
 
+    file.exceptions(std::ios::badbit);
+
     file.open(file_name);
 
     if (!file.is_open()) {
 
         throw std::runtime_error("Could not open file: " + file_name);
     }
-
-    file.exceptions(std::ios::badbit);
 
     std::vector<int> values {};
 
@@ -46,3 +46,11 @@ int main() {
         std::cerr << "Error: " << ex.what() << '\n';
     }
 }
+
+/*
+./a.out
+123
+2345
+456
+12
+*/
