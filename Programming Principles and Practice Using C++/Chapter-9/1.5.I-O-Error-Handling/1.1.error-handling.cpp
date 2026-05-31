@@ -14,7 +14,7 @@ std::vector<int> read_numbers(const std::string& file_name) {
         throw std::runtime_error("Could not open file: " + file_name);
     }
 
-    file.exceptions(std::ios::badbit | std::ios::failbit);
+    file.exceptions(std::ios::badbit);
 
     std::vector<int> values {};
 
@@ -43,6 +43,6 @@ int main() {
         }
     }
     catch (const std::exception& ex) {
-        std::cerr << ex.what() << '\n';
+        std::cerr << "Error: " << ex.what() << '\n';
     }
 }
