@@ -7,9 +7,14 @@ std::vector<int> read_numbers(const std::string& file_name) {
 
     std::ifstream file;
 
-    file.exceptions(std::ios::badbit | std::ios::failbit);
-
     file.open(file_name);
+
+    if (!file.is_open()) {
+
+        throw std::runtime_error("Could not open file: " + file_name);
+    }
+
+    file.exceptions(std::ios::badbit | std::ios::failbit);
 
     std::vector<int> values {};
 
@@ -25,7 +30,7 @@ std::vector<int> read_numbers(const std::string& file_name) {
 
 int main() {
 
-    std::ofstream create_file("nmbers.txt");
+    std::ofstream create_file("numbers.txt");
     create_file << "123 2345 456 12";
     create_file.close();
 
