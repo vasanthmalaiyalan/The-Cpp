@@ -7,7 +7,7 @@ std::vector<int> read_numbers(const std::string& file_name) {
 
     std::ifstream file;
 
-    file.exceptions(std::ios::badbit);
+    file.exceptions(std::ios::badbit | std::ios::failbit);
 
     file.open(file_name);
 
