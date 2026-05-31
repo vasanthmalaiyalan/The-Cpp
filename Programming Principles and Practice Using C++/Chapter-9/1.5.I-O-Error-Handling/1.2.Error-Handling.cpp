@@ -9,8 +9,8 @@ void fill_vector(
     char terminator
 ) {
 
-   for (int value {}; input_stream >> values;) {
-        values.push_back(values);
+   for (int value {}; input_stream >> value;) {
+        values.push_back(value);
    }
 
    if (input_stream.eof()) {
@@ -78,7 +78,7 @@ int main() {
         std::cout << "\nFinal stream state:\n";
 
         std::cout << "good(): " << input_file.good() << '\n';
-        std::cout << "eof(): " << input_file.of() << '\n';
+        std::cout << "eof(): " << input_file.eof() << '\n';
         std::cout << "fail(): " << input_file.fail() << '\n';
         std::cout << "bad(): " << input_file.bad() << '\n';
     }
@@ -87,3 +87,20 @@ int main() {
         return 1;
     }
 }
+
+/*
+ ./a.out
+[INFO] End of file reached
+
+Numbers read:
+123
+2345
+456
+12
+
+Final stream state:
+good(): 0
+eof(): 1
+fail(): 1
+bad(): 0
+*/
