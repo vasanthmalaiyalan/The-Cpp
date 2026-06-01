@@ -20,7 +20,7 @@ namespace StreamBits {
 class MyStream {
     private:
       int m_state {StreamBits::goodbit }; // தொடக்கத்தில் good
-      std::string m_bufffer {};  // raw data சேமிக்கும் இடம்
+      std::string m_buffer {};  // raw data சேமிக்கும் இடம்
 
     public:
        // Constructor - string-ஐ buffer-இல் சேமிக்கிறது
@@ -41,7 +41,12 @@ class MyStream {
       bool fail() const { return m_state & (StreamBits::failbit | StreamBits::badbit); }
 
       // badbit set ?
-      bool bad() cosnt { return m_state & StreamBits::badbit; }
+      bool bad() const { return m_state & StreamBits::badbit; }
+
+      // Fix: Aded clear() function to reset the state bits back to good
+      void clear() {
+        m_state = StreamBits::goodbit;
+      }
 
     // ─────────────────────────────────────
     // operator bool
