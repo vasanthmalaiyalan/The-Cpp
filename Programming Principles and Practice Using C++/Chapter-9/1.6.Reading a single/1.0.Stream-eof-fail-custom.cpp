@@ -186,3 +186,43 @@ int main() {
   return 0;
 }
 constexpr int badbit = 0b0100;
+
+/*
+$ ./a.out
+=== Case 1: EOF ===
+Read: 10
+Read: 20
+Read: 30
+[INFO] Buffer empty - EOF
+
+good(): 0
+eof(): 1
+fail(): 1
+bad(): 0
+
+=== Case 2: character ===
+Read: 10
+Read: 20
+[INFO] int அல்லாத character
+
+good(): 0
+eof(): 0
+fail(): 1
+bad(): 0
+
+=== Case 3: clear() ===
+Read: 10
+Read: 20
+
+clear() before:
+good(): 0
+eof(): 0
+fail(): 1
+bad(): 0
+
+clear() After:
+good(): 1
+eof(): 0
+fail(): 0
+bad(): 0
+*/
