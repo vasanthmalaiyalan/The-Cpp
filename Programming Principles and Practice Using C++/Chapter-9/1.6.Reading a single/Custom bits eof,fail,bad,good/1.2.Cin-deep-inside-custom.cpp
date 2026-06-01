@@ -204,7 +204,7 @@ int get_numbers_1_to_10(const std::string& simulatedInput, bool forceEOF = false
         myCin.simulateEOF();
     }
     else {
-        myCin.simulateUserTyping(simulateInput);
+        myCin.simulateUserTyping(simulatedInput);
     }
 
     while (true) {
@@ -278,7 +278,7 @@ int main() {
         // outt of range -> loop would ask again in real program
         // here we just show the first iteration message
         int result = get_numbers_1_to_10("155");
-        sttd::cout << "Accepted value: " << result << "\n";
+        std::cout << "Accepted value: " << result << "\n";
     }
     catch (const std::exception& e) {
         std::cerr << e.what() << "\n";
@@ -303,3 +303,26 @@ int main() {
     }
     return 0;
 }
+
+/*
+ ./a.out
+=== Case 1: Vaild input (5) ===
+Enter an integer (1-10): 5
+Accepted value: 5
+
+=== Case 2: Out of range (15) ===
+Enter an integer (1-10): 155
+Number must be between 1 and 10.
+Enter an integer (1-10): 155
+Input closed by user
+
+=== Case 3: Wrong type (abc) ===
+Enter an integer (1-10): abc
+Not an integer. Try again.
+Enter an integer (1-10): abc
+Input closed by user
+
+=== Case 4: EOF ===
+Enter an integer (1-10):
+Input closed by user
+*/
