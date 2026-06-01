@@ -128,3 +128,49 @@ int main() {
     return 0;
 }
 
+/*
+/a.out
+=== Test 1: Fresh stream ===
+ good() = 1
+ eof() = 0
+ fail() = 0
+ bad() = 0
+
+=== Test 2: EOF set () ========
+ good() = 0
+ eof() = 1
+ fail() = 0
+ bad() = 0
+
+=== Test 3: Fail set (wrong type input) ====
+ good() = 0
+ eof() = 0
+ fail() = 1
+ bad() = 0
+
+=== Test 4: After clear() ===
+ good() = 1
+ eof() = 0
+ fail() = 0
+ bad() = 0
+
+=== Test 5: BAD set (hardware error) ===
+ good() = 0
+ eof() = 0
+ fail() = 0
+ bad() = 1
+
+=== Test 6: MyFileStream - file not found ===
+ good() = 0
+ eof() = 0
+ fail() = 1
+ bad() = 0
+
+=== Test 7: MyFileStream - file open ok ===
+ good() = 1
+ eof() = 0
+ fail() = 0
+ bad() = 0
+
+*/
+
