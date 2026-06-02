@@ -14,8 +14,7 @@ void skip_to_int() {
                 }
         }
     }
-    throw std::runtime_error("
-        No valid input available");
+    throw std::runtime_error("No valid input available");
 }
 
 int get_int() {
@@ -45,7 +44,7 @@ int get_int(int low, int high) {
 
 int main() {
     try {
-        const int_age = get_int(1, 120);
+        const int age = get_int(1, 120);
 
         std::cout << "Age: " << age << '\n';
 
